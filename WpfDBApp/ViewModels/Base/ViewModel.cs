@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfDBApp.ViewModels
+namespace WpfDBApp.Base.ViewModels
 {
     internal abstract class ViewModel : INotifyPropertyChanged
     {

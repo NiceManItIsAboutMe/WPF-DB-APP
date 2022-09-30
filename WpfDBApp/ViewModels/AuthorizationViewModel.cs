@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WpfDBApp.Base.ViewModels;
 
 namespace WpfDBApp.ViewModels
 {
@@ -17,10 +18,5 @@ namespace WpfDBApp.ViewModels
         }
 
         public string Password { get; set; }
-
-        private bool CheckPassword()
-        {
-            return false;
-        }
     }
 }
