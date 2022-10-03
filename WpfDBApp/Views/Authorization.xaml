@@ -24,9 +24,13 @@
          HorizontalAlignment="Center"
          VerticalAlignment="Center">
             <TextBlock Text="Логин" FontSize="16" FontFamily="Arial Black"/>
-            <TextBox MaxLength="250" Text="Введите логин" FontSize="16" FontFamily="Arial Black" TextAlignment="Center" Width="500" Margin="0 5 0 10"/>
+            <TextBox MaxLength="250" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"  FontSize="16" FontFamily="Arial Black" TextAlignment="Center" Width="500" Margin="0 5 0 10">
+                <TextBox.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding ChangeTextBoxTextCommand}" CommandParameter="{Binding Login}"/>
+                </TextBox.InputBindings>
+            </TextBox>
             <TextBlock Text="Пароль" FontSize="16" FontFamily="Arial Black"/>
-            <TextBox MaxLength="250" Text="Введите пароль" FontSize="16" FontFamily="Arial Black" TextAlignment="Center" Margin="0 5 0 10"/>
+            <TextBox MaxLength="250" Text="{Binding Password,UpdateSourceTrigger=PropertyChanged}" FontSize="16" FontFamily="Arial Black" TextAlignment="Center" Margin="0 5 0 10"/>
             <Button Content="Войти" FontSize="16" FontFamily="Arial Black" Background="#FF0FA033"/>
 
         </StackPanel>
