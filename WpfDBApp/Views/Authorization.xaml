@@ -8,7 +8,10 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:WpfDBApp.Views"
         mc:Ignorable="d"
-        Title="Authorization" Height="300" Width="600" Background="Bisque">
+        Title="Authorization" Height="300" Width="600" Background="Bisque" WindowStartupLocation="CenterScreen">
+    <Window.InputBindings>
+        <KeyBinding Key="Enter" Command="{Binding SignInCommand}"/>
+    </Window.InputBindings>
     <!--подключаем класс из пространства имен vm, чтобы студия подсказки делала-->
     <Window.DataContext>
         <vm:AuthorizationViewModel/>
@@ -25,11 +28,11 @@
          HorizontalAlignment="Center"
          VerticalAlignment="Center">
             <TextBlock Text="Логин" FontSize="16" FontFamily="Arial Black"/>
-            <TextBox materialDesign:HintAssist.Hint="Введите логин" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"  FontSize="16" FontFamily="Arial Black" TextAlignment="Center" Width="500" Margin="0 5 0 10">
+            <TextBox materialDesign:HintAssist.Hint="Введите логин" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"  FontSize="16" FontFamily="Arial Black" TextAlignment="Left" Width="500" Margin="0 5 0 10">
             </TextBox>
             <TextBlock Text="Пароль" FontSize="16" FontFamily="Arial Black"/>
-            <TextBox materialDesign:HintAssist.Hint="Введите пароль" Text="{Binding Password,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" FontSize="16" FontFamily="Arial Black" TextAlignment="Center" Margin="0 5 0 10"/>
-            <Button Content="Войти" FontSize="16" FontFamily="Arial Black" Background="#FF0FA033"/>
+            <TextBox materialDesign:HintAssist.Hint="Введите пароль" Text="{Binding Password,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" FontSize="16" FontFamily="Arial Black" TextAlignment="Left" Margin="0 5 0 10"/>
+            <Button Content="Войти" Command="{Binding SignInCommand }" FontSize="16" FontFamily="Arial Black" Background="#FF0FA033"/>
 
         </StackPanel>
 

@@ -17,7 +17,7 @@ namespace WpfDBApp.ViewModels
         public const string PASSWORD = "Введите пароль";
         #endregion
 
-        #region поля в авторизации
+        #region поля в окне
         private string _Login;
         public string Login
         {
@@ -57,16 +57,41 @@ namespace WpfDBApp.ViewModels
         }
 
         #endregion
+        #region кнопка входа
+        public ICommand SignInCommand { get; }
 
+        private bool CanSignInCommandExecute(object p) => true;
+        private void OnSignInCommandExecuted(object p)
+        {
+            //новое окно смотря кто зашел
+            if (Login.Length == 0)
+            {
+                MessageBox.Show("Введите логин");
+                return;
+            }
+            if (Password.Length == 0)
+            {
+                MessageBox.Show("Введите пароль");
+                return;
+            }
+            if(Login=="1" && Password=="1")
+                MessageBox.Show("вошли");
+
+        }
+        #endregion
         #endregion
 
         public AuthorizationViewModel()
         {
             #region поля
+            Login = String.Empty;
+            Password = String.Empty;
             #endregion
             #region команды
             //создание команды
             CloseApplicationCommand = new RelayCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
+
+            SignInCommand = new RelayCommand(OnSignInCommandExecuted, CanSignInCommandExecute);
             #endregion
         }
     }
