@@ -4,7 +4,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:WpfDBApp.ViewModels"     
+        xmlns:vm="clr-namespace:WpfDBApp.ViewModels"   
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:WpfDBApp.Views"
         mc:Ignorable="d"
         Title="Authorization" Height="300" Width="600" Background="Bisque">
@@ -24,13 +25,10 @@
          HorizontalAlignment="Center"
          VerticalAlignment="Center">
             <TextBlock Text="Логин" FontSize="16" FontFamily="Arial Black"/>
-            <TextBox MaxLength="250" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"  FontSize="16" FontFamily="Arial Black" TextAlignment="Center" Width="500" Margin="0 5 0 10">
-                <TextBox.InputBindings>
-                    <MouseBinding MouseAction="LeftClick" Command="{Binding ChangeTextBoxTextCommand}" CommandParameter="{Binding Login}"/>
-                </TextBox.InputBindings>
+            <TextBox materialDesign:HintAssist.Hint="Введите логин" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"  FontSize="16" FontFamily="Arial Black" TextAlignment="Center" Width="500" Margin="0 5 0 10">
             </TextBox>
             <TextBlock Text="Пароль" FontSize="16" FontFamily="Arial Black"/>
-            <TextBox MaxLength="250" Text="{Binding Password,UpdateSourceTrigger=PropertyChanged}" FontSize="16" FontFamily="Arial Black" TextAlignment="Center" Margin="0 5 0 10"/>
+            <TextBox materialDesign:HintAssist.Hint="Введите пароль" Text="{Binding Password,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" FontSize="16" FontFamily="Arial Black" TextAlignment="Center" Margin="0 5 0 10"/>
             <Button Content="Войти" FontSize="16" FontFamily="Arial Black" Background="#FF0FA033"/>
 
         </StackPanel>

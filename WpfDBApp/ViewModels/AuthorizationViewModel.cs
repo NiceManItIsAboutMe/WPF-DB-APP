@@ -24,7 +24,13 @@ namespace WpfDBApp.ViewModels
             get => _Login;
             set=>Set(ref _Login, value);
         }
-        public string Password { get; set; }
+
+        private string _Password;
+        public string Password
+        {
+            get => _Password;
+            set => Set(ref _Password, value);
+        }
         #endregion
 
         // можно вынести команды в отдельный класс и вызывать их сразу из view xaml
@@ -52,32 +58,15 @@ namespace WpfDBApp.ViewModels
 
         #endregion
 
-        #region Изменение текста в TextBox
-        
-        public ICommand ChangeTextBoxTextCommand{get;}
-        private bool CanChangeTextBoxTextCommandExecute(object p) => true;
-        
-        private void OnChangeTextBoxTextCommandExecuted(object p)
-        {
-            if (p.ToString() == LOGIN) { Login = string.Empty; return; }
-            if (p.ToString() == PASSWORD) { Password = string.Empty; return; }
-            if (p.ToString() == string.Empty) { Login = LOGIN; return; }
-            if(p.ToString() == string.Empty) Password = PASSWORD;
-        }
-        #endregion
         #endregion
 
         public AuthorizationViewModel()
         {
             #region поля
-            Login = LOGIN;
-            Password = PASSWORD;
             #endregion
             #region команды
             //создание команды
             CloseApplicationCommand = new RelayCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
-
-            ChangeTextBoxTextCommand = new RelayCommand(OnChangeTextBoxTextCommandExecuted, CanChangeTextBoxTextCommandExecute);
             #endregion
         }
     }
