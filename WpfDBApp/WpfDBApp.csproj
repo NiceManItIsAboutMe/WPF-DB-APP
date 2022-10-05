@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DB\Новая папка\" />
     <Folder Include="Views\DialogViews\" />
   </ItemGroup>
 

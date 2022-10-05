@@ -1,12 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using WpfDBApp.Base.ViewModels;
 using WpfDBApp.ViewModels.Commands;
+using System.Security.Cryptography;
+using Npgsql;
+using System.Text;
+using System.Collections.Generic;
+using System.Xml.Linq;
+using WpfDBApp.Models;
 
 namespace WpfDBApp.ViewModels
 {
@@ -15,6 +17,7 @@ namespace WpfDBApp.ViewModels
         #region CONST
         public const string LOGIN = "Введите логин";
         public const string PASSWORD = "Введите пароль";
+        private static readonly string _connectionString = "Host=localhost:5432; Username=postgres; Password=postgres; Database=WpfDBApp";
         #endregion
 
         #region поля в окне
@@ -58,10 +61,19 @@ namespace WpfDBApp.ViewModels
 
         #endregion
         #region кнопка входа
+        /*await using var cmd1 = new NpgsqlCommand("INSERT INTO public.users(name, surname, patronymic, description, superuser, login, password) VALUES('name','surname','patronymic','description', FALSE,$1,$2)", connection)
+{ 
+    Parameters =
+    {
+        new(){Value=Login},
+        new(){Value=hash16}
+    }
+};
+await cmd1.ExecuteNonQueryAsync();*/
         public ICommand SignInCommand { get; }
 
         private bool CanSignInCommandExecute(object p) => true;
-        private void OnSignInCommandExecuted(object p)
+        private async void OnSignInCommandExecuted(object p)
         {
             //новое окно смотря кто зашел
             if (Login.Length == 0)
@@ -74,9 +86,51 @@ namespace WpfDBApp.ViewModels
                 MessageBox.Show("Введите пароль");
                 return;
             }
-            if(Login=="1" && Password=="1")
-                MessageBox.Show("вошли");
+            //хэшим пароль, чтобы сравнить с базой
+            var hash = SHA512.HashData(ASCIIEncoding.ASCII.GetBytes(Password));
+            var hash16 = ByteArrayToString16(hash);
+            //соединение
+            try
+            {
+                await using var connection = new NpgsqlConnection(_connectionString);
+                await connection.OpenAsync();
+                //смотрим есть ли в базе такой человек
+                await using var cmd = new NpgsqlCommand("SELECT login,password FROM public.users WHERE login=$1 AND password=$2", connection)
+                {
+                    Parameters =
+                {
+                    new(){Value=Login},
+                    new(){Value=hash16}
+                }
+                };
+                await using var reader = cmd.ExecuteReader();
 
+                //если есть заходим
+                if (reader.HasRows)
+                    MessageBox.Show("вошли");
+                else
+                    MessageBox.Show("Вы ввели неверный логин или пароль");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Нет доступа к базе данных, пожалуйста обратитесь к системному администратору и сообщите об ошибке.\n Ошибка:"+ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// преобразует массив байтов в 16 формат (с офиц сайта microsoft https://learn.microsoft.com/ru-ru/troubleshoot/developer/visualstudio/csharp/language-compilers/compute-hash-values)
+        /// </summary>
+        /// <param name="arrInput">массив байтов</param>
+        /// <returns>строка в 16ричной форме</returns>
+        private static string ByteArrayToString16(byte[] arrInput)
+        {
+            int i;
+            StringBuilder sOutput = new StringBuilder(arrInput.Length);
+            for (i = 0; i < arrInput.Length; i++)
+            {
+                sOutput.Append(arrInput[i].ToString("X2"));
+            }
+            return sOutput.ToString();
         }
         #endregion
         #endregion
