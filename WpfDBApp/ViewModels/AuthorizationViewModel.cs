@@ -9,15 +9,17 @@ using System.Text;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using WpfDBApp.Models;
+using WpfDBApp.Views;
+using WpfDBApp.Database;
 
 namespace WpfDBApp.ViewModels
 {
     internal class AuthorizationViewModel : ViewModel
     {
+
         #region CONST
-        public const string LOGIN = "Введите логин";
-        public const string PASSWORD = "Введите пароль";
-        private static readonly string _connectionString = "Host=localhost:5432; Username=postgres; Password=postgres; Database=WpfDBApp";
+        public static readonly string LOGIN = "Введите логин";
+        public static readonly string PASSWORD = "Введите пароль";
         #endregion
 
         #region поля в окне
@@ -25,7 +27,7 @@ namespace WpfDBApp.ViewModels
         public string Login
         {
             get => _Login;
-            set=>Set(ref _Login, value);
+            set => Set(ref _Login, value);
         }
 
         private string _Password;
@@ -61,15 +63,6 @@ namespace WpfDBApp.ViewModels
 
         #endregion
         #region кнопка входа
-        /*await using var cmd1 = new NpgsqlCommand("INSERT INTO public.users(name, surname, patronymic, description, superuser, login, password) VALUES('name','surname','patronymic','description', FALSE,$1,$2)", connection)
-{ 
-    Parameters =
-    {
-        new(){Value=Login},
-        new(){Value=hash16}
-    }
-};
-await cmd1.ExecuteNonQueryAsync();*/
         public ICommand SignInCommand { get; }
 
         private bool CanSignInCommandExecute(object p) => true;
@@ -90,30 +83,39 @@ await cmd1.ExecuteNonQueryAsync();*/
             var hash = SHA512.HashData(ASCIIEncoding.ASCII.GetBytes(Password));
             var hash16 = ByteArrayToString16(hash);
             //соединение
+
             try
             {
-                await using var connection = new NpgsqlConnection(_connectionString);
-                await connection.OpenAsync();
+                await using var db = new Connection();
+                await using var connection = db.GetConnection();
+
                 //смотрим есть ли в базе такой человек
                 await using var cmd = new NpgsqlCommand("SELECT login,password FROM public.users WHERE login=$1 AND password=$2", connection)
                 {
                     Parameters =
-                {
+                        {
                     new(){Value=Login},
                     new(){Value=hash16}
-                }
+                        }
                 };
                 await using var reader = cmd.ExecuteReader();
 
                 //если есть заходим
                 if (reader.HasRows)
-                    MessageBox.Show("вошли");
+                {
+                    //создаем основное окно
+                    MainWindow mainWindow = new MainWindow();
+                    mainWindow.Show();
+                    //закрываем окно авторизации
+                    Application.Current.Windows[0].Close();
+                }
                 else
                     MessageBox.Show("Вы ввели неверный логин или пароль");
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                MessageBox.Show("Нет доступа к базе данных, пожалуйста обратитесь к системному администратору и сообщите об ошибке.\n Ошибка:"+ex.Message);
+                MessageBox.Show("Нет доступа к базе данных, пожалуйста обратитесь к системному администратору и сообщите об ошибке.\n Ошибка:" + ex.Message);
             }
         }
 

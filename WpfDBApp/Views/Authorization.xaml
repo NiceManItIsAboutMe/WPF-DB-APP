@@ -10,7 +10,7 @@
         mc:Ignorable="d"
         Title="Authorization" Height="300" Width="600" Background="Bisque" WindowStartupLocation="CenterScreen">
     <Window.InputBindings>
-        <KeyBinding Key="Enter" Command="{Binding SignInCommand}"/>
+        <KeyBinding Key="Enter" Command="{Binding SignInCommand}" CommandParameter="{}"/>
     </Window.InputBindings>
     <!--подключаем класс из пространства имен vm, чтобы студия подсказки делала-->
     <Window.DataContext>
