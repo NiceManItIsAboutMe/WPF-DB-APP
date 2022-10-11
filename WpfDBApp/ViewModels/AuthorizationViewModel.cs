@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using WpfDBApp.Models;
 using WpfDBApp.Views;
 using WpfDBApp.Database;
+using System.Security.Policy;
 
 namespace WpfDBApp.ViewModels
 {
@@ -81,25 +82,32 @@ namespace WpfDBApp.ViewModels
             }
             //хэшим пароль, чтобы сравнить с базой
             var hash = SHA512.HashData(ASCIIEncoding.ASCII.GetBytes(Password));
-            var hash16 = ByteArrayToString16(hash);
             //соединение
 
             try
             {
                 await using var db = new Connection();
                 await using var connection = db.GetConnection();
-
-                //смотрим есть ли в базе такой человек
-                await using var cmd = new NpgsqlCommand("SELECT login,password FROM public.users WHERE login=$1 AND password=$2", connection)
+                /*await using var cmd1 = new NpgsqlCommand("INSERT INTO public.users(name, surname, patronymic, description, login, password) VALUES('name','surname','patronymic','description',$1,$2)", connection)
                 {
                     Parameters =
-                        {
+    {
+        new(){Value=Login},
+        new(){Value=hash}
+    }
+                };
+                await cmd1.ExecuteNonQueryAsync();*/
+                //смотрим есть ли в базе такой человек
+                await using var cmd = new NpgsqlCommand("SELECT public.positions.issuperuser FROM positions,users WHERE users.login=$1 AND users.password=$2 AND users.positionid=positions.id", connection)
+                //await using var cmd = new NpgsqlCommand("SELECT password FROM users WHERE users.login=$1 AND users.password=$2", connection)
+                {
+                    Parameters =
+                    {
                     new(){Value=Login},
-                    new(){Value=hash16}
-                        }
+                    new(){Value=hash}
+                    }
                 };
                 await using var reader = cmd.ExecuteReader();
-
                 //если есть заходим
                 if (reader.HasRows)
                 {
@@ -119,21 +127,7 @@ namespace WpfDBApp.ViewModels
             }
         }
 
-        /// <summary>
-        /// преобразует массив байтов в 16 формат (с офиц сайта microsoft https://learn.microsoft.com/ru-ru/troubleshoot/developer/visualstudio/csharp/language-compilers/compute-hash-values)
-        /// </summary>
-        /// <param name="arrInput">массив байтов</param>
-        /// <returns>строка в 16ричной форме</returns>
-        private static string ByteArrayToString16(byte[] arrInput)
-        {
-            int i;
-            StringBuilder sOutput = new StringBuilder(arrInput.Length);
-            for (i = 0; i < arrInput.Length; i++)
-            {
-                sOutput.Append(arrInput[i].ToString("X2"));
-            }
-            return sOutput.ToString();
-        }
+
         #endregion
         #endregion
 
@@ -149,6 +143,7 @@ namespace WpfDBApp.ViewModels
 
             SignInCommand = new RelayCommand(OnSignInCommandExecuted, CanSignInCommandExecute);
             #endregion
+
         }
     }
 }
