@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System;
-using Microsoft.EntityFrameworkCore;
 
 namespace WpfMVVMEfApp
 {
@@ -22,5 +21,6 @@ namespace WpfMVVMEfApp
         public static IHostBuilder CreateHostBuilder(string[] args) => Host
             .CreateDefaultBuilder(args)
             .ConfigureServices(App.ConfigureServices);
+
     }
 }
