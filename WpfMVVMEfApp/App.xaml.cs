@@ -26,14 +26,32 @@ namespace WpfMVVMEfApp
         internal static void ConfigureServices(HostBuilderContext host, IServiceCollection services) => services
             .AddSingleton<MainWindowViewModel>()
             .AddSingleton<AuthorizationViewModel>()
-            .AddDbContext<ApplicationContext>(opt => opt.UseNpgsql(host.Configuration.GetConnectionString("Bookinist")))
             .AddTransient<DBInitializer>()
+            
+            .AddDbContext<ApplicationContext>(opt =>
+                        {
+                            //выбираем секцию из appsettings Database
+                            var conf = host.Configuration.GetSection("Database");
+                            var type = conf["Type"];
+                            switch (type)
+                            {
+                                case null: throw new InvalidOperationException("Не определен тип БД в appsettings.json");
+                                default:throw new InvalidOperationException($"Тип подключения {type} не поддерживается");
+
+                                case "Postgres":
+                                    opt.UseNpgsql(conf.GetConnectionString(type));
+                                    break;
+                                case "Local":
+                                    opt.UseInMemoryDatabase(conf.GetConnectionString(type));
+                                    break;
+                            }
+                        })
             ;
         protected override async void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
             //Инициализация бд при запуске
             await Services.GetRequiredService<DBInitializer>().InitializeAsync();
+            base.OnStartup(e);
         }
     }
 }
