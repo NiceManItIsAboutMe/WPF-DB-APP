@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Windows;
+using System.Xaml;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.ViewModels;
 using WpfMVVMEfApp.Views;
@@ -22,11 +23,17 @@ namespace WpfMVVMEfApp
 
         public static IServiceProvider Services => Host.Services;
 
-
         internal static void ConfigureServices(HostBuilderContext host, IServiceCollection services) => services
             .AddSingleton<MainWindowViewModel>()
             .AddSingleton<AuthorizationViewModel>()
             .AddDbContext<ApplicationContext>(opt => opt.UseNpgsql(host.Configuration.GetConnectionString("Bookinist")))
+            .AddTransient<DBInitializer>()
             ;
+        protected override async void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            //Инициализация бд при запуске
+            await Services.GetRequiredService<DBInitializer>().InitializeAsync();
+        }
     }
 }
