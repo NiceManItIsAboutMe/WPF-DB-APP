@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using WpfMVVMEfApp.Models.Base;
 
 namespace WpfMVVMEfApp.Models
@@ -15,5 +17,7 @@ namespace WpfMVVMEfApp.Models
         public bool IsAdmin { get; set; }
 
         public virtual ICollection<Book> Books { get; set; }
+
+        public byte[] HashPassword(string Password) => SHA512.HashData(ASCIIEncoding.ASCII.GetBytes(Password));
     }
 }
