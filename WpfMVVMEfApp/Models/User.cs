@@ -18,6 +18,6 @@ namespace WpfMVVMEfApp.Models
 
         public virtual ICollection<Book> Books { get; set; }
 
-        public byte[] HashPassword(string Password) => SHA512.HashData(ASCIIEncoding.ASCII.GetBytes(Password));
+        public static byte[] HashPassword(string Password) => SHA512.HashData(ASCIIEncoding.ASCII.GetBytes(Password));
     }
 }

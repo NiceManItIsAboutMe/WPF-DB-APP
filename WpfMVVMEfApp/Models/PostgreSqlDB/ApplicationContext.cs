@@ -21,5 +21,12 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
         private readonly string _connectionStr = "Host=localhost;Port=5432;Database=Bookinist;Username=postgres;Password=postgres";
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options):base(options){ }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Login).IsUnique(true);
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

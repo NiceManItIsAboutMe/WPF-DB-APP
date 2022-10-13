@@ -19,6 +19,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
         private Category[] _Categories;
         private Author[] _Authors;
         private Book[] _Books;
+        private User[] _Users;
         public DBInitializer(ApplicationContext db, ILogger<DBInitializer> logger)
         {
             _db = db;
@@ -38,18 +39,22 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
             await _db.Database.MigrateAsync();
             _logger.LogInformation("Миграция БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
+            // если в базе уже что-то есть не инициализируем
             if (await _db.books.AnyAsync()) return;
 
             Random random = new Random();
             _Categories = Enumerable
                 .Range(1, 5)
-                .Select(i => new Category { Name = $"Категория {i}" })
-                .ToArray();
+                .Select(i => new Category { Name = $"Категория {i}" }).ToArray();
 
             _Authors = Enumerable
                 .Range(1, 5)
-                .Select(i => new Author { Name = $"Автор {i}" })
-                .ToArray();
+                .Select(i => new Author 
+                { 
+                    Surname=$"Фамилия {i}",
+                    Name = $"Автор {i}",
+                    Patronymic=$"Отчество {i}",
+                }).ToArray();
 
             _Books = Enumerable
                .Range(1, 500)
@@ -58,13 +63,26 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                    Name = $"Книга {i}",
                    Category = random.NextItem<Category>(_Categories),
                    Author = random.NextItem<Author>(_Authors)
-               })
-               .ToArray();
+               }).ToArray();
+            _Users = Enumerable
+               .Range(1, 5)
+               .Select(i => new User
+               {
+                   Surname = $"Фамилия {i}",
+                   Name = $"Имя {i}",
+                   Patronymic = $"Отчество {i}",
+                   Birthday = DateOnly.FromDateTime(DateTime.Now),
+                   Login = $"login {i}",
+                   Password = User.HashPassword($"password {i}"),
+                   IsAdmin=false
+               }).ToArray();
+
             await _db.AddRangeAsync(_Categories);
             await _db.AddRangeAsync(_Authors);
             await _db.AddRangeAsync(_Books);
+            await _db.AddRangeAsync(_Users);
             await _db.SaveChangesAsync();
-
+            _logger.LogInformation("Инициализация завершена {0} мс", timer.ElapsedMilliseconds);
         }
     }
 }
