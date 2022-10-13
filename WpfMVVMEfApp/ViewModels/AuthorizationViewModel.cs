@@ -67,10 +67,10 @@ namespace WpfMVVMEfApp.ViewModels
             {
                 var password = User.HashPassword(Password);
                 var db = App.Services.GetRequiredService<ApplicationContext>();
-
-                var user = await db.Users.Where(u => u.Login == Login && u.Password == password).FirstAsync();
-
-                if (user == null) { MessageBox.Show("Вы ввели неверный логин или пароль"); return; }
+                
+                var user =await db.Users.Where(u => u.Login == Login && u.Password == password).FirstOrDefaultAsync();
+                
+                if (user==null) { MessageBox.Show("Вы ввели неверный логин или пароль"); return; }
                 else
                 {
                     MainWindow window = new MainWindow();

@@ -2,12 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -32,63 +28,68 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
         {
             try
             {
+
                 var timer = Stopwatch.StartNew();
-            _logger.LogInformation("------------------------Инициализация БД------------------------");
+                _logger.LogInformation("------------------------Инициализация БД------------------------");
 
-            _logger.LogInformation("Удаление БД");
-            //await _db.Database.EnsureDeletedAsync();
-            _logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
+                _logger.LogInformation("Удаление БД");
+                //await _db.Database.EnsureDeletedAsync();
+                _logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
-            _logger.LogInformation("Миграция БД");
-            
-                await _db.Database.MigrateAsync();
 
-            _logger.LogInformation("Миграция БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
+                _logger.LogInformation("Миграция БД");
 
-            // если в базе уже что-то есть не инициализируем
-            if (await _db.books.AnyAsync()) { _logger.LogInformation("База данных существует и полна"); return; }
+                if (_db.Database.IsInMemory())
+                    await _db.Database.EnsureCreatedAsync();
+                else
+                    await _db.Database.MigrateAsync();
 
-            Random random = new Random();
-            _Categories = Enumerable
-                .Range(1, 5)
-                .Select(i => new Category { Name = $"Категория {i}" }).ToArray();
+                _logger.LogInformation("Миграция БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
-            _Authors = Enumerable
-                .Range(1, 5)
-                .Select(i => new Author 
-                { 
-                    Surname=$"Фамилия {i}",
-                    Name = $"Автор {i}",
-                    Patronymic=$"Отчество {i}",
-                }).ToArray();
+                // если в базе уже что-то есть не инициализируем
+                if (await _db.books.AnyAsync()) { _logger.LogInformation("База данных существует и полна"); return; }
 
-            _Books = Enumerable
-               .Range(1, 500)
-               .Select(i => new Book 
-               { 
-                   Name = $"Книга {i}",
-                   Category = random.NextItem<Category>(_Categories),
-                   Author = random.NextItem<Author>(_Authors)
-               }).ToArray();
-            _Users = Enumerable
-               .Range(1, 5)
-               .Select(i => new User
-               {
-                   Surname = $"Фамилия {i}",
-                   Name = $"Имя {i}",
-                   Patronymic = $"Отчество {i}",
-                   Birthday = DateOnly.FromDateTime(DateTime.Now),
-                   Login = $"login{i}",
-                   Password = User.HashPassword($"password{i}"),
-                   IsAdmin=false
-               }).ToArray();
+                Random random = new Random();
+                _Categories = Enumerable
+                    .Range(1, 5)
+                    .Select(i => new Category { Name = $"Категория {i}" }).ToArray();
 
-            await _db.AddRangeAsync(_Categories);
-            await _db.AddRangeAsync(_Authors);
-            await _db.AddRangeAsync(_Books);
-            await _db.AddRangeAsync(_Users);
-            await _db.SaveChangesAsync();
-            _logger.LogInformation("Инициализация завершена {0} мс", timer.ElapsedMilliseconds);
+                _Authors = Enumerable
+                    .Range(1, 5)
+                    .Select(i => new Author
+                    {
+                        Surname = $"Фамилия {i}",
+                        Name = $"Автор {i}",
+                        Patronymic = $"Отчество {i}",
+                    }).ToArray();
+
+                _Books = Enumerable
+                   .Range(1, 500)
+                   .Select(i => new Book
+                   {
+                       Name = $"Книга {i}",
+                       Category = random.NextItem<Category>(_Categories),
+                       Author = random.NextItem<Author>(_Authors)
+                   }).ToArray();
+                _Users = Enumerable
+                   .Range(1, 5)
+                   .Select(i => new User
+                   {
+                       Surname = $"Фамилия {i}",
+                       Name = $"Имя {i}",
+                       Patronymic = $"Отчество {i}",
+                       Birthday = DateOnly.FromDateTime(DateTime.Now),
+                       Login = $"login{i}",
+                       Password = User.HashPassword($"password{i}"),
+                       IsAdmin = false
+                   }).ToArray();
+
+                await _db.AddRangeAsync(_Categories);
+                await _db.AddRangeAsync(_Authors);
+                await _db.AddRangeAsync(_Books);
+                await _db.AddRangeAsync(_Users);
+                await _db.SaveChangesAsync();
+                _logger.LogInformation("Инициализация завершена {0} мс", timer.ElapsedMilliseconds);
             }
             catch (NpgsqlException ex)
             {
