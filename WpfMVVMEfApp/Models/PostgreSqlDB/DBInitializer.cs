@@ -32,7 +32,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
             _logger.LogInformation("------------------------Инициализация БД------------------------");
 
             _logger.LogInformation("Удаление БД");
-            await _db.Database.EnsureDeletedAsync();
+            //await _db.Database.EnsureDeletedAsync();
             _logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
             _logger.LogInformation("Миграция БД");
@@ -40,7 +40,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
             _logger.LogInformation("Миграция БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
             // если в базе уже что-то есть не инициализируем
-            if (await _db.books.AnyAsync()) return;
+            if (await _db.books.AnyAsync()) { _logger.LogInformation("База данных существует и полна"); return; }
 
             Random random = new Random();
             _Categories = Enumerable
@@ -72,8 +72,8 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                    Name = $"Имя {i}",
                    Patronymic = $"Отчество {i}",
                    Birthday = DateOnly.FromDateTime(DateTime.Now),
-                   Login = $"login {i}",
-                   Password = User.HashPassword($"password {i}"),
+                   Login = $"login{i}",
+                   Password = User.HashPassword($"password{i}"),
                    IsAdmin=false
                }).ToArray();
 

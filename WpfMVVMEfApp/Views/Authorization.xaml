@@ -23,7 +23,8 @@
             </TextBox>
             <TextBlock Text="Пароль" FontSize="16" FontFamily="Arial Black"/>
             <TextBox materialDesign:HintAssist.Hint="Введите пароль" Text="{Binding Password}" FontSize="16" FontFamily="Arial Black" TextAlignment="Left" Margin="0 5 0 10"/>
-            <Button Content="Войти" FontSize="16" FontFamily="Arial Black" Background="#FF0FA033"/>
+            
+            <Button Content="Войти" Command="{Binding SignInCommand}" FontSize="16" FontFamily="Arial Black" Background="#FF0FA033"/>
         </StackPanel>
 
     </Grid>
