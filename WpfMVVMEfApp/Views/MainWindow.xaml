@@ -6,8 +6,29 @@
         xmlns:local="clr-namespace:WpfMVVMEfApp"
         mc:Ignorable="d"
         DataContext="{Binding MainWindowModel,Source={StaticResource Locator}}"
-        Title="{Binding Title}" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+        Title="{Binding Title}" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Height="20">
+            <MenuItem Header="Помощь" Height="20">
+                <MenuItem Header="О программе"/>
+            </MenuItem>
+        </Menu>
+        <TabControl >
+            <TabItem Header="Книги" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Grid Grid.Column="0">
+                        <ListBox ItemsSource="{Binding Categories}">
+                            
+                        </ListBox>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem></TabItem>
+        </TabControl>
+    </DockPanel>
 </Window>

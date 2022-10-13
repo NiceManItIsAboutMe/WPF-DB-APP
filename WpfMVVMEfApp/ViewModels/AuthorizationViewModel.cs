@@ -19,10 +19,12 @@ namespace WpfMVVMEfApp.ViewModels
     internal class AuthorizationViewModel:ViewModel
     {
         #region поля
+        private ApplicationContext _db;
+
         #region Заголовок string Title
 
         /// <summary> /// Заголовок /// </summary>
-        private string _Title;
+        private string _Title = "Авторизация";
 
         /// <summary> /// Заголовок /// </summary>
         public string Title { get => _Title; set => Set(ref _Title, value); }
@@ -66,9 +68,8 @@ namespace WpfMVVMEfApp.ViewModels
             try
             {
                 var password = User.HashPassword(Password);
-                var db = App.Services.GetRequiredService<ApplicationContext>();
                 
-                var user =await db.Users.Where(u => u.Login == Login && u.Password == password).FirstOrDefaultAsync();
+                var user =await _db.Users.Where(u => u.Login == Login && u.Password == password).FirstOrDefaultAsync();
                 
                 if (user==null) { MessageBox.Show("Вы ввели неверный логин или пароль"); return; }
                 else
@@ -93,14 +94,12 @@ namespace WpfMVVMEfApp.ViewModels
                 MessageBox.Show("Возникла ошибка. Обратитесь в службу поддержки." + Environment.NewLine + ex.Message);
             }
         }
-
-
         #endregion
 
-        public AuthorizationViewModel()
+        public AuthorizationViewModel(ApplicationContext db)
         {
+            _db = db;
             SignInCommand = new RelayCommand(OnSignInCommandExecuted, CanSignInCommandExecute);
-
 
         }
     }
