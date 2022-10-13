@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,23 +63,40 @@ namespace WpfMVVMEfApp.ViewModels
         {
             if (String.IsNullOrEmpty(Login)) { MessageBox.Show("Введите логин"); return; }
             if (String.IsNullOrEmpty(Password)) { MessageBox.Show("Введите пароль"); return; }
-
-            var password = User.HashPassword(Password);
-            using var db = App.Services.GetRequiredService<ApplicationContext>();
-
-            var user = await db.Users.Where(u => u.Login == Login && u.Password == password).FirstAsync();
-
-            if (user == null) { MessageBox.Show("Вы ввели неверный логин или пароль"); return; }
-            else
+            try
             {
-                MainWindow window = new MainWindow();
-                window.Show();
-                App.Current.Windows[0].Close();
+                var password = User.HashPassword(Password);
+                var db = App.Services.GetRequiredService<ApplicationContext>();
+
+                var user = await db.Users.Where(u => u.Login == Login && u.Password == password).FirstAsync();
+
+                if (user == null) { MessageBox.Show("Вы ввели неверный логин или пароль"); return; }
+                else
+                {
+                    MainWindow window = new MainWindow();
+                    window.Show();
+                    App.Current.Windows[0].Close();
+                }
+            }
+            catch(NpgsqlException ex)
+            {
+                MessageBox.Show("Нет доступа к базе данных. Обратитесь в службу поддержки" + Environment.NewLine
+                    +"Код ошибки:" + ex.ErrorCode
+                    + Environment.NewLine + ex.Message);
+            }
+            catch(InvalidOperationException ex)
+            {
+                MessageBox.Show("Нет доступа к базе данных. Обратитесь в службу поддержки" + Environment.NewLine + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Возникла ошибка. Обратитесь в службу поддержки." + Environment.NewLine + ex.Message);
             }
         }
 
 
         #endregion
+
         public AuthorizationViewModel()
         {
             SignInCommand = new RelayCommand(OnSignInCommandExecuted, CanSignInCommandExecute);

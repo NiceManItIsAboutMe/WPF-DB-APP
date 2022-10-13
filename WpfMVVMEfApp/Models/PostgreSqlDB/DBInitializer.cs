@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace WpfMVVMEfApp.Models.PostgreSqlDB
 {
@@ -28,7 +30,9 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
 
         public async Task InitializeAsync()
         {
-            var timer = Stopwatch.StartNew();
+            try
+            {
+                var timer = Stopwatch.StartNew();
             _logger.LogInformation("------------------------Инициализация БД------------------------");
 
             _logger.LogInformation("Удаление БД");
@@ -36,7 +40,9 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
             _logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
             _logger.LogInformation("Миграция БД");
-            await _db.Database.MigrateAsync();
+            
+                await _db.Database.MigrateAsync();
+
             _logger.LogInformation("Миграция БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
             // если в базе уже что-то есть не инициализируем
@@ -83,6 +89,11 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
             await _db.AddRangeAsync(_Users);
             await _db.SaveChangesAsync();
             _logger.LogInformation("Инициализация завершена {0} мс", timer.ElapsedMilliseconds);
+            }
+            catch (NpgsqlException ex)
+            {
+                MessageBox.Show("Нет доступа к базе данных. Обратитесь в службу поддержки" + Environment.NewLine + ex.Message);
+            }
         }
     }
 }
