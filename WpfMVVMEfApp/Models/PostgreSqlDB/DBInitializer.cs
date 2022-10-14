@@ -69,7 +69,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                    {
                        Name = $"Книга {i}",
                        Description =$"Описание книги {i}...",
-                       Category = random.NextItem<Category>(_Categories),
+                       Category = _Categories.ToList().GetRange(random.Next(1,3), 2),
                        Author = random.NextItem<Author>(_Authors)
                    }).ToArray();
                 _Users = Enumerable
@@ -82,13 +82,14 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                        Birthday = DateOnly.FromDateTime(DateTime.Now),
                        Login = $"login{i}",
                        Password = User.HashPassword($"password{i}"),
-                       IsAdmin = false
+                       IsAdmin = false,
+                       Books= _Books.ToList().GetRange(random.Next(1,490),10)
                    }).ToArray();
 
                 await _db.AddRangeAsync(_Categories);
                 await _db.AddRangeAsync(_Authors);
-                await _db.AddRangeAsync(_Books);
                 await _db.AddRangeAsync(_Users);
+                await _db.AddRangeAsync(_Books);
                 await _db.SaveChangesAsync();
                 _logger.LogInformation("Инициализация завершена {0} мс", timer.ElapsedMilliseconds);
             }

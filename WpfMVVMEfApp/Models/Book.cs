@@ -1,4 +1,5 @@
-﻿using WpfMVVMEfApp.Models.Base;
+﻿using System.Collections.Generic;
+using WpfMVVMEfApp.Models.Base;
 
 namespace WpfMVVMEfApp.Models
 {
@@ -7,8 +8,10 @@ namespace WpfMVVMEfApp.Models
         public string Description { get; set; }
 
         //virtual - ленивая загрузка (EF будет забирать из базы только в момент обращения) (грабля в двух концах )0)0
-        public virtual Category Category { get; set; }
+        public virtual ICollection<Category> Category { get; set; }
 
         public virtual Author Author { get; set; }
+
+        public virtual ICollection<User> Users { get; set; }
     }
 }

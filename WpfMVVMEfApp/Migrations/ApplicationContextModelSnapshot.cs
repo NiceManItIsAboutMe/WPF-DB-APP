@@ -22,6 +22,36 @@ namespace WpfMVVMEfApp.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("BookCategory", b =>
+                {
+                    b.Property<int>("BooksId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("BooksId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("BookCategory");
+                });
+
+            modelBuilder.Entity("BookUser", b =>
+                {
+                    b.Property<int>("BooksId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UsersId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("BooksId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("BookUser");
+                });
+
             modelBuilder.Entity("WpfMVVMEfApp.Models.Author", b =>
                 {
                     b.Property<int>("Id")
@@ -61,9 +91,6 @@ namespace WpfMVVMEfApp.Migrations
                     b.Property<int>("AuthorId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -72,16 +99,9 @@ namespace WpfMVVMEfApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Books");
                 });
@@ -148,6 +168,36 @@ namespace WpfMVVMEfApp.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("BookCategory", b =>
+                {
+                    b.HasOne("WpfMVVMEfApp.Models.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BooksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WpfMVVMEfApp.Models.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BookUser", b =>
+                {
+                    b.HasOne("WpfMVVMEfApp.Models.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BooksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WpfMVVMEfApp.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("WpfMVVMEfApp.Models.Book", b =>
                 {
                     b.HasOne("WpfMVVMEfApp.Models.Author", "Author")
@@ -156,32 +206,10 @@ namespace WpfMVVMEfApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WpfMVVMEfApp.Models.Category", "Category")
-                        .WithMany("Books")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WpfMVVMEfApp.Models.User", null)
-                        .WithMany("Books")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Author");
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("WpfMVVMEfApp.Models.Author", b =>
-                {
-                    b.Navigation("Books");
-                });
-
-            modelBuilder.Entity("WpfMVVMEfApp.Models.Category", b =>
-                {
-                    b.Navigation("Books");
-                });
-
-            modelBuilder.Entity("WpfMVVMEfApp.Models.User", b =>
                 {
                     b.Navigation("Books");
                 });
