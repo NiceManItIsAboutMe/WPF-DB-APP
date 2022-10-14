@@ -46,7 +46,13 @@ namespace WpfMVVMEfApp.ViewModels
         private Author _SelectedAuthor;
 
         /// <summary> /// Выбранный автор /// </summary>
-        public Author SelectedAuthor { get => _SelectedAuthor; set => Set(ref _SelectedAuthor, value); }
+        public Author SelectedAuthor { get => _SelectedAuthor;
+            set 
+            {
+                if (AddBooksInAuthorsCommand.CanExecute(value))
+                    AddBooksInAuthorsCommand.Execute(value);
+                Set(ref _SelectedAuthor, value); 
+            } }
 
         #endregion
 
@@ -96,14 +102,38 @@ namespace WpfMVVMEfApp.ViewModels
 
         #endregion
 
+        #region команда Добавления книг в авторов при выборе автора
+
+        /// <summary> /// Добавления книг в коллекцию при выборе категории /// </summary>
+        public ICommand AddBooksInAuthorsCommand;
+
+        /// <summary> /// Добавления книг в коллекцию при выборе категории /// </summary>
+        public bool CanAddBooksInAuthorsCommandExecute(object? p)
+        {
+            if (p == null) return false;
+            if (((Author)p).Books != null) return false;
+
+            return true;
+        }
+
+        /// <summary> /// Добавления книг в коллекцию при выборе категории /// </summary>
+        public void OnAddBooksInAuthorsCommandExecuted(object? p)
+        {
+            ((Author)p).Books = _db.Authors.Where(c => c.Id == ((Author)p).Id).Select(c => c.Books).FirstOrDefault();
+        }
+
+        #endregion
         #endregion
 
         public MainWindowViewModel(ApplicationContext db)
         {
             _db = db;
+
             Categories = new ObservableCollection<Category>(db.Categories.ToArray());
             Authors = new ObservableCollection<Author>(db.Authors.ToArray());
+
             AddBooksInCategoriesCommand = new RelayCommand(OnAddBooksInCategoriesCommandExecuted, CanAddBooksInCategoriesCommandExecute);
+            AddBooksInAuthorsCommand = new RelayCommand(OnAddBooksInAuthorsCommandExecuted, CanAddBooksInAuthorsCommandExecute);
         }
 
     }

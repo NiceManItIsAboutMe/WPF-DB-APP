@@ -61,16 +61,16 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <DockPanel>
-                                        <TextBlock Text="{Binding Surname}"/>
-                                        <TextBlock Text="{Binding Name}"/>
-                                        <TextBlock Text="{Binding Patronymic}"/>
+                                        <TextBlock Text="{Binding Surname}" Margin="2,2,2,2"/>
+                                        <TextBlock Text="{Binding Name}" Margin="2,2,2,2"/>
+                                        <TextBlock Text="{Binding Patronymic}" Margin="2,2,2,2"/>
                                     </DockPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
                     </GroupBox>
-                    <GroupBox Header="{Binding SelectedAuthor, Converter={StaticResource FullNameConverter}}" Grid.Column="1">
-                        <ListBox ItemsSource="{Binding SelectedCategory.Books}">
+                    <GroupBox Header="{Binding SelectedAuthor, Converter={StaticResource FullNameConverter}, FallbackValue='Книги'}" Grid.Column="1">
+                        <ListBox ItemsSource="{Binding SelectedAuthor.Books}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <DockPanel>
