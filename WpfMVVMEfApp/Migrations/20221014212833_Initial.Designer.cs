@@ -12,7 +12,7 @@ using WpfMVVMEfApp.Models.PostgreSqlDB;
 namespace WpfMVVMEfApp.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20221014181647_Initial")]
+    [Migration("20221014212833_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,6 +66,10 @@ namespace WpfMVVMEfApp.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -81,7 +85,7 @@ namespace WpfMVVMEfApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("books");
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("WpfMVVMEfApp.Models.Category", b =>

@@ -32,9 +32,9 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                 var timer = Stopwatch.StartNew();
                 _logger.LogInformation("------------------------Инициализация БД------------------------");
 
-                _logger.LogInformation("Удаление БД");
+                //_logger.LogInformation("Удаление БД");
                 //await _db.Database.EnsureDeletedAsync();
-                _logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
+                //_logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
 
                 _logger.LogInformation("Миграция БД");
@@ -47,7 +47,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                 _logger.LogInformation("Миграция БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
                 // если в базе уже что-то есть не инициализируем
-                if (await _db.books.AnyAsync()) { _logger.LogInformation("База данных существует и полна"); return; }
+                if (await _db.Books.AnyAsync()) { _logger.LogInformation("База данных существует и полна"); return; }
 
                 Random random = new Random();
                 _Categories = Enumerable
@@ -68,6 +68,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                    .Select(i => new Book
                    {
                        Name = $"Книга {i}",
+                       Description =$"Описание книги {i}...",
                        Category = random.NextItem<Category>(_Categories),
                        Author = random.NextItem<Author>(_Authors)
                    }).ToArray();

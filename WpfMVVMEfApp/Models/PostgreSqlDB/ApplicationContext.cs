@@ -10,7 +10,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
     //Диспетчер пакетов -> Add-Migration Initial -> Update-Database
     internal class ApplicationContext:DbContext
     {
-        public DbSet<Book> books { get; set; }
+        public DbSet<Book> Books { get; set; }
 
         public DbSet<Category> Categories { get; set; }
 

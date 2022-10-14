@@ -64,6 +64,10 @@ namespace WpfMVVMEfApp.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -79,7 +83,7 @@ namespace WpfMVVMEfApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("books");
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("WpfMVVMEfApp.Models.Category", b =>

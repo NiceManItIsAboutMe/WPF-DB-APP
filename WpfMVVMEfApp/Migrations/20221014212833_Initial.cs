@@ -58,11 +58,12 @@ namespace WpfMVVMEfApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "books",
+                name: "Books",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Description = table.Column<string>(type: "text", nullable: false),
                     CategoryId = table.Column<int>(type: "integer", nullable: false),
                     AuthorId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: true),
@@ -70,21 +71,21 @@ namespace WpfMVVMEfApp.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_books", x => x.Id);
+                    table.PrimaryKey("PK_Books", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_books_Authors_AuthorId",
+                        name: "FK_Books_Authors_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "Authors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_books_Categories_CategoryId",
+                        name: "FK_Books_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_books_Users_UserId",
+                        name: "FK_Books_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -97,18 +98,18 @@ namespace WpfMVVMEfApp.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_books_AuthorId",
-                table: "books",
+                name: "IX_Books_AuthorId",
+                table: "Books",
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_books_CategoryId",
-                table: "books",
+                name: "IX_Books_CategoryId",
+                table: "Books",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_books_UserId",
-                table: "books",
+                name: "IX_Books_UserId",
+                table: "Books",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -127,7 +128,7 @@ namespace WpfMVVMEfApp.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "books");
+                name: "Books");
 
             migrationBuilder.DropTable(
                 name: "Authors");
