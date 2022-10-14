@@ -5,8 +5,8 @@
     /// </summary>
     internal abstract class Person : NamedEntity
     {
-        public string Surname { get; set; }
+        public virtual string Surname { get; set; }
 
-        public string Patronymic { get; set; }
+        public virtual string Patronymic { get; set; }
     }
 }

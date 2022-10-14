@@ -18,15 +18,19 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
         
         public DbSet<Author> Authors { get; set; }
 
-        private readonly string _connectionStr = "Host=localhost;Port=5432;Database=Bookinist;Username=postgres;Password=postgres";
-
         public ApplicationContext(DbContextOptions<ApplicationContext> options):base(options){ }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Login).IsUnique(true);
+            modelBuilder.Entity<Category>()
+                .HasIndex(u => u.Name).IsUnique(true);
+            // сочетание фамилии имени и отчетсва должны быть уникальными
+            modelBuilder.Entity<Author>()
+                .HasIndex(u => new { u.Surname, u.Name, u.Patronymic }).IsUnique(true);
             base.OnModelCreating(modelBuilder);
+
         }
     }
 }
