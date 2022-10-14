@@ -26,7 +26,7 @@ namespace WpfMVVMEfApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "categories",
+                name: "Categories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -35,7 +35,7 @@ namespace WpfMVVMEfApp.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_categories", x => x.Id);
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -78,9 +78,9 @@ namespace WpfMVVMEfApp.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_books_categories_CategoryId",
+                        name: "FK_books_Categories_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "categories",
+                        principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -89,6 +89,12 @@ namespace WpfMVVMEfApp.Migrations
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Authors_Surname_Name_Patronymic",
+                table: "Authors",
+                columns: new[] { "Surname", "Name", "Patronymic" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_books_AuthorId",
@@ -104,6 +110,18 @@ namespace WpfMVVMEfApp.Migrations
                 name: "IX_books_UserId",
                 table: "books",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_Name",
+                table: "Categories",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Login",
+                table: "Users",
+                column: "Login",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -115,7 +133,7 @@ namespace WpfMVVMEfApp.Migrations
                 name: "Authors");
 
             migrationBuilder.DropTable(
-                name: "categories");
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Users");

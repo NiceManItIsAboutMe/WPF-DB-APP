@@ -12,14 +12,14 @@ using WpfMVVMEfApp.Models.PostgreSqlDB;
 namespace WpfMVVMEfApp.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20221011211223_Initial")]
+    [Migration("20221014181647_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
+                .HasAnnotation("ProductVersion", "6.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -45,6 +45,9 @@ namespace WpfMVVMEfApp.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Surname", "Name", "Patronymic")
+                        .IsUnique();
 
                     b.ToTable("Authors");
                 });
@@ -95,7 +98,10 @@ namespace WpfMVVMEfApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("categories");
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("WpfMVVMEfApp.Models.User", b =>
@@ -133,6 +139,9 @@ namespace WpfMVVMEfApp.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Login")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });

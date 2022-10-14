@@ -99,7 +99,7 @@ namespace WpfMVVMEfApp.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("categories");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("WpfMVVMEfApp.Models.User", b =>
