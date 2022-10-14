@@ -21,11 +21,15 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     
-                    <Grid Grid.Column="0">
-                        <ListBox ItemsSource="{Binding Categories}">
-                            
-                        </ListBox>
-                    </Grid>
+                    <GroupBox Header="Категории" Grid.Column="0">
+                        <ListView ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn DisplayMemberBinding="{Binding Name}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </GroupBox>
                 </Grid>
             </TabItem>
             <TabItem></TabItem>

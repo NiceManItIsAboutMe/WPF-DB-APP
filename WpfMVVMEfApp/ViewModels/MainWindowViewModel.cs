@@ -16,6 +16,16 @@ namespace WpfMVVMEfApp.ViewModels
         public string Title { get => _Title; set => Set(ref _Title, value); }
         #endregion
 
+        #region Выбранная категория
+
+        /// <summary> /// Выбранная категория /// </summary>
+        private Category _SelectedCategory;
+
+        /// <summary> /// Выбранная категория /// </summary>
+        public Category SelectedCategory { get => _SelectedCategory; set => Set(ref _SelectedCategory, value); }
+
+        #endregion
+
 
         #region Категории
 
@@ -31,6 +41,7 @@ namespace WpfMVVMEfApp.ViewModels
 
         public MainWindowViewModel(ApplicationContext db)
         {
+            Categories = new ObservableCollection<Category>(db.categories.ToArray());
         }
 
     }
