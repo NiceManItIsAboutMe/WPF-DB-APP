@@ -12,7 +12,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
     {
         public DbSet<Book> books { get; set; }
 
-        public DbSet<Category> categories { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         public DbSet<User> Users { get; set; }
         
