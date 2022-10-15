@@ -24,7 +24,7 @@ namespace WpfMVVMEfApp
         public static IServiceProvider Services => Host.Services;
 
         internal static void ConfigureServices(HostBuilderContext host, IServiceCollection services) => services
-            .AddTransient<MainWindowViewModel>()
+            .AddSingleton<MainWindowViewModel>()
             .AddTransient<AuthorizationViewModel>()
             .AddTransient<DBInitializer>()
             
