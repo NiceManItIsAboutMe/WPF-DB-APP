@@ -12,14 +12,19 @@ using WpfDBApp.ViewModels.Base;
 using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
+using WpfMVVMEfApp.Services.Interfaces;
+using WpfMVVMEfApp.ViewModels.AdminViewModels;
 using WpfMVVMEfApp.Views;
+using WpfMVVMEfApp.Views.Windows;
 
 namespace WpfMVVMEfApp.ViewModels
 {
     internal class AuthorizationViewModel:ViewModel
     {
         #region поля
+        private IUserDialogService _DialogService;
         private ApplicationContext _db;
+        private MainWindowViewModel _MainWindowViewModel;
 
         #region Заголовок string Title
 
@@ -56,51 +61,67 @@ namespace WpfMVVMEfApp.ViewModels
 
         #endregion
 
-        #region Команда входа
-        public ICommand SignInCommand { get; set; }
 
+        #region команда Команда входа
+
+        /// <summary> /// Команда входа /// </summary>
+        private ICommand _SignInCommand;
+
+        /// <summary> /// Команда входа /// </summary>
+        public ICommand SignInCommand => _SignInCommand
+               ??= new RelayCommand(OnSignInCommandExecuted, CanSignInCommandExecute);
+
+        /// <summary> /// Команда входа /// </summary>
         public bool CanSignInCommandExecute(object? p) => true;
 
+        /// <summary> /// Команда входа /// </summary>
         public async void OnSignInCommandExecuted(object? p)
         {
-            if (String.IsNullOrEmpty(Login)) { MessageBox.Show("Введите логин"); return; }
-            if (String.IsNullOrEmpty(Password)) { MessageBox.Show("Введите пароль"); return; }
+            if (String.IsNullOrEmpty(Login)) { _DialogService.ShowWarning("Введите логин", "Предупреждение"); return; }
+            if (String.IsNullOrEmpty(Password)) { _DialogService.ShowWarning("Введите пароль", "Предупреждение"); return; }
             try
             {
                 var password = User.HashPassword(Password);
-                
-                var user =await _db.Users.Where(u => u.Login == Login && u.Password == password).FirstOrDefaultAsync();
-                
-                if (user==null) { MessageBox.Show("Вы ввели неверный логин или пароль"); return; }
+
+                var user = await _db.Users.Where(u => u.Login == Login && u.Password == password).FirstOrDefaultAsync();
+
+                if (user == null) { _DialogService.ShowWarning("Вы ввели неверный логин или пароль", "Предупреждение"); return; }
+                else if(!user.IsAdmin) // изменить потом
+                {
+                    _MainWindowViewModel.CurrrentViewModel = new AdminViewModel(_db);
+                }
                 else
                 {
-                    MainWindow window = new MainWindow();
-                    window.Show();
-                    App.Current.Windows[0].Close();
+
                 }
             }
-            catch(NpgsqlException ex)
+            catch (NpgsqlException ex)
             {
-                MessageBox.Show("Нет доступа к базе данных. Обратитесь в службу поддержки" + Environment.NewLine
-                    +"Код ошибки:" + ex.ErrorCode
-                    + Environment.NewLine + ex.Message);
+                _DialogService.ShowError("Нет доступа к базе данных. Обратитесь в службу поддержки" + Environment.NewLine
+                    + "Код ошибки:" + ex.ErrorCode
+                    + Environment.NewLine + ex.Message,
+                    "Ошибка связи с базой данных");
             }
-            catch(InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
-                MessageBox.Show("Нет доступа к базе данных. Обратитесь в службу поддержки" + Environment.NewLine + ex.Message);
+                _DialogService.ShowError("Нет доступа к базе данных. Обратитесь в службу поддержки" + Environment.NewLine
+                    + ex.Message,
+                    "Ошибка связи с базой данных");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Возникла ошибка. Обратитесь в службу поддержки." + Environment.NewLine + ex.Message);
+                _DialogService.ShowError("Возникла ошибка. Обратитесь в службу поддержки." + Environment.NewLine
+                    + ex.Message,
+                    "Непредвиденная ошибка");
             }
         }
         #endregion
 
-        public AuthorizationViewModel(ApplicationContext db)
+        public AuthorizationViewModel(ApplicationContext db,MainWindowViewModel mainWindowViewModel, IUserDialogService dialogService)
         {
             _db = db;
-            SignInCommand = new RelayCommand(OnSignInCommandExecuted, CanSignInCommandExecute);
-
+            _DialogService = dialogService;
+            _MainWindowViewModel = mainWindowViewModel;
         }
     }
 }

@@ -10,16 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace WpfMVVMEfApp.Views
 {
     /// <summary>
-    /// Логика взаимодействия для Authorization.xaml
+    /// Логика взаимодействия для AuthorizationView.xaml
     /// </summary>
-    public partial class Authorization : Window
+    public partial class AuthorizationView : UserControl
     {
-        public Authorization()
+        public AuthorizationView()
         {
             InitializeComponent();
         }

@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WpfMVVMEfApp.Views
+namespace WpfMVVMEfApp.Views.AdminViews
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Логика взаимодействия для AdminView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class AdminView : UserControl
     {
-        public MainWindow()
+        public AdminView()
         {
             InitializeComponent();
         }

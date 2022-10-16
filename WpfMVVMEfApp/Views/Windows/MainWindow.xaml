@@ -1,0 +1,22 @@
+﻿<Window x:Class="WpfMVVMEfApp.Views.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:c="clr-namespace:WpfMVVMEfApp.ViewModels.Converters"
+        xmlns:local="clr-namespace:WpfMVVMEfApp"
+        mc:Ignorable="d"
+        DataContext="{Binding MainWindowModel,Source={StaticResource Locator}}"
+        Name="MainWindowName"
+        Title="{Binding Title}" Height="600" Width="1200" WindowStartupLocation="CenterScreen">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Height="20">
+            <MenuItem Header="Помощь" Height="20">
+                <MenuItem Header="О программе"/>
+            </MenuItem>
+        </Menu>
+        <Grid>
+            <ContentControl Content="{Binding CurrrentViewModel}"/>
+        </Grid>
+    </DockPanel>
+</Window>
