@@ -8,6 +8,11 @@ namespace WpfMVVMEfApp.Services.Interfaces
 {
     internal interface IUserDialogService
     {
+        /// <summary>
+        /// Редактирование и добавление
+        /// </summary>
+        /// <param name="item">Сущность, которую редактируем или добавляем</param>
+        /// <returns></returns>
         bool Edit(object item);
 
         /// <summary>
