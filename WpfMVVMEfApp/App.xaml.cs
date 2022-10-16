@@ -6,6 +6,8 @@ using System;
 using System.Windows;
 using System.Xaml;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
+using WpfMVVMEfApp.Services;
+using WpfMVVMEfApp.Services.Interfaces;
 using WpfMVVMEfApp.ViewModels;
 using WpfMVVMEfApp.Views;
 
@@ -27,7 +29,8 @@ namespace WpfMVVMEfApp
             .AddSingleton<MainWindowViewModel>()
             .AddTransient<AuthorizationViewModel>()
             .AddTransient<DBInitializer>()
-            
+            .AddTransient<IUserDialogService,WindowUserDialogService>()
+
             .AddDbContext<ApplicationContext>(opt =>
                         {
                             //выбираем секцию из appsettings Database
@@ -47,6 +50,7 @@ namespace WpfMVVMEfApp
                             }
                         })
             ;
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             //Инициализация бд при запуске
