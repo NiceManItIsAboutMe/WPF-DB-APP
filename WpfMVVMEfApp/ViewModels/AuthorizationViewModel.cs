@@ -24,7 +24,8 @@ namespace WpfMVVMEfApp.ViewModels
         #region поля
         private IUserDialogService _DialogService;
         private ApplicationContext _db;
-        private MainWindowViewModel _MainWindowViewModel;
+        public MainWindowViewModel _MainWindowViewModel { get; set; }
+        private AdminViewModel _AdminViewModel;
 
         #region Заголовок string Title
 
@@ -88,7 +89,7 @@ namespace WpfMVVMEfApp.ViewModels
                 if (user == null) { _DialogService.ShowWarning("Вы ввели неверный логин или пароль", "Предупреждение"); return; }
                 else if(!user.IsAdmin) // изменить потом
                 {
-                    _MainWindowViewModel.CurrrentViewModel = new AdminViewModel(_db);
+                    _MainWindowViewModel.CurrrentViewModel = _AdminViewModel;
                 }
                 else
                 {
@@ -117,11 +118,11 @@ namespace WpfMVVMEfApp.ViewModels
         }
         #endregion
 
-        public AuthorizationViewModel(ApplicationContext db,MainWindowViewModel mainWindowViewModel, IUserDialogService dialogService)
+        public AuthorizationViewModel(ApplicationContext db,AdminViewModel adminViewModel, IUserDialogService dialogService)
         {
             _db = db;
             _DialogService = dialogService;
-            _MainWindowViewModel = mainWindowViewModel;
+            _AdminViewModel = adminViewModel;
         }
     }
 }

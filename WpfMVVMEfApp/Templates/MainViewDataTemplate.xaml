@@ -4,15 +4,24 @@
                     xmlns:vma="clr-namespace:WpfMVVMEfApp.ViewModels.AdminViewModels"
                     xmlns:v="clr-namespace:WpfMVVMEfApp.Views"
                     xmlns:va="clr-namespace:WpfMVVMEfApp.Views.AdminViews">
-    <DataTemplate DataType="{x:Type vm:BooksViewModel}">
-        <v:BooksView DataContext="{Binding}"/>
-    </DataTemplate>
-
     <DataTemplate DataType="{x:Type vm:AuthorizationViewModel}">
         <v:AuthorizationView DataContext="{Binding}"/>
     </DataTemplate>
     
     <DataTemplate DataType="{x:Type vma:AdminViewModel}">
         <va:AdminView DataContext="{Binding}"/>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type vma:UsersViewModel}">
+        <va:UsersView DataContext="{Binding}"/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vma:AuthorsViewModel}">
+        <va:AuthorsView DataContext="{Binding}"/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vma:CategoriesViewModel}">
+        <va:CategoriesView DataContext="{Binding}"/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type vma:BooksViewModel}">
+        <va:BooksView DataContext="{Binding}"/>
     </DataTemplate>
 </ResourceDictionary>

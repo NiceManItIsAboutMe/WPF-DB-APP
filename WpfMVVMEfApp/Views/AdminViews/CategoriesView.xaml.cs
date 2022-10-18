@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WpfMVVMEfApp.Views
+namespace WpfMVVMEfApp.Views.AdminViews
 {
     /// <summary>
-    /// Логика взаимодействия для BooksView.xaml
+    /// Логика взаимодействия для CategoriesView.xaml
     /// </summary>
-    public partial class BooksView : UserControl
+    public partial class CategoriesView : UserControl
     {
-        public BooksView()
+        public CategoriesView()
         {
             InitializeComponent();
         }

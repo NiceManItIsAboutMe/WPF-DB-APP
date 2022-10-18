@@ -17,7 +17,9 @@ namespace WpfMVVMEfApp.ViewModels
     {
         #region Поля
         private ApplicationContext _db;
-        public BooksViewModel BooksViewModel { get; set; }
+
+        private AuthorizationViewModel _AuthorizationViewModel;
+
         #region Заголовок
         private string _Title = "Библиотека";
 
@@ -37,12 +39,32 @@ namespace WpfMVVMEfApp.ViewModels
         #endregion
 
 
+        #region команда Переводим окно в режим авторизации
 
-        public MainWindowViewModel(ApplicationContext db, IUserDialogService DialogService)
+        /// <summary> /// Переводим окно в режим авторизации /// </summary>
+        private ICommand _SelectAuthorizationViewModelCommand;
+
+        /// <summary> /// Переводим окно в режим авторизации /// </summary>
+        public ICommand SelectAuthorizationViewModelCommand => _SelectAuthorizationViewModelCommand
+               ??= new RelayCommand(OnSelectAuthorizationViewModelCommandExecuted, CanSelectAuthorizationViewModelCommandExecute);
+
+        /// <summary> /// Переводим окно в режим авторизации /// </summary>
+        public bool CanSelectAuthorizationViewModelCommandExecute(object? p) => true;
+
+        /// <summary> /// Переводим окно в режим авторизации /// </summary>
+        public void OnSelectAuthorizationViewModelCommandExecuted(object? p)
+        {
+            CurrrentViewModel = _AuthorizationViewModel;
+        }
+
+        #endregion
+
+        public MainWindowViewModel(ApplicationContext db,AuthorizationViewModel authorizationViewModel, IUserDialogService DialogService)
         {
             _db = db;
-            this.BooksViewModel = new BooksViewModel(_db);
-            CurrrentViewModel = new AuthorizationViewModel(db,this, DialogService);
+            _AuthorizationViewModel = authorizationViewModel;
+            //чтобы создать авторизацию нам надо данный сервис а чтобы создать данный сервис надо авторизацию разрываем это кольцо
+            _AuthorizationViewModel._MainWindowViewModel = this;
         }
 
     }

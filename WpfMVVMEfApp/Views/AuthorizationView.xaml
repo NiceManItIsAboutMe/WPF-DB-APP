@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:WpfMVVMEfApp.Views"
              mc:Ignorable="d"
              DataContext="{Binding AuthorizationModel,Source={StaticResource Locator}}"
-             d:DesignHeight="300" d:DesignWidth="600">
+             d:DesignHeight="300" d:DesignWidth="600" Background="Bisque">
     <UserControl.InputBindings>
         <KeyBinding Key="Enter" Command="{Binding SignInCommand}"/>
     </UserControl.InputBindings>
@@ -22,12 +22,12 @@
          HorizontalAlignment="Center"
          VerticalAlignment="Center">
             <TextBlock Text="Логин" FontSize="16" FontFamily="Arial Black"/>
-            <TextBox materialDesign:HintAssist.Hint="Введите логин" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}"  FontSize="16" FontFamily="Arial Black" TextAlignment="Left" Width="500" Margin="0 5 0 10">
+            <TextBox materialDesign:HintAssist.Hint="Введите логин" Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}"  FontSize="16" FontFamily="Arial Black" TextAlignment="Left" Width="500" Margin="0 5 0 10" TabIndex="0">
             </TextBox>
             <TextBlock Text="Пароль" FontSize="16" FontFamily="Arial Black"/>
-            <TextBox materialDesign:HintAssist.Hint="Введите пароль" Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" FontSize="16" FontFamily="Arial Black" TextAlignment="Left" Margin="0 5 0 10"/>
+            <TextBox materialDesign:HintAssist.Hint="Введите пароль" Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" FontSize="16" FontFamily="Arial Black" TextAlignment="Left" Margin="0 5 0 10" TabIndex="1"/>
 
-            <Button Content="Войти" Command="{Binding SignInCommand}" FontSize="16" FontFamily="Arial Black" Background="#FF0FA033"/>
+            <Button Content="Войти" Command="{Binding SignInCommand}" FontSize="16" FontFamily="Arial Black" Background="#FF0FA033" TabIndex="2"/>
         </StackPanel>
 
     </Grid>
