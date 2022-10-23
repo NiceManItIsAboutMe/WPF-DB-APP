@@ -33,7 +33,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                 _logger.LogInformation("------------------------Инициализация БД------------------------");
 
                 //_logger.LogInformation("Удаление БД");
-                //await _db.Database.EnsureDeletedAsync();
+                await _db.Database.EnsureDeletedAsync();
                 //_logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
 
@@ -69,7 +69,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                    {
                        Name = $"Книга {i}",
                        Description =$"Описание книги {i}...",
-                       Category = _Categories.ToList().GetRange(random.Next(1,3), 2),
+                       Category = _Categories.ToList().GetRange(random.Next(0,4), 2),
                        Author = random.NextItem<Author>(_Authors)
                    }).ToArray();
                 _Users = Enumerable
@@ -91,6 +91,81 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                 await _db.AddRangeAsync(_Users);
                 await _db.AddRangeAsync(_Books);
                 await _db.SaveChangesAsync();
+                _logger.LogInformation("Инициализация завершена {0} мс", timer.ElapsedMilliseconds);
+            }
+            catch (NpgsqlException ex)
+            {
+                MessageBox.Show("Нет доступа к базе данных. Обратитесь в службу поддержки" + Environment.NewLine + ex.Message);
+            }
+        }
+
+        public void Initialize()
+        {
+            try
+            {
+
+                var timer = Stopwatch.StartNew();
+                _logger.LogInformation("------------------------Инициализация БД------------------------");
+
+                //_logger.LogInformation("Удаление БД");
+                _db.Database.EnsureDeleted();
+                //_logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
+
+
+                _logger.LogInformation("Миграция БД");
+
+                if (_db.Database.IsInMemory())
+                    _db.Database.EnsureCreated();
+                else
+                    _db.Database.Migrate();
+
+                _logger.LogInformation("Миграция БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
+
+                // если в базе уже что-то есть не инициализируем
+                if (_db.Books.Any()) { _logger.LogInformation("База данных существует и полна"); return; }
+
+                Random random = new Random();
+                _Categories = Enumerable
+                    .Range(1, 5)
+                    .Select(i => new Category { Name = $"Категория {i}" }).ToArray();
+
+                _Authors = Enumerable
+                    .Range(1, 5)
+                    .Select(i => new Author
+                    {
+                        Surname = $"Фамилия {i}",
+                        Name = $"Автор {i}",
+                        Patronymic = $"Отчество {i}",
+                    }).ToArray();
+
+                _Books = Enumerable
+                   .Range(1, 500)
+                   .Select(i => new Book
+                   {
+                       Name = $"Книга {i}",
+                       Description = $"Описание книги {i}...",
+                       Category = _Categories.ToList().GetRange(random.Next(0, 4), 2),
+                       Author = random.NextItem<Author>(_Authors)
+                   }).ToArray();
+                _Users = Enumerable
+                   .Range(1, 5)
+                   .Select(i => new User
+                   {
+                       Surname = $"Фамилия {i}",
+                       Name = $"Имя {i}",
+                       Patronymic = $"Отчество {i}",
+                       Birthday = DateOnly.FromDateTime(DateTime.Now),
+                       Login = $"login{i}",
+                       Password = User.HashPassword($"password{i}"),
+                       IsAdmin = false,
+                       Books = _Books.ToList().GetRange(random.Next(1, 490), 10)
+                   }).ToArray();
+
+                _db.AddRange(_Categories);
+                _db.AddRange(_Authors);
+                _db.AddRange(_Users);
+                _db.AddRange(_Books);
+                _db.SaveChanges();
                 _logger.LogInformation("Инициализация завершена {0} мс", timer.ElapsedMilliseconds);
             }
             catch (NpgsqlException ex)
