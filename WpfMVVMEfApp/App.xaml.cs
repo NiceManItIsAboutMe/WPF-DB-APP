@@ -27,15 +27,15 @@ namespace WpfMVVMEfApp
         public static IServiceProvider Services => Host.Services;
         
         internal static void ConfigureServices(HostBuilderContext host, IServiceCollection services) => services
-            .AddSingleton<AuthorizationViewModel>()
+            .AddScoped<AuthorizationViewModel>()
             .AddSingleton<MainWindowViewModel>() // singltone объекты данного сервисы создаются в момент обращения к ним все последующие запросы идут к данному объекту
             .AddTransient<DBInitializer>() // нужен всего раз
             .AddTransient<IUserDialogService,WindowUserDialogService>() // диалоги нет смысла все время хранить стоит создавать только в момент обращения к ним
-            .AddSingleton<AdminViewModel>()
-            .AddSingleton<UsersViewModel>()
-            .AddSingleton<BooksViewModel>()
-            .AddSingleton<AuthorsViewModel>()
-            .AddSingleton<CategoriesViewModel>()
+            .AddSingleton<AdminViewModel>() // если бы не разбивал на разные вью модели, то данный сервис был бы scoped и создавался в рамках зашедшего пользователя, для следущего пользователя создавался бы другой экземпляр
+            .AddScoped<UsersViewModel>() // из-за разбиения при переходе по вкладкам происходит обращение к бд каждый раз (думаю это не правильно), для пользовательского доступа реализуем по-другому
+            .AddScoped<BooksViewModel>()
+            .AddScoped<AuthorsViewModel>()
+            .AddScoped<CategoriesViewModel>()
 
             .AddDbContext<ApplicationContext>(opt => // не уверен как долго живет данный сервис, но раз офф документация советует, скорее всего закрывает как можно быстрее соединение с бд(надеюсь...)
                         {
@@ -60,7 +60,8 @@ namespace WpfMVVMEfApp
         protected override async void OnStartup(StartupEventArgs e)
         {
             //Инициализация бд при запуске
-            //await Services.GetRequiredService<DBInitializer>().InitializeAsync();
+            //await Services.GetRequiredService<DBInitializer>().InitializeAsync(); // при вызове метода Wait происходит дедлок, а нужно чтобы сначала бд инициализировалась, а потом отображался интерфейс и тд.
+            Services.GetRequiredService<DBInitializer>().Initialize(); // пока что без асинхронности
             base.OnStartup(e);
         }
     }
