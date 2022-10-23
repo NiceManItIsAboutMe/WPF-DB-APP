@@ -71,15 +71,6 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
 
 
-        #region Книги
-
-        /// <summary> /// Книги /// </summary>
-        private ObservableCollection<Book> _Books;
-
-        /// <summary> /// Книги /// </summary>
-        public ObservableCollection<Book> Books { get => _Books; set => Set(ref _Books, value); }
-
-        #endregion
 
 
         #endregion
@@ -233,7 +224,6 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public AdminViewModel(ApplicationContext db, IUserDialogService dialogService, UsersViewModel usersViewModel,AuthorsViewModel authorsViewModel,CategoriesViewModel categoriesViewModel, BooksViewModel booksViewModel)
         {
             _db = db;
-            Books = new ObservableCollection<Book>(db.Books);
             UsersViewModel = usersViewModel;
             AuthorsViewModel = authorsViewModel;
             CategoriesViewModel = categoriesViewModel;
