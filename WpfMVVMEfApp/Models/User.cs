@@ -19,5 +19,10 @@ namespace WpfMVVMEfApp.Models
         public virtual ICollection<Book> Books { get; set; }
 
         public static byte[] HashPassword(string Password) => SHA512.HashData(ASCIIEncoding.ASCII.GetBytes(Password));
+
+        public override string ToString()
+        {
+            return base.ToString() + " " + Login;
+        }
     }
 }
