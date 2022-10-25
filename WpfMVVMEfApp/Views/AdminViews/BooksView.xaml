@@ -3,10 +3,62 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:c="clr-namespace:WpfMVVMEfApp.ViewModels.Converters"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:WpfMVVMEfApp.Views.AdminViews"
              mc:Ignorable="d" 
+             DataContext="{Binding BooksModel, Source={StaticResource Locator}}"
              d:DesignHeight="450" d:DesignWidth="800">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadBooksCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
-            
+        <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
+        <DataGrid ItemsSource="{Binding BooksView}" SelectedItem="{Binding SelectedBook}" IsReadOnly="True" AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45">
+            <DataGrid.Resources>
+                <c:FullNameConverter x:Key="FullNameConverter"/>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Автор" Binding="{Binding Author,Converter={StaticResource FullNameConverter}}"/>
+                <DataGridTemplateColumn Header="Категории">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Category}" SelectedIndex="0">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <!--<DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="250"/>-->
+                <DataGridTemplateColumn Header="Редактировать">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Редактировать" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Удалить" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Удалить" Command="{Binding BooksModel.RemoveSelectedBookCommand, Source={StaticResource Locator}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap" MaxWidth="800" FontSize="14"/>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+        </DataGrid>
+        <Button Content="Добавить книгу" Margin="10,10,10,10" VerticalAlignment="Bottom"/>
     </Grid>
 </UserControl>

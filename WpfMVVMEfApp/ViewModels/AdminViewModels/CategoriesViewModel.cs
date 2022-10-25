@@ -198,7 +198,65 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Загрузка книг выбранной категории /// </summary>
         public void OnLoadBooksSelectedCategoriesCommandExecuted(object? p)
         {
-            Books = new ObservableCollection<Book>(_db.Books.Where(b => b.Category.Contains(SelectedCategory)));
+            Books = new ObservableCollection<Book>(_db.Books.Where(b => b.Category.Contains(SelectedCategory)).Include(b=>b.Category).Include(b => b.Author));
+        }
+
+        #endregion
+
+
+        #region команда Удаление категории
+
+        /// <summary> /// Удаление категории /// </summary>
+        private ICommand _RemoveSelectedCategoryCommand;
+
+        /// <summary> /// Удаление категории /// </summary>
+        public ICommand RemoveSelectedCategoryCommand => _RemoveSelectedCategoryCommand
+               ??= new RelayCommand(OnRemoveSelectedCategoryCommandExecuted, CanRemoveSelectedCategoryCommandExecute);
+
+        /// <summary> /// Удаление категории /// </summary>
+        public bool CanRemoveSelectedCategoryCommandExecute(object? p) => true;
+
+        /// <summary> /// Удаление категории /// </summary>
+        public void OnRemoveSelectedCategoryCommandExecuted(object? p)
+        {
+            if (SelectedCategory == null) return;
+
+            if (!_DialogService.Confirm($"Вы действительно хотите удалить категорию: {SelectedCategory}", "Удаление"))
+                return;
+            _db.Remove(SelectedCategory);
+            _db.SaveChanges();
+            Categories.Remove(SelectedCategory);
+        }
+
+        #endregion
+
+
+        #region команда Удаление книги
+
+        /// <summary> /// Удаление книги /// </summary>
+        private ICommand _RemoveSelectedBookCommand;
+
+        /// <summary> /// Удаление книги /// </summary>
+        public ICommand RemoveSelectedBookCommand => _RemoveSelectedBookCommand
+               ??= new RelayCommand(OnRemoveSelectedBookCommandExecuted, CanRemoveSelectedBookCommandExecute);
+
+        /// <summary> /// Удаление книги /// </summary>
+        public bool CanRemoveSelectedBookCommandExecute(object? p) => true;
+
+        /// <summary> /// Удаление книги /// </summary>
+        public void OnRemoveSelectedBookCommandExecuted(object? p)
+        {
+            if (SelectedBook == null) return;
+
+            if (!_DialogService.Confirm($"Вы действительно хотите удалить книгу: {SelectedBook.Name}" +
+                $", автора: {SelectedBook.Author}?",
+                "Удаление"))
+                return;
+
+            _db.Remove(SelectedBook);
+            _db.SaveChanges();
+
+            Books.Remove(SelectedBook);
         }
 
         #endregion

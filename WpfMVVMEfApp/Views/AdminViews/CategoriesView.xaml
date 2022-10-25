@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:c="clr-namespace:WpfMVVMEfApp.ViewModels.Converters"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:WpfMVVMEfApp.Views.AdminViews"
@@ -30,27 +31,79 @@
                 <Grid>
                     <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding CategoriesSearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
                     <ListBox ItemsSource="{Binding CategoriesView}" SelectedItem="{Binding SelectedCategory}" Margin="0,30,0,75">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}"/>
+                                <Grid>
+                                    <TextBlock Text="{Binding Name}"/>
+                                    <Button Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="3,0"
+                                            Background="Transparent" BorderThickness="0" Foreground="Red"
+                                            FontWeight="Bold"
+                                            Command="{Binding CategoriesModel.RemoveSelectedCategoryCommand, Source={StaticResource Locator}}"
+                                            CommandParameter="{Binding}"/>
+                                </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </Grid>
             </GroupBox>
+
             <Button Content="Редактировать категорию" Grid.Column="0" VerticalAlignment="Bottom" Margin="10,50"/>
             <Button Content="Добавить категорию" Grid.Column="0" VerticalAlignment="Bottom" Margin="10"/>
+
             <GroupBox Header="{Binding SelectedCategory.Name , FallbackValue='Книги'}" Grid.Column="1">
                 <Grid>
                     <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding BooksSearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
                     <DataGrid ItemsSource="{Binding BooksView}" SelectedItem="{Binding SelectedBook}" IsReadOnly="True" AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45">
+                        <DataGrid.Resources>
+                            <c:FullNameConverter x:Key="FullNameConverter"/>
+                        </DataGrid.Resources>
+                        
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
-                            <DataGridTextColumn Header="Описание" Binding="{Binding Description}"/>
+                            <DataGridTextColumn Header="Автор" Binding="{Binding Author,Converter={StaticResource FullNameConverter}}"/>
+                            <DataGridTemplateColumn Header="Категории">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding Category}" SelectedItem="{Binding CategoriesModel.SelectedCategory,Source={StaticResource Locator}}">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Редактировать">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Редактировать" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Удалить" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Удалить" Command="{Binding CategoriesModel.RemoveSelectedBookCommand, Source={StaticResource Locator}}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
+                        
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" MaxWidth="800" FontSize="14"/>
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
                     </DataGrid>
                 </Grid>
             </GroupBox>
+
             <Button Content="Добавить книгу" Grid.Column="1" VerticalAlignment="Bottom" Margin="10"/>
         </Grid>
     </Grid>

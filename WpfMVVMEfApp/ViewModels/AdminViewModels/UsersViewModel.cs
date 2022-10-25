@@ -139,6 +139,31 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
 
 
+        #region команда Удаление пользователя
+
+        /// <summary> /// Удаление пользователя /// </summary>
+        private ICommand _RemoveSelectedUserCommand;
+
+        /// <summary> /// Удаление пользователя /// </summary>
+        public ICommand RemoveSelectedUserCommand => _RemoveSelectedUserCommand
+               ??= new RelayCommand(OnRemoveSelectedUserCommandExecuted, CanRemoveSelectedUserCommandExecute);
+
+        /// <summary> /// Удаление пользователя /// </summary>
+        public bool CanRemoveSelectedUserCommandExecute(object? p) => true;
+
+        /// <summary> /// Удаление пользователя /// </summary>
+        public void OnRemoveSelectedUserCommandExecuted(object? p)
+        {
+            if (SelectedUser == null) return;
+
+            if (!_DialogService.Confirm($"Вы действительно хотите удалить пользователя: {SelectedUser}?", "Удаление"))
+                return;
+            _db.Remove(SelectedUser);
+            _db.SaveChanges();
+            Users.Remove(SelectedUser);
+        }
+
+        #endregion
         public UsersViewModel(ApplicationContext db, IUserDialogService dialogService)
         {
             _db = db;
@@ -149,7 +174,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             if (!(e.Item is User user) || string.IsNullOrEmpty(SearchFilter)) return;
 
-            if (!user.Name.Contains(_SearchFilter, StringComparison.OrdinalIgnoreCase) 
+            if (!user.Name.Contains(_SearchFilter, StringComparison.OrdinalIgnoreCase)
                 && !user.Surname.Contains(_SearchFilter, StringComparison.OrdinalIgnoreCase)
                 && !user.Patronymic.Contains(_SearchFilter, StringComparison.OrdinalIgnoreCase) 
                 && !user.Login.Contains(_SearchFilter, StringComparison.OrdinalIgnoreCase))

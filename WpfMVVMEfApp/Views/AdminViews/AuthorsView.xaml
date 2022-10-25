@@ -16,6 +16,10 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
+    <UserControl.Resources>
+        <c:FullNameConverter x:Key="FullNameConverter"/>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -23,9 +27,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid>
-            <Grid.Resources>
-                <c:FullNameConverter x:Key="FullNameConverter"/>
-            </Grid.Resources>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"/>
                 <ColumnDefinition/>
@@ -34,13 +35,24 @@
                 <Grid>
                     <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding AuthorsSearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
                     <ListBox ItemsSource="{Binding AuthorsView}" SelectedItem="{Binding SelectedAuthor}" Margin="0,30,0,75">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <DockPanel>
-                                    <TextBlock Text="{Binding Surname}" Margin="2,2,2,2"/>
-                                    <TextBlock Text="{Binding Name}" Margin="2,2,2,2"/>
-                                    <TextBlock Text="{Binding Patronymic}" Margin="2,2,2,2"/>
-                                </DockPanel>
+                                <Grid>
+                                    <DockPanel>
+                                        <TextBlock Text="{Binding Surname}" Margin="2,2,2,2"/>
+                                        <TextBlock Text="{Binding Name}" Margin="2,2,2,2"/>
+                                        <TextBlock Text="{Binding Patronymic}" Margin="2,2,2,2"/>
+                                    </DockPanel>
+                                    <Button Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="3,0"
+                                            Background="Transparent" BorderThickness="0" Foreground="Red"
+                                            FontWeight="Bold"
+                                            Command="{Binding AuthorsModel.RemoveSelectedAuthorCommand, Source={StaticResource Locator}}"/>
+                                </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -52,10 +64,43 @@
                 <Grid>
                     <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding BooksSearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
                     <DataGrid ItemsSource="{Binding BooksView}" SelectedItem="{Binding SelectedBook}" IsReadOnly="True" AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45">
+                        
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
-                            <DataGridTextColumn Header="Описание" Binding="{Binding Description}"/>
+                            <DataGridTextColumn Header="Автор" Binding="{Binding Author,Converter={StaticResource FullNameConverter}}"/>
+                            <DataGridTemplateColumn Header="Категории">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{Binding Category}" SelectedIndex="0">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Редактировать">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Редактировать" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Удалить" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Удалить" Command="{Binding CategoriesModel.RemoveSelectedBookCommand, Source={StaticResource Locator}}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" MaxWidth="800" FontSize="14"/>
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
                     </DataGrid>
                 </Grid>
             </GroupBox>

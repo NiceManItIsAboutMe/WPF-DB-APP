@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:vm="clr-namespace:WpfMVVMEfApp.ViewModels.AdminViewModels"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:WpfMVVMEfApp.Views.AdminViews"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -28,7 +27,7 @@
                 <DataGridTemplateColumn Header="Книги">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Books}">
+                            <ComboBox ItemsSource="{Binding Books}" SelectedIndex="0">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Name}"/>
