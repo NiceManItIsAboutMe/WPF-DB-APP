@@ -139,6 +139,28 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         #endregion
 
 
+        #region команда Редактирование книги
+
+        /// <summary> /// Редактирование книги /// </summary>
+        private ICommand _EditSelectedBookCommand;
+
+        /// <summary> /// Редактирование книги /// </summary>
+        public ICommand EditSelectedBookCommand => _EditSelectedBookCommand
+               ??= new RelayCommand(OnEditSelectedBookCommandExecuted, CanEditSelectedBookCommandExecute);
+
+        /// <summary> /// Редактирование книги /// </summary>
+        public bool CanEditSelectedBookCommandExecute(object? p) => SelectedBook is Book;
+
+        /// <summary> /// Редактирование книги /// </summary>
+        public void OnEditSelectedBookCommandExecuted(object? p)
+        {
+            /* копию объекта изъять из бд */
+
+        }
+
+        #endregion
+
+
         public BooksViewModel(ApplicationContext db, IUserDialogService dialogService)
         {
             _db = db;
