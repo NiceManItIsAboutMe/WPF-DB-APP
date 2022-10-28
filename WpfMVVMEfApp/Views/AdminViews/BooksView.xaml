@@ -17,7 +17,15 @@
     </i:Interaction.Triggers>
     <Grid>
         <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
-        <DataGrid ItemsSource="{Binding BooksView}" SelectedItem="{Binding SelectedBook}" IsReadOnly="True" AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45">
+        <DataGrid ItemsSource="{Binding BooksView}" SelectedItem="{Binding SelectedBook}" IsReadOnly="True" 
+                  AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45"
+                  VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
+                  VirtualizingPanel.VirtualizationMode="Recycling">
+            <DataGrid.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel/>
+                </ItemsPanelTemplate>
+            </DataGrid.ItemsPanel>
             <DataGrid.Resources>
                 <c:FullNameConverter x:Key="FullNameConverter"/>
             </DataGrid.Resources>

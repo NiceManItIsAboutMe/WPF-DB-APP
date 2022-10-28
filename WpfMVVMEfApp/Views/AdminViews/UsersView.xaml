@@ -15,8 +15,18 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
-        <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
-        <DataGrid ItemsSource="{Binding UsersView}" SelectedItem="{Binding SelectedUser}" IsReadOnly="True" AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45">
+        <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding SearchFilter, 
+            UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
+        <DataGrid ItemsSource="{Binding UsersView}" SelectedItem="{Binding SelectedUser}" IsReadOnly="True" 
+                  AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45"
+                  VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
+                  VirtualizingPanel.VirtualizationMode="Recycling">
+            <DataGrid.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel/>
+                </ItemsPanelTemplate>
+            </DataGrid.ItemsPanel>
+
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}"/>
                 <DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
@@ -47,7 +57,8 @@
                 <DataGridTemplateColumn Header="Сброс пароля">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Сбросить пароль" Command="{Binding UsersModel.PasswordResetCommand,Source={StaticResource Locator}}"/>
+                            <Button Content="Сбросить пароль" Command="{Binding UsersModel.PasswordResetCommand,
+                                Source={StaticResource Locator}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

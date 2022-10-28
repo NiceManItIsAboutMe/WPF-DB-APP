@@ -30,7 +30,14 @@
             <GroupBox Header="Категории" Grid.Column="0">
                 <Grid>
                     <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding CategoriesSearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
-                    <ListBox ItemsSource="{Binding CategoriesView}" SelectedItem="{Binding SelectedCategory}" Margin="0,30,0,75">
+                    <ListBox ItemsSource="{Binding CategoriesView}" SelectedItem="{Binding SelectedCategory}" Margin="0,30,0,75"
+                             VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
+                             VirtualizingPanel.VirtualizationMode="Recycling">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -58,7 +65,15 @@
             <GroupBox Header="{Binding SelectedCategory.Name , FallbackValue='Книги'}" Grid.Column="1">
                 <Grid>
                     <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding BooksSearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
-                    <DataGrid ItemsSource="{Binding BooksView}" SelectedItem="{Binding SelectedBook}" IsReadOnly="True" AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45">
+                    <DataGrid ItemsSource="{Binding BooksView}" SelectedItem="{Binding SelectedBook}" IsReadOnly="True" 
+                              AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45"
+                              VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
+                              VirtualizingPanel.VirtualizationMode="Recycling">
+                        <DataGrid.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel/>
+                            </ItemsPanelTemplate>
+                        </DataGrid.ItemsPanel>
                         <DataGrid.Resources>
                             <c:FullNameConverter x:Key="FullNameConverter"/>
                         </DataGrid.Resources>
