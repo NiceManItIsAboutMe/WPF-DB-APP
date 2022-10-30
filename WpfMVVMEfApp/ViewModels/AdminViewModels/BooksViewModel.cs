@@ -154,8 +154,15 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Редактирование книги /// </summary>
         public void OnEditSelectedBookCommandExecuted(object? p)
         {
-            /* копию объекта изъять из бд */
+            var result=_DialogService.Edit(SelectedBook);
+            if (!result)
+            {
+                _db.Entry(SelectedBook).Reload();
+                _BooksViewSource.View.Refresh();
+                return;
+            }
 
+            _db.SaveChanges();
         }
 
         #endregion

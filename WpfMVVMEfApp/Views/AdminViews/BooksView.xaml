@@ -41,7 +41,7 @@
                 <DataGridTemplateColumn Header="Редактировать">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Редактировать" />
+                            <Button Content="Редактировать" Command="{Binding BooksModel.EditSelectedBookCommand, Source={StaticResource Locator}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
