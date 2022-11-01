@@ -6,10 +6,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:WpfMVVMEfApp.Views.Windows.Dialogs"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d" Name="BookEditor"
         Title="Редактор книг" Height="500" Width="700"
         d:DataContext="{d:DesignInstance vm:BookEditorViewModel}" WindowStartupLocation="CenterOwner" Cursor="Hand">
-    <Grid Margin="3">
+    <Grid Margin="3" Cursor="Hand">
         <Grid.Resources>
             <Style TargetType="TextBlock">
                 <Style.Triggers>
@@ -57,7 +58,7 @@
                             <ColumnDefinition Width="400"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding Name}"/>
+                        <TextBlock Grid.Column="0" Text="{Binding Category}"/>
                         <CheckBox Grid.Column="1" IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                     </Grid>
                 </DataTemplate>
@@ -73,7 +74,14 @@
                 VerticalAlignment="Bottom" HorizontalAlignment="Left" 
                 Width="250" Background="Green"
                 Command="{StaticResource DialogResultCommand}"
-                CommandParameter="True"/>
+                CommandParameter="True">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Click">
+                    <i:InvokeCommandAction Command="{Binding ChangeBookCategoriesCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Button>
+ 
     </Grid>
     <!--<UniformGrid DockPanel.Dock="Bottom" Rows="1" Margin="0,0,0,10">
                     <Button Content="Ok" Margin="10,0" Padding="35,5" IsDefault="True" FontWeight="Bold"/>

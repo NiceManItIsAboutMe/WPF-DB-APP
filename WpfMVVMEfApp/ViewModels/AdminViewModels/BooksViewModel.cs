@@ -102,7 +102,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Загрузки книг /// </summary>
         public void OnLoadBooksCommandExecuted(object? p)
         {
-            Books = new ObservableCollection<Book>(_db.Books.Include(b=> b.Author).Include(b=>b.Category).OrderBy(b=> b.Name));
+            Books = new ObservableCollection<Book>(_db.Books.Include(b=> b.Author).Include(b=>b.Category).OrderBy(b=> b.Name).AsNoTracking());
         }
 
         #endregion
@@ -154,15 +154,21 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Редактирование книги /// </summary>
         public void OnEditSelectedBookCommandExecuted(object? p)
         {
-            var result=_DialogService.Edit(SelectedBook);
+            Book book = _db.Books.Include(b => b.Category).Include(b => b.Author).First(b => b.Id == SelectedBook.Id);
+            bool result=_DialogService.Edit(book);
             if (!result)
             {
-                _db.Entry(SelectedBook).Reload();
-                _BooksViewSource.View.Refresh();
+                // перестаем остлеживать данную сущность, иначе при следующем входе в редактор мы получим изменненую сущность, которая была закэширована EF
+                _db.Entry(book).State = EntityState.Detached;
                 return;
             }
-
+            _db.Update(book);
             _db.SaveChanges();
+            _db.Entry(book).State = EntityState.Detached;
+            Books.Remove(SelectedBook);
+            Books.Add(book);
+            SelectedBook = book;
+            _BooksViewSource.View.Refresh();
         }
 
         #endregion

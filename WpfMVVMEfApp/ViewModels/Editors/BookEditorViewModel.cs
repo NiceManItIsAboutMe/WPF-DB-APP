@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Input;
 using WpfDBApp.ViewModels.Base;
+using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using static System.Reflection.Metadata.BlobBuilder;
@@ -15,15 +18,14 @@ namespace WpfMVVMEfApp.ViewModels.Editors
 {
     internal class BookEditorViewModel:ViewModel
     {
-        internal class SelectedCategory : Category
+        internal class SelectedCategory
         {
             public bool IsSelected { get; set; } = false;
+            public Category Category { get; set; }
 
             public SelectedCategory(Category category)
             {
-                Books = category.Books;
-                Name = category.Name;
-                Id = category.Id;
+                Category = category;
             }
         }
 
@@ -78,7 +80,7 @@ namespace WpfMVVMEfApp.ViewModels.Editors
                         Source = Categories,
                         SortDescriptions =
                         {
-                            new SortDescription(nameof(Book.Name), ListSortDirection.Ascending),
+                            new SortDescription(nameof(SelectedCategory.IsSelected), ListSortDirection.Descending),
                         }
                     };
                     _CategoriesViewSource.Filter += OnCategoriesViewSourceFilter;
@@ -99,6 +101,30 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         #endregion
 
 
+        #region команда SaveButtonClick Изменяем выбранные категории в книге
+
+        /// <summary> /// SaveButtonClick Изменяем выбранные категории в книге /// </summary>
+        private ICommand _ChangeBookCategoriesCommand;
+
+        /// <summary> /// SaveButtonClick Изменяем выбранные категории в книге /// </summary>
+        public ICommand ChangeBookCategoriesCommand => _ChangeBookCategoriesCommand
+               ??= new RelayCommand(OnChangeBookCategoriesCommandExecuted, CanChangeBookCategoriesCommandExecute);
+
+        /// <summary> /// SaveButtonClick Изменяем выбранные категории в книге /// </summary>
+        public bool CanChangeBookCategoriesCommandExecute(object? p) => true;
+
+        /// <summary> /// SaveButtonClick Изменяем выбранные категории в книге /// </summary>
+        public void OnChangeBookCategoriesCommandExecuted(object? p)
+        {
+            Book.Category.Clear();
+            foreach (var item in Categories.Where(c=>c.IsSelected==true))
+            {
+                Book.Category.Add(item.Category);
+            }
+        }
+
+        #endregion
+
         public BookEditorViewModel(Book book, ObservableCollection<Category>? categories, ObservableCollection<Author>? authors)
         {
             Categories = new ObservableCollection<SelectedCategory>();
@@ -113,16 +139,17 @@ namespace WpfMVVMEfApp.ViewModels.Editors
             //заполняем коллекцию категорий, к которым относится данная книга
             foreach (var item in Book.Category)
             {
-                if (Categories.Where(c => c.Id == item.Id).FirstOrDefault() is SelectedCategory category)
+                if (Categories.Where(c => c.Category.Id == item.Id).FirstOrDefault() is SelectedCategory category)
                     category.IsSelected = true;
             }
+            _CategoriesViewSource.View.Refresh();
         }
 
         private void OnCategoriesViewSourceFilter(object sender, FilterEventArgs e)
         {
             if (!(e.Item is SelectedCategory category) || string.IsNullOrEmpty(SearchFilter)) return;
 
-            if (!category.Name.Contains(_SearchFilter, StringComparison.OrdinalIgnoreCase))
+            if (!category.Category.Name.Contains(_SearchFilter, StringComparison.OrdinalIgnoreCase))
                 e.Accepted = false;
         }
     }
