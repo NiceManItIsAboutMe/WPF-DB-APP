@@ -173,7 +173,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Загрузка категорий /// </summary>
         public void OnLoadCategoriesDataCommandExecuted(object? p)
         {
-            Categories = new ObservableCollection<Category>(_db.Categories);
+            Categories = new ObservableCollection<Category>(_db.Categories.AsNoTracking());
         }
 
         #endregion
@@ -198,7 +198,8 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Загрузка книг выбранной категории /// </summary>
         public void OnLoadBooksSelectedCategoriesCommandExecuted(object? p)
         {
-            Books = new ObservableCollection<Book>(_db.Books.Where(b => b.Category.Contains(SelectedCategory)).Include(b=>b.Category).Include(b => b.Author));
+            Books = new ObservableCollection<Book>(_db.Books.Where(b => b.Category.Contains(SelectedCategory))
+                .Include(b=>b.Category).Include(b => b.Author).AsNoTracking());
         }
 
         #endregion

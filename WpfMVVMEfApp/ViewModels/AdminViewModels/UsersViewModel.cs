@@ -132,7 +132,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Загрузка данных пользователей из бд /// </summary>
         public void OnLoadUsersDataCommandExecuted(object? p)
         {
-            Users = new ObservableCollection<User>(_db.Users.Include(a => a.Books));
+            Users = new ObservableCollection<User>(_db.Users.Include(a => a.Books).AsNoTracking());
         }
 
         #endregion
