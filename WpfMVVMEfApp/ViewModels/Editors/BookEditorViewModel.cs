@@ -102,7 +102,7 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         #endregion
 
 
-        #region команда SaveButtonClick Изменяем выбранные категории в книге
+        #region команда ChangeBookCategories SaveButtonClick Изменяем выбранные категории в книге
 
         /// <summary> /// SaveButtonClick Изменяем выбранные категории в книге /// </summary>
         private ICommand _ChangeBookCategoriesCommand;
@@ -111,7 +111,7 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         public ICommand ChangeBookCategoriesCommand => _ChangeBookCategoriesCommand
                ??= new RelayCommand(OnChangeBookCategoriesCommandExecuted, CanChangeBookCategoriesCommandExecute);
 
-        /// <summary> /// SaveButtonClick Изменяем выбранные категории в книге /// </summary>
+        /// <summary> /// Проверям валидаторы/// </summary>
         public bool CanChangeBookCategoriesCommandExecute(object? p)
         {
             var context = new ValidationContext(Book);
@@ -138,11 +138,15 @@ namespace WpfMVVMEfApp.ViewModels.Editors
 
         public BookEditorViewModel(Book book, ObservableCollection<Category>? categories, ObservableCollection<Author>? authors)
         {
-            Categories = new ObservableCollection<SelectedCategory>();
-            foreach (var item in categories)
+            if (categories != null)
             {
-                Categories.Add(new SelectedCategory(item));
+                Categories = new ObservableCollection<SelectedCategory>();
+                foreach (var item in categories)
+                {
+                    Categories.Add(new SelectedCategory(item));
+                }
             }
+
             Authors = authors;
 
             Book = book;

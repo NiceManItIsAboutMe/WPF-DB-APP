@@ -84,14 +84,16 @@
                             <DataGridTemplateColumn Header="Редактировать">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="Редактировать" />
+                                        <Button Content="Редактировать" 
+                                                Command="{Binding CategoriesModel.EditSelectedBookCommand, Source={StaticResource Locator}}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Удалить" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="Удалить" Command="{Binding CategoriesModel.RemoveSelectedBookCommand, Source={StaticResource Locator}}"/>
+                                        <Button Content="Удалить" 
+                                                Command="{Binding CategoriesModel.RemoveSelectedBookCommand, Source={StaticResource Locator}}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -104,7 +106,8 @@
                     </DataGrid>
                 </Grid>
             </GroupBox>
-            <Button Content="Добавить книгу" Grid.Column="1" Margin="10" VerticalAlignment="Bottom"/>
+            <Button Content="Добавить книгу" Grid.Column="1" Margin="10" VerticalAlignment="Bottom"
+                    Command="{Binding AddBookCommand}"/>
         </Grid>
     </Grid>
 

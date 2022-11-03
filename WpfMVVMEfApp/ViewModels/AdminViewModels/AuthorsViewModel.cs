@@ -252,6 +252,74 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
+        #region команда Редактирование книги
+
+        /// <summary> /// Редактирование книги /// </summary>
+        private ICommand _EditSelectedBookCommand;
+
+        /// <summary> /// Редактирование книги /// </summary>
+        public ICommand EditSelectedBookCommand => _EditSelectedBookCommand
+               ??= new RelayCommand(OnEditSelectedBookCommandExecuted, CanEditSelectedBookCommandExecute);
+
+        /// <summary> /// Редактирование книги /// </summary>
+        public bool CanEditSelectedBookCommandExecute(object? p) => SelectedBook is Book;
+
+        /// <summary> /// Редактирование книги /// </summary>
+        public void OnEditSelectedBookCommandExecuted(object? p)
+        {
+            Book book = _db.Books.Include(b => b.Category).Include(b => b.Author).First(b => b.Id == SelectedBook.Id);
+            bool result = _DialogService.Edit(book);
+            if (!result)
+            {
+                // перестаем остлеживать данную сущность, иначе при следующем входе в редактор мы получим изменненую сущность, которая была закэширована EF
+                _db.Entry(book).State = EntityState.Detached;
+                return;
+            }
+            _db.Update(book);
+            _db.SaveChanges();
+            _db.Entry(book).State = EntityState.Detached;
+            Books.Remove(SelectedBook);
+            if (book.Author == SelectedAuthor)
+            {
+                Books.Add(book);
+                SelectedBook = book;
+            }
+            _BooksViewSource.View.Refresh();
+        }
+
+        #endregion
+
+        #region команда Добавить книгу
+
+        /// <summary> /// Добавить книгу /// </summary>
+        private ICommand _AddBookCommand;
+
+        /// <summary> /// Добавить книгу /// </summary>
+        public ICommand AddBookCommand => _AddBookCommand
+               ??= new RelayCommand(OnAddBookCommandExecuted, CanAddBookCommandExecute);
+
+        /// <summary> /// Добавить книгу /// </summary>
+        public bool CanAddBookCommandExecute(object? p) => true;
+
+        /// <summary> /// Добавить книгу /// </summary>
+        public void OnAddBookCommandExecuted(object? p)
+        {
+            Book book = new Book { Author=SelectedAuthor};
+            bool result = _DialogService.Edit(book);
+            if (!result) return;
+            _db.Add(book);
+            _db.SaveChanges();
+            if (book.Author == SelectedAuthor)
+            {
+                Books.Add(book);
+                SelectedBook = book;
+            }
+            _BooksViewSource.View.Refresh();
+        }
+
+        #endregion
+
+
         public AuthorsViewModel(ApplicationContext db, IUserDialogService dialogService)
         {
             _db = db;
