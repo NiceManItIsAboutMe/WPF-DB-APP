@@ -14,6 +14,7 @@ using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
 using WpfMVVMEfApp.Views.AdminViews;
+using static WpfMVVMEfApp.ViewModels.Editors.BookEditorViewModel;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
@@ -222,6 +223,88 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
+        #region команда Редактирование автора
+
+        /// <summary> /// Редактирование автора /// </summary>
+        private ICommand _EditAuthorCommand;
+
+        /// <summary> /// Редактирование автора /// </summary>
+        public ICommand EditAuthorCommand => _EditAuthorCommand
+               ??= new RelayCommand(OnEditAuthorCommandExecuted, CanEditAuthorCommandExecute);
+
+        /// <summary> /// Редактирование автора /// </summary>
+        public bool CanEditAuthorCommandExecute(object? p) => SelectedAuthor is Author;
+
+        /// <summary> /// Редактирование автора /// </summary>
+        public void OnEditAuthorCommandExecuted(object? p)
+        {
+            Author author = _db.Authors.First(a=>a.Id==SelectedAuthor.Id);
+            bool result = _DialogService.Edit(author);
+            if (!result)
+            {
+                // перестаем остлеживать данную сущность, иначе при следующем входе в редактор мы получим изменненую сущность, которая была закэширована EF
+                _db.Entry(author).State = EntityState.Detached;
+                return;
+            }
+            try
+            {
+                _db.Update(author);
+                _db.SaveChanges();
+                _db.Entry(author).State = EntityState.Detached;
+                Authors.Remove(SelectedAuthor);
+                Authors.Add(author);
+                SelectedAuthor = author;
+                _AuthorsViewSource.View.Refresh();
+            }
+            catch (Exception ex)
+            {
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
+        }
+
+        #endregion
+
+        #region команда Добавить автора
+
+        /// <summary> /// Добавить автора /// </summary>
+        private ICommand _AddAuthorCommand;
+
+        /// <summary> /// Добавить автора /// </summary>
+        public ICommand AddAuthorCommand => _AddAuthorCommand
+               ??= new RelayCommand(OnAddAuthorCommandExecuted, CanAddAuthorCommandExecute);
+
+        /// <summary> /// Добавить автора /// </summary>
+        public bool CanAddAuthorCommandExecute(object? p) => true;
+
+        /// <summary> /// Добавить автора /// </summary>
+        public void OnAddAuthorCommandExecuted(object? p)
+        {
+            Author author = new Author();
+            bool result = _DialogService.Edit(author);
+            if (!result)
+            {
+                return;
+            }
+            try
+            {
+                _db.Add(author);
+                _db.SaveChanges();
+                Authors.Add(author);
+                SelectedAuthor = author;
+                _AuthorsViewSource.View.Refresh();
+            }
+            catch (Exception ex)
+            {
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
+        }
+
+        #endregion
+
         #region команда Удаление книги
 
         /// <summary> /// Удаление книги /// </summary>
@@ -275,16 +358,26 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
                 _db.Entry(book).State = EntityState.Detached;
                 return;
             }
-            _db.Update(book);
-            _db.SaveChanges();
-            _db.Entry(book).State = EntityState.Detached;
-            Books.Remove(SelectedBook);
-            if (book.Author == SelectedAuthor)
+            try
             {
-                Books.Add(book);
-                SelectedBook = book;
+                _db.Update(book);
+                _db.SaveChanges();
+                _db.Entry(book).State = EntityState.Detached;
+                Books.Remove(SelectedBook);
+                if (book.Author == SelectedAuthor)
+                {
+                    Books.Add(book);
+                    SelectedBook = book;
+                }
+                _BooksViewSource.View.Refresh();
             }
-            _BooksViewSource.View.Refresh();
+            catch (Exception ex)
+            {
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
+            
         }
 
         #endregion
@@ -307,14 +400,23 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             Book book = new Book { Author=SelectedAuthor};
             bool result = _DialogService.Edit(book);
             if (!result) return;
-            _db.Add(book);
-            _db.SaveChanges();
-            if (book.Author == SelectedAuthor)
+            try
             {
-                Books.Add(book);
-                SelectedBook = book;
+                _db.Add(book);
+                _db.SaveChanges();
+                if (book.Author == SelectedAuthor)
+                {
+                    Books.Add(book);
+                    SelectedBook = book;
+                }
+                _BooksViewSource.View.Refresh();
             }
-            _BooksViewSource.View.Refresh();
+            catch (Exception ex)
+            {
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
         }
 
         #endregion

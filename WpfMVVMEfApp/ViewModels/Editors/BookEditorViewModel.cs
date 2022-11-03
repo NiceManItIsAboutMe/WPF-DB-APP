@@ -17,7 +17,7 @@ using static System.Reflection.Metadata.BlobBuilder;
 
 namespace WpfMVVMEfApp.ViewModels.Editors
 {
-    internal class BookEditorViewModel:ViewModel
+    internal class BookEditorViewModel : ViewModel
     {
         internal class SelectedCategory
         {
@@ -58,7 +58,7 @@ namespace WpfMVVMEfApp.ViewModels.Editors
 
         #endregion
 
-       
+
 
         private CollectionViewSource _CategoriesViewSource;
 
@@ -71,10 +71,12 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         private ObservableCollection<SelectedCategory> _Categories;
 
         /// <summary> /// Категории /// </summary>
-        public ObservableCollection<SelectedCategory> Categories { get => _Categories;
-            set 
-            { 
-                if(Set(ref _Categories, value))
+        public ObservableCollection<SelectedCategory> Categories
+        {
+            get => _Categories;
+            set
+            {
+                if (Set(ref _Categories, value))
                 {
                     _CategoriesViewSource = new CollectionViewSource
                     {
@@ -87,8 +89,9 @@ namespace WpfMVVMEfApp.ViewModels.Editors
                     _CategoriesViewSource.Filter += OnCategoriesViewSourceFilter;
                     OnPropertyChanged(nameof(CategoriesView));
                     _CategoriesViewSource.View.Refresh();
-                } 
-            } }
+                }
+            }
+        }
         #endregion
 
         #region Авторы
@@ -127,17 +130,24 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         {
             if (Book.Category == null) return;
 
+            if (Book.Category == null) Book.Category = new ObservableCollection<Category>();
+
             Book.Category.Clear();
-            foreach (var item in Categories.Where(c=>c.IsSelected==true))
+            foreach (var item in Categories.Where(c => c.IsSelected == true))
             {
                 Book.Category.Add(item.Category);
             }
+
         }
 
         #endregion
 
         public BookEditorViewModel(Book book, ObservableCollection<Category>? categories, ObservableCollection<Author>? authors)
         {
+            Authors = authors;
+
+            Book = book;
+
             if (categories != null)
             {
                 Categories = new ObservableCollection<SelectedCategory>();
@@ -145,22 +155,19 @@ namespace WpfMVVMEfApp.ViewModels.Editors
                 {
                     Categories.Add(new SelectedCategory(item));
                 }
-            }
 
-            Authors = authors;
-
-            Book = book;
-
-            //заполняем коллекцию категорий, к которым относится данная книга
-            if (Book.Category != null)
-            {
-                foreach (var item in Book.Category)
+                //заполняем коллекцию категорий, к которым относится данная книга
+                if (Book.Category != null)
                 {
-                    if (Categories.Where(c => c.Category.Id == item.Id).FirstOrDefault() is SelectedCategory category)
-                        category.IsSelected = true;
+                    foreach (var item in Book.Category)
+                    {
+                        if (Categories.Where(c => c.Category.Id == item.Id).FirstOrDefault() is SelectedCategory category)
+                            category.IsSelected = true;
+                    }
+                    _CategoriesViewSource?.View.Refresh();
                 }
             }
-            _CategoriesViewSource.View.Refresh();
+
         }
 
         private void OnCategoriesViewSourceFilter(object sender, FilterEventArgs e)

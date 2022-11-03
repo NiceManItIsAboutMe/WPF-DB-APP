@@ -231,6 +231,87 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
+        #region команда Редактирование категории
+
+        /// <summary> /// Редактирование категории /// </summary>
+        private ICommand _EditSelectedCategoryCommand;
+
+        /// <summary> /// Редактирование категории /// </summary>
+        public ICommand EditSelectedCategoryCommand => _EditSelectedCategoryCommand
+               ??= new RelayCommand(OnEditSelectedCategoryCommandExecuted, CanEditSelectedCategoryCommandExecute);
+
+        /// <summary> /// Редактирование категории /// </summary>
+        public bool CanEditSelectedCategoryCommandExecute(object? p) => SelectedCategory is Category;
+
+        /// <summary> /// Редактирование категории /// </summary>
+        public void OnEditSelectedCategoryCommandExecuted(object? p)
+        {
+            Category category = _db.Categories.Include(c=>c.Books).FirstOrDefault(c=>c.Id==SelectedCategory.Id);
+            bool result = _DialogService.Edit(category);
+            if (!result)
+            {
+                // перестаем остлеживать данную сущность, иначе при следующем входе в редактор мы получим изменненую сущность, которая была закэширована EF
+                _db.Entry(category).State = EntityState.Detached;
+                return;
+            }
+            try
+            {
+                _db.Update(category);
+                _db.SaveChanges();
+                _db.Entry(category).State = EntityState.Detached;
+                Categories.Remove(SelectedCategory);
+                Categories.Add(category);
+                SelectedCategory = category;
+                _CategoriesViewSource.View.Refresh();
+            }
+            catch (Exception ex)
+            {
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
+        }
+
+        #endregion
+
+        #region команда Добавление категории
+
+        /// <summary> /// Добавление категории /// </summary>
+        private ICommand _AddCategoryCommand;
+
+        /// <summary> /// Добавление категории /// </summary>
+        public ICommand AddCategoryCommand => _AddCategoryCommand
+               ??= new RelayCommand(OnAddCategoryCommandExecuted, CanAddCategoryCommandExecute);
+
+        /// <summary> /// Добавление категории /// </summary>
+        public bool CanAddCategoryCommandExecute(object? p) => true;
+
+        /// <summary> /// Добавление категории /// </summary>
+        public void OnAddCategoryCommandExecuted(object? p)
+        {
+            Category category = new Category();
+            bool result = _DialogService.Edit(category);
+            if (!result)
+            {
+                return;
+            }
+            try
+            {
+                _db.Add(category);
+                _db.SaveChanges();
+                Categories.Add(category);
+                SelectedCategory = category;
+                _CategoriesViewSource.View.Refresh();
+            }
+            catch(Exception ex)
+            {
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
+        }
+
+        #endregion
 
         #region команда Удаление книги
 
@@ -262,7 +343,6 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-
         #region команда Добавление книги
 
         /// <summary> /// Добавление книги /// </summary>
@@ -284,14 +364,23 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             };
             bool result = _DialogService.Edit(book);
             if (!result) return;
-            _db.Add(book);
-            _db.SaveChanges();
-            if (book.Category.Contains(SelectedCategory))
+            try
             {
-                Books.Add(book);
-                SelectedBook = book;
+                _db.Add(book);
+                _db.SaveChanges();
+                if (book.Category.Contains(SelectedCategory))
+                {
+                    Books.Add(book);
+                    SelectedBook = book;
+                }
+                _BooksViewSource.View.Refresh();
             }
-            _BooksViewSource.View.Refresh();
+            catch (Exception ex)
+            {
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
         }
 
         #endregion
@@ -319,16 +408,26 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
                 _db.Entry(book).State = EntityState.Detached;
                 return;
             }
-            _db.Update(book);
-            _db.SaveChanges();
-            _db.Entry(book).State = EntityState.Detached;
-            Books.Remove(SelectedBook);
-            if (book.Category.Contains(SelectedCategory))
+            try
             {
-                Books.Add(book);
-                SelectedBook = book;
+                _db.Update(book);
+                _db.SaveChanges();
+                _db.Entry(book).State = EntityState.Detached;
+                Books.Remove(SelectedBook);
+                if (book.Category.Contains(SelectedCategory))
+                {
+                    Books.Add(book);
+                    SelectedBook = book;
+                }
+                _BooksViewSource.View.Refresh();
             }
-            _BooksViewSource.View.Refresh();
+            catch (Exception ex)
+            {
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
+            
         }
 
         #endregion

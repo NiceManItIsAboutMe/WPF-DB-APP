@@ -26,6 +26,14 @@ namespace WpfMVVMEfApp.Services
                     {
                         return EditBook(book);
                     }
+                case Author author:
+                    {
+                        return EditAuthor(author);
+                    }
+                case Category category:
+                    {
+                        return EditCategory(category);
+                    }
             }
         }
 
@@ -62,6 +70,35 @@ namespace WpfMVVMEfApp.Services
                 DataContext = vm,
                 Owner=App.Current.MainWindow,
                 WindowStartupLocation=WindowStartupLocation.CenterOwner,
+            };
+            var result = window.ShowDialog();
+            return result ?? false;
+        }
+
+        private bool EditAuthor(Author author)
+        {
+            AuthorEditorViewModel vm = new AuthorEditorViewModel(author);
+
+            AuthorEditorWindow window = new AuthorEditorWindow()
+            {
+                DataContext = vm,
+                Owner = App.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            };
+            var result = window.ShowDialog();
+            return result ?? false;
+        }
+
+        private bool EditCategory(Category category)
+        {
+            CategoryEditorViewModel vm=new CategoryEditorViewModel(category,
+               new ObservableCollection<Book>(_db.Books));
+
+            CategoryEditorWindow window = new CategoryEditorWindow()
+            {
+                DataContext = vm,
+                Owner = App.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
             };
             var result = window.ShowDialog();
             return result ?? false;

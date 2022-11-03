@@ -13,6 +13,7 @@ using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
+using static WpfMVVMEfApp.ViewModels.Editors.BookEditorViewModel;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
@@ -162,13 +163,23 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
                 _db.Entry(book).State = EntityState.Detached;
                 return;
             }
-            _db.Update(book);
-            _db.SaveChanges();
-            _db.Entry(book).State = EntityState.Detached;
-            Books.Remove(SelectedBook);
-            Books.Add(book);
-            SelectedBook = book;
-            _BooksViewSource.View.Refresh();
+            try
+            {
+                _db.Update(book);
+                _db.SaveChanges();
+                _db.Entry(book).State = EntityState.Detached;
+                Books.Remove(SelectedBook);
+                Books.Add(book);
+                SelectedBook = book;
+                _BooksViewSource.View.Refresh();
+            }
+            catch (Exception ex)
+            {
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
+
         }
 
         #endregion
@@ -192,11 +203,20 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             Book book = new Book();
             bool result = _DialogService.Edit(book);
             if (!result) return;
-            _db.Add(book);
-            _db.SaveChanges();
-            Books.Add(book);
-            SelectedBook = book;
-            _BooksViewSource.View.Refresh();
+            try
+            {
+                _db.Add(book);
+                _db.SaveChanges();
+                Books.Add(book);
+                SelectedBook = book;
+                _BooksViewSource.View.Refresh();
+            }
+            catch (Exception ex)
+            {
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
         }
 
         #endregion

@@ -52,8 +52,10 @@
                 </Grid>
             </GroupBox>
 
-            <Button Content="Редактировать категорию" Grid.Column="0" VerticalAlignment="Bottom" Margin="10,50"/>
-            <Button Content="Добавить категорию" Grid.Column="0" VerticalAlignment="Bottom" Margin="10"/>
+            <Button Content="Редактировать категорию" Grid.Column="0" VerticalAlignment="Bottom" Margin="10,50"
+                    Command="{Binding EditSelectedCategoryCommand}"/>
+            <Button Content="Добавить категорию" Grid.Column="0" VerticalAlignment="Bottom" Margin="10"
+                    Command="{Binding AddCategoryCommand}"/>
 
             <GroupBox Header="{Binding SelectedCategory.Name , FallbackValue='Книги'}" Grid.Column="1">
                 <Grid>
@@ -69,7 +71,8 @@
                             <DataGridTemplateColumn Header="Категории">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding Category}" SelectedItem="{Binding CategoriesModel.SelectedCategory,Source={StaticResource Locator}}">
+                                        <ComboBox ItemsSource="{Binding Category}" 
+                                                  SelectedItem="{Binding CategoriesModel.SelectedCategory,Source={StaticResource Locator}}">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding Name}"/>
