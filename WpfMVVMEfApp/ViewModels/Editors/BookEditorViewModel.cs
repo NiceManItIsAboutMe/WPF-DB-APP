@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -111,11 +112,21 @@ namespace WpfMVVMEfApp.ViewModels.Editors
                ??= new RelayCommand(OnChangeBookCategoriesCommandExecuted, CanChangeBookCategoriesCommandExecute);
 
         /// <summary> /// SaveButtonClick Изменяем выбранные категории в книге /// </summary>
-        public bool CanChangeBookCategoriesCommandExecute(object? p) => true;
+        public bool CanChangeBookCategoriesCommandExecute(object? p)
+        {
+            var context = new ValidationContext(Book);
+            var results = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(Book, context, results, true)) return false;
+
+            return true;
+        }
+
 
         /// <summary> /// SaveButtonClick Изменяем выбранные категории в книге /// </summary>
         public void OnChangeBookCategoriesCommandExecuted(object? p)
         {
+            if (Book.Category == null) return;
+
             Book.Category.Clear();
             foreach (var item in Categories.Where(c=>c.IsSelected==true))
             {
@@ -137,10 +148,13 @@ namespace WpfMVVMEfApp.ViewModels.Editors
             Book = book;
 
             //заполняем коллекцию категорий, к которым относится данная книга
-            foreach (var item in Book.Category)
+            if (Book.Category != null)
             {
-                if (Categories.Where(c => c.Category.Id == item.Id).FirstOrDefault() is SelectedCategory category)
-                    category.IsSelected = true;
+                foreach (var item in Book.Category)
+                {
+                    if (Categories.Where(c => c.Category.Id == item.Id).FirstOrDefault() is SelectedCategory category)
+                        category.IsSelected = true;
+                }
             }
             _CategoriesViewSource.View.Refresh();
         }

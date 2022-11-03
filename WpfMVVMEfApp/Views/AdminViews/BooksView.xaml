@@ -59,6 +59,7 @@
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
-        <Button Content="Добавить книгу" Margin="10,10,10,10" VerticalAlignment="Bottom"/>
+        <Button Content="Добавить книгу" Margin="10,10,10,10" VerticalAlignment="Bottom"
+                Command="{Binding AddBookCommand}"/>
     </Grid>
 </UserControl>

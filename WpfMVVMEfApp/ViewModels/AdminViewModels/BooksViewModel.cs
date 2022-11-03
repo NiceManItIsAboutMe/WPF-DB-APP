@@ -174,6 +174,34 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         #endregion
 
 
+        #region команда Добавить книгу
+
+        /// <summary> /// Добавить книгу /// </summary>
+        private ICommand _AddBookCommand;
+
+        /// <summary> /// Добавить книгу /// </summary>
+        public ICommand AddBookCommand => _AddBookCommand
+               ??= new RelayCommand(OnAddBookCommandExecuted, CanAddBookCommandExecute);
+
+        /// <summary> /// Добавить книгу /// </summary>
+        public bool CanAddBookCommandExecute(object? p) => true;
+
+        /// <summary> /// Добавить книгу /// </summary>
+        public void OnAddBookCommandExecuted(object? p)
+        {
+            Book book = new Book();
+            bool result = _DialogService.Edit(book);
+            if (!result) return;
+            _db.Add(book);
+            _db.SaveChanges();
+            Books.Add(book);
+            SelectedBook = book;
+            _BooksViewSource.View.Refresh();
+        }
+
+        #endregion
+
+
         public BooksViewModel(ApplicationContext db, IUserDialogService dialogService)
         {
             _db = db;

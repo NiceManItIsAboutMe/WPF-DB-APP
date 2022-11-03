@@ -73,11 +73,11 @@
         <Button Grid.Column="1" Grid.Row="5" Content="Сохранить"
                 VerticalAlignment="Bottom" HorizontalAlignment="Left" 
                 Width="250" Background="Green"
-                Command="{StaticResource DialogResultCommand}"
-                CommandParameter="True">
+                Command="{Binding ChangeBookCategoriesCommand}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Click">
                     <i:InvokeCommandAction Command="{Binding ChangeBookCategoriesCommand}"/>
+                    <i:InvokeCommandAction Command="{StaticResource DialogResultCommand}" CommandParameter="True"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Button>
