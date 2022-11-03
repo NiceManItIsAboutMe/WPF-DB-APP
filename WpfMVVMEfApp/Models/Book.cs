@@ -7,7 +7,7 @@ namespace WpfMVVMEfApp.Models
     internal class Book : NamedEntity
     {
         [Required(ErrorMessage = "Не указано описание")]
-        [StringLength(5000, MinimumLength = 50)]
+        [StringLength(10000, MinimumLength = 50)]
         public string Description { get; set; }
 
         //virtual - ленивая загрузка (EF будет забирать из базы только в момент обращения) (грабля в двух концах )0)0
@@ -17,5 +17,6 @@ namespace WpfMVVMEfApp.Models
         public virtual Author Author { get; set; }
 
         public virtual ICollection<User> Users { get; set; }
+
     }
 }
