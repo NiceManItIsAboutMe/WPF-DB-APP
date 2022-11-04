@@ -149,7 +149,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
                ??= new RelayCommand(OnRemoveSelectedUserCommandExecuted, CanRemoveSelectedUserCommandExecute);
 
         /// <summary> /// Удаление пользователя /// </summary>
-        public bool CanRemoveSelectedUserCommandExecute(object? p) => true;
+        public bool CanRemoveSelectedUserCommandExecute(object? p) => SelectedUser is User;
 
         /// <summary> /// Удаление пользователя /// </summary>
         public void OnRemoveSelectedUserCommandExecuted(object? p)

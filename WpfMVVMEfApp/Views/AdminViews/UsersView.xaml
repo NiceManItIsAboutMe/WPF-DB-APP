@@ -16,7 +16,7 @@
     </i:Interaction.Triggers>
     <Grid>
         <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
-        <DataGrid ItemsSource="{Binding UsersView}" SelectedItem="{Binding SelectedUser}" IsReadOnly="True" AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45">
+        <DataGrid ItemsSource="{Binding UsersView}" SelectedItem="{Binding SelectedUser}" IsReadOnly="True" AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,85">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}"/>
                 <DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
@@ -54,16 +54,10 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Удалить" Width="*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Удалить" 
-                                    Command="{Binding UsersModel.RemoveSelectedUserCommand, Source={StaticResource Locator}}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <Button Content="Удалить пользователя" Margin="10,10,10,45" VerticalAlignment="Bottom"
+                Command="{Binding UsersModel.RemoveSelectedUserCommand,Source={StaticResource Locator}}"/>
         <Button Content="Добавить пользователя" Margin="10,10,10,10" VerticalAlignment="Bottom"
                 Command="{Binding UsersModel.AddUserCommand,Source={StaticResource Locator}}"/>
     </Grid>
