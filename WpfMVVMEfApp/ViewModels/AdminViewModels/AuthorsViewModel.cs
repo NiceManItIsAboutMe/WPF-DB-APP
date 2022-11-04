@@ -213,10 +213,10 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public void OnRemoveSelectedAuthorCommandExecuted(object? p)
         {
             if (SelectedAuthor == null) return;
-
+            Author author = _db.Authors.First(a => a.Id == SelectedAuthor.Id);
             if (!_DialogService.Confirm($"Вы действительно хотите удалить автора: {SelectedAuthor}\n При удалении автора удалятся так же и все его книги!!!", "Удаление"))
                 return;
-            _db.Remove(SelectedAuthor);
+            _db.Remove(author);
             _db.SaveChanges();
             Authors.Remove(SelectedAuthor);
         }
@@ -321,13 +321,13 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public void OnRemoveBookCommandCommandExecuted(object? p)
         {
             if (SelectedBook == null) return;
-
+            Book book = _db.Books.First(b => b.Id == SelectedBook.Id);
             if (!_DialogService.Confirm($"Вы действительно хотите удалить книгу: {SelectedBook.Name}" +
                 $", автора: {SelectedBook.Author}?",
                 "Удаление"))
                 return;
 
-            _db.Remove(SelectedBook);
+            _db.Remove(book);
             _db.SaveChanges();
 
             Books.Remove(SelectedBook);

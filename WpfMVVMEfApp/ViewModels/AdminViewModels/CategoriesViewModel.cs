@@ -222,9 +222,10 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             if (SelectedCategory == null) return;
 
+            Category category = _db.Categories.First(c => c.Id == SelectedCategory.Id);
             if (!_DialogService.Confirm($"Вы действительно хотите удалить категорию: {SelectedCategory}", "Удаление"))
                 return;
-            _db.Remove(SelectedCategory);
+            _db.Remove(category);
             _db.SaveChanges();
             Categories.Remove(SelectedCategory);
         }
@@ -329,13 +330,13 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public void OnRemoveSelectedBookCommandExecuted(object? p)
         {
             if (SelectedBook == null) return;
-
+            Book book = _db.Books.First(b => b.Id == SelectedBook.Id);
             if (!_DialogService.Confirm($"Вы действительно хотите удалить книгу: {SelectedBook.Name}" +
                 $", автора: {SelectedBook.Author}?",
                 "Удаление"))
                 return;
 
-            _db.Remove(SelectedBook);
+            _db.Remove(book);
             _db.SaveChanges();
 
             Books.Remove(SelectedBook);

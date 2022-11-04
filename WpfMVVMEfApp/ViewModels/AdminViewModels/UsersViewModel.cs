@@ -15,6 +15,7 @@ using WpfMVVMEfApp.Services.Interfaces;
 using System.Windows.Data;
 using System.ComponentModel;
 using WpfMVVMEfApp.Views.AdminViews;
+using static WpfMVVMEfApp.ViewModels.Editors.CategoryEditorViewModel;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
@@ -156,14 +157,16 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             if (SelectedUser == null) return;
 
+            User user = _db.Users.First(u => u.Id == SelectedUser.Id);
             if (!_DialogService.Confirm($"Вы действительно хотите удалить пользователя: {SelectedUser}?", "Удаление"))
                 return;
-            _db.Remove(SelectedUser);
+            _db.Remove(user);
             _db.SaveChanges();
             Users.Remove(SelectedUser);
         }
 
         #endregion
+
         public UsersViewModel(ApplicationContext db, IUserDialogService dialogService)
         {
             _db = db;
