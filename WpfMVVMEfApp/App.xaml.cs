@@ -49,6 +49,7 @@ namespace WpfMVVMEfApp
 
                                 case "Postgres":
                                     opt.UseNpgsql(conf.GetConnectionString(type));
+                                    AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true); // для добавления дат (Постгрес ругается что добавляем дату не в UTC)
                                     break;
                                 case "Local":
                                     opt.UseInMemoryDatabase(conf.GetConnectionString(type));
