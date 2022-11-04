@@ -47,7 +47,7 @@
         <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Book.Name, UpdateSourceTrigger=PropertyChanged}"/>
         <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Authors, UpdateSourceTrigger=PropertyChanged}" 
                   SelectedItem="{Binding Book.Author, UpdateSourceTrigger=PropertyChanged}"/>
-        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Book.Description}" TextWrapping="Wrap" MaxWidth="650"/>
+        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Book.Description, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" MaxWidth="650"/>
         <TextBox Grid.Column="1" Grid.Row="3" materialDesign:HintAssist.Hint="Поиск" 
                      Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}"/>
         <ListBox Grid.Column="1" Grid.Row="4" ItemsSource="{Binding CategoriesView}">
