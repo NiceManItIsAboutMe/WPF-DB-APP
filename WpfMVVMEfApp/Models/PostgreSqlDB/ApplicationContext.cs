@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,20 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                 .HasIndex(u => new { u.Surname, u.Name, u.Patronymic }).IsUnique(true);
             base.OnModelCreating(modelBuilder);
 
+        }
+    }
+
+    /// <summary>
+    /// Для создания миграций
+    /// </summary>
+    internal class YourDbContextFactory : IDesignTimeDbContextFactory<ApplicationContext>
+    {
+        public ApplicationContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
+            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=Bookinist;Username=postgres;Password=postgres");
+
+            return new ApplicationContext(optionsBuilder.Options);
         }
     }
 }

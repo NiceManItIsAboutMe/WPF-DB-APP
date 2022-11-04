@@ -11,9 +11,8 @@ namespace WpfMVVMEfApp.Models.Base
         [StringLength(100, MinimumLength = 2)]
         public virtual string Surname { get; set; }
 
-        [Required]
-        [StringLength(100, MinimumLength = 2)]
-        public virtual string Patronymic { get; set; }
+        [StringLength(100, MinimumLength = 0)]
+        public virtual string? Patronymic { get; set; }
 
         public override string ToString()
         {

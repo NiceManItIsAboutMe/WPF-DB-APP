@@ -61,7 +61,7 @@ namespace WpfMVVMEfApp
         {
             //Инициализация бд при запуске
             //await Services.GetRequiredService<DBInitializer>().InitializeAsync(); // при вызове метода Wait происходит дедлок, а нужно чтобы сначала бд инициализировалась, а потом отображался интерфейс и тд.
-            //Services.GetRequiredService<DBInitializer>().Initialize(); // пока что без асинхронности
+            Services.GetRequiredService<DBInitializer>().Initialize(); // пока что без асинхронности
             base.OnStartup(e);
         }
     }

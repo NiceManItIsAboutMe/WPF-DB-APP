@@ -128,7 +128,7 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         /// <summary> /// SaveButtonClick Изменяем выбранные категории в книге /// </summary>
         public void OnChangeBookCategoriesCommandExecuted(object? p)
         {
-            if (Book.Category == null) return;
+            if (Categories == null) return;
 
             if (Book.Category == null) Book.Category = new ObservableCollection<Category>();
 

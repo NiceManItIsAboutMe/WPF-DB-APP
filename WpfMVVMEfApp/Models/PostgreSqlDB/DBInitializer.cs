@@ -33,7 +33,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                 _logger.LogInformation("------------------------Инициализация БД------------------------");
 
                 //_logger.LogInformation("Удаление БД");
-                await _db.Database.EnsureDeletedAsync();
+                //await _db.Database.EnsureDeletedAsync();
                 //_logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
 
@@ -108,7 +108,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                 _logger.LogInformation("------------------------Инициализация БД------------------------");
 
                 //_logger.LogInformation("Удаление БД");
-                _db.Database.EnsureDeleted();
+                //_db.Database.EnsureDeleted();
                 //_logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
 
