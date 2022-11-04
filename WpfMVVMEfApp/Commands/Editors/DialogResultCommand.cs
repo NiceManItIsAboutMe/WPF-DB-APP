@@ -16,6 +16,8 @@ namespace WpfMVVMEfApp.Commands.Editors
         {
             if(App.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsMouseOver) is Window window)
             {
+                if(parameter == null) throw new ArgumentNullException(nameof(parameter));
+
                 bool? dialogResult = Convert.ToBoolean(parameter);
                 window.DialogResult = dialogResult;
                 window.Close();
