@@ -306,6 +306,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             }
             catch(Exception ex)
             {
+                _db.Remove(category);
                 _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
                     "\nВ ином случае обратитесь в службу поддержки" +
                     $"\n{ex.Message}", "Ошибка сохранения объекта");
@@ -378,6 +379,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             }
             catch (Exception ex)
             {
+                _db.Remove(book);
                 _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
                     "\nВ ином случае обратитесь в службу поддержки" +
                     $"\n{ex.Message}", "Ошибка сохранения объекта");
