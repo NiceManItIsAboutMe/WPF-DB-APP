@@ -27,11 +27,13 @@
                 </ItemsPanelTemplate>
             </DataGrid.ItemsPanel>
 
+        <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
+        <DataGrid ItemsSource="{Binding UsersView}" SelectedItem="{Binding SelectedUser}" IsReadOnly="True" AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,85">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}"/>
                 <DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
                 <DataGridTextColumn Header="Отчество" Binding="{Binding Patronymic}"  />
-                <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birthday}"  />
+                <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birthday, StringFormat='dd.MM.yyyy'}"  />
                 <DataGridTextColumn Header="Логин" Binding="{Binding Login}"/>
                 <DataGridCheckBoxColumn Header="Администратор" Binding="{Binding IsAdmin}"  />
                 <DataGridTemplateColumn Header="Книги">
@@ -50,27 +52,27 @@
                 <DataGridTemplateColumn Header="Редактировать">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Редактировать" />
+                            <Button Content="Редактировать" 
+                                    Command="{Binding UsersModel.EditSelectedUserCommand,Source={StaticResource Locator}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Сброс пароля">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
+                            <Button Content="Сбросить пароль" 
+                                    Command="{Binding UsersModel.EditSelectedUserCommand,Source={StaticResource Locator}}"
+                                    CommandParameter="True"/>
                             <Button Content="Сбросить пароль" Command="{Binding UsersModel.PasswordResetCommand,
                                 Source={StaticResource Locator}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Удалить" Width="*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Удалить" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Content="Добавить пользователя" Margin="10,10,10,10" VerticalAlignment="Bottom"/>
+        <Button Content="Удалить пользователя" Margin="10,10,10,45" VerticalAlignment="Bottom"
+                Command="{Binding UsersModel.RemoveSelectedUserCommand,Source={StaticResource Locator}}"/>
+        <Button Content="Добавить пользователя" Margin="10,10,10,10" VerticalAlignment="Bottom"
+                Command="{Binding UsersModel.AddUserCommand,Source={StaticResource Locator}}"/>
     </Grid>
 </UserControl>

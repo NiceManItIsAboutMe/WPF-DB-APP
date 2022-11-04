@@ -42,6 +42,9 @@
                                 <VirtualizingStackPanel/>
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
+                    <TextBox materialDesign:HintAssist.Hint="Поиск" 
+                             Text="{Binding AuthorsSearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
+                    <ListBox ItemsSource="{Binding AuthorsView}" SelectedItem="{Binding SelectedAuthor}" Margin="0,30,0,75">
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -65,8 +68,10 @@
                     </ListBox>
                 </Grid>
             </GroupBox>
-            <Button Content="Редактировать автора" Grid.Column="0" VerticalAlignment="Bottom" Margin="10,50"/>
-            <Button Content="Добавить автора" Grid.Column="0" VerticalAlignment="Bottom" Margin="10"/>
+            <Button Content="Редактировать автора" Grid.Column="0" VerticalAlignment="Bottom" Margin="10,50"
+                    Command="{Binding EditAuthorCommand}"/>
+            <Button Content="Добавить автора" Grid.Column="0" VerticalAlignment="Bottom" Margin="10"
+                    Command="{Binding AddAuthorCommand}"/>
             <GroupBox Header="{Binding SelectedAuthor, Converter={StaticResource FullNameConverter}, FallbackValue='Книги'}" Grid.Column="1">
                 <Grid>
                     <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding BooksSearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
@@ -98,14 +103,16 @@
                             <DataGridTemplateColumn Header="Редактировать">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="Редактировать" />
+                                        <Button Content="Редактировать" 
+                                                Command="{Binding CategoriesModel.EditSelectedBookCommand, Source={StaticResource Locator}}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Удалить" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="Удалить" Command="{Binding CategoriesModel.RemoveSelectedBookCommand, Source={StaticResource Locator}}"/>
+                                        <Button Content="Удалить" 
+                                                Command="{Binding CategoriesModel.RemoveSelectedBookCommand, Source={StaticResource Locator}}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -118,7 +125,8 @@
                     </DataGrid>
                 </Grid>
             </GroupBox>
-            <Button Content="Добавить книгу" Grid.Column="1" Margin="10" VerticalAlignment="Bottom"/>
+            <Button Content="Добавить книгу" Grid.Column="1" Margin="10" VerticalAlignment="Bottom"
+                    Command="{Binding AddBookCommand}"/>
         </Grid>
     </Grid>
 

@@ -13,6 +13,7 @@ using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
+using static WpfMVVMEfApp.ViewModels.Editors.BookEditorViewModel;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
@@ -102,7 +103,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Загрузки книг /// </summary>
         public void OnLoadBooksCommandExecuted(object? p)
         {
-            Books = new ObservableCollection<Book>(_db.Books.Include(b=> b.Author).Include(b=>b.Category).OrderBy(b=> b.Name));
+            Books = new ObservableCollection<Book>(_db.Books.Include(b=> b.Author).Include(b=>b.Category).OrderBy(b=> b.Name).AsNoTracking());
         }
 
         #endregion
@@ -125,15 +126,99 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             if (SelectedBook == null) return;
 
+            Book book = _db.Books.First(b => b.Id == SelectedBook.Id);
             if (!_DialogService.Confirm($"Вы действительно хотите удалить книгу: {SelectedBook.Name}" +
                 $", автора: {SelectedBook.Author}?",
                 "Удаление"))
                 return;
 
-            _db.Remove(SelectedBook);
+            _db.Remove(book);
             _db.SaveChanges();
 
             Books.Remove(SelectedBook);
+        }
+
+        #endregion
+
+
+        #region команда Редактирование книги
+
+        /// <summary> /// Редактирование книги /// </summary>
+        private ICommand _EditSelectedBookCommand;
+
+        /// <summary> /// Редактирование книги /// </summary>
+        public ICommand EditSelectedBookCommand => _EditSelectedBookCommand
+               ??= new RelayCommand(OnEditSelectedBookCommandExecuted, CanEditSelectedBookCommandExecute);
+
+        /// <summary> /// Редактирование книги /// </summary>
+        public bool CanEditSelectedBookCommandExecute(object? p) => SelectedBook is Book;
+
+        /// <summary> /// Редактирование книги /// </summary>
+        public void OnEditSelectedBookCommandExecuted(object? p)
+        {
+            Book book = _db.Books.Include(b => b.Category).Include(b => b.Author).First(b => b.Id == SelectedBook.Id);
+            bool result=_DialogService.Edit(book);
+            if (!result)
+            {
+                // перестаем остлеживать данную сущность, иначе при следующем входе в редактор мы получим изменненую сущность, которая была закэширована EF
+                _db.Entry(book).State = EntityState.Detached;
+                return;
+            }
+            try
+            {
+                _db.Update(book);
+                _db.SaveChanges();
+                _db.Entry(book).State = EntityState.Detached;
+                Books.Remove(SelectedBook);
+                Books.Add(book);
+                SelectedBook = book;
+                _BooksViewSource.View.Refresh();
+            }
+            catch (Exception ex)
+            {
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
+
+        }
+
+        #endregion
+
+
+        #region команда Добавить книгу
+
+        /// <summary> /// Добавить книгу /// </summary>
+        private ICommand _AddBookCommand;
+
+        /// <summary> /// Добавить книгу /// </summary>
+        public ICommand AddBookCommand => _AddBookCommand
+               ??= new RelayCommand(OnAddBookCommandExecuted, CanAddBookCommandExecute);
+
+        /// <summary> /// Добавить книгу /// </summary>
+        public bool CanAddBookCommandExecute(object? p) => true;
+
+        /// <summary> /// Добавить книгу /// </summary>
+        public void OnAddBookCommandExecuted(object? p)
+        {
+            Book book = new Book();
+            bool result = _DialogService.Edit(book);
+            if (!result) return;
+            try
+            {
+                _db.Add(book);
+                _db.SaveChanges();
+                Books.Add(book);
+                SelectedBook = book;
+                _BooksViewSource.View.Refresh();
+            }
+            catch (Exception ex)
+            {
+                _db.Remove(book);
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
         }
 
         #endregion

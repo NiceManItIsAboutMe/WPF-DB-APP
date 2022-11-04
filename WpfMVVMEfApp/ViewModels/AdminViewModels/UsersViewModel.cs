@@ -15,6 +15,8 @@ using WpfMVVMEfApp.Services.Interfaces;
 using System.Windows.Data;
 using System.ComponentModel;
 using WpfMVVMEfApp.Views.AdminViews;
+using static WpfMVVMEfApp.ViewModels.Editors.CategoryEditorViewModel;
+using static WpfMVVMEfApp.ViewModels.Editors.BookEditorViewModel;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
@@ -88,7 +90,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-        #region команда Сбросить пароль
+        #region команда Сбросить пароль только сбрасывает пароль, но не меняет его
         /// <summary> /// Сбросить пароль /// </summary>
         private ICommand _PasswordResetCommand;
 
@@ -96,7 +98,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public ICommand PasswordResetCommand => _PasswordResetCommand ??= new RelayCommand(OnPasswordResetCommandExecuted, CanPasswordResetCommandExecute);
 
         /// <summary> /// Сбросить пароль /// </summary>
-        public bool CanPasswordResetCommandExecute(object? p) => true;
+        public bool CanPasswordResetCommandExecute(object? p) => SelectedUser is User;
 
         /// <summary> /// Сбросить пароль /// </summary>
         public void OnPasswordResetCommandExecuted(object? p)
@@ -132,12 +134,10 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Загрузка данных пользователей из бд /// </summary>
         public void OnLoadUsersDataCommandExecuted(object? p)
         {
-            Users = new ObservableCollection<User>(_db.Users.Include(a => a.Books));
+            Users = new ObservableCollection<User>(_db.Users.Include(a => a.Books).AsNoTracking());
         }
 
         #endregion
-
-
 
         #region команда Удаление пользователя
 
@@ -149,21 +149,118 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
                ??= new RelayCommand(OnRemoveSelectedUserCommandExecuted, CanRemoveSelectedUserCommandExecute);
 
         /// <summary> /// Удаление пользователя /// </summary>
-        public bool CanRemoveSelectedUserCommandExecute(object? p) => true;
+        public bool CanRemoveSelectedUserCommandExecute(object? p) => SelectedUser is User;
 
         /// <summary> /// Удаление пользователя /// </summary>
         public void OnRemoveSelectedUserCommandExecuted(object? p)
         {
             if (SelectedUser == null) return;
 
+            User user = _db.Users.First(u => u.Id == SelectedUser.Id);
             if (!_DialogService.Confirm($"Вы действительно хотите удалить пользователя: {SelectedUser}?", "Удаление"))
                 return;
-            _db.Remove(SelectedUser);
+            _db.Remove(user);
             _db.SaveChanges();
             Users.Remove(SelectedUser);
         }
 
         #endregion
+
+        #region команда Редактирование пользователя и сброс пароля если p=true
+
+        /// <summary> /// Редактирование пользователя /// </summary>
+        private ICommand _EditSelectedUserCommand;
+
+        /// <summary> /// Редактирование пользователя /// </summary>
+        public ICommand EditSelectedUserCommand => _EditSelectedUserCommand
+               ??= new RelayCommand(OnEditSelectedUserCommandExecuted, CanEditSelectedUserCommandExecute);
+
+        /// <summary>
+        /// Редактирование пользователя
+        /// </summary>
+        /// <param name="p"> bool - сброс пароля</param>
+        /// <returns></returns>
+        public bool CanEditSelectedUserCommandExecute(object? p) => SelectedUser is User;
+
+        /// <summary>
+        /// Редактирование пользователя
+        /// </summary>
+        /// <param name="p"> bool - сброс пароля </param>
+        public void OnEditSelectedUserCommandExecuted(object? p)
+        {
+            User user = _db.Users.First(u => u.Id == SelectedUser.Id);
+            if(p != null)
+            {
+                if (Convert.ToBoolean(p))
+                    user.Password = null;
+            }
+            bool result = _DialogService.Edit(user);
+            if (!result)
+            {
+                // перестаем остлеживать данную сущность, иначе при следующем входе в редактор мы получим изменненую сущность, которая была закэширована EF
+                _db.Entry(user).State = EntityState.Detached;
+                return;
+            }
+            try
+            {
+                _db.Update(user);
+                _db.SaveChanges();
+                _db.Entry(user).State = EntityState.Detached;
+                Users.Remove(SelectedUser);
+                Users.Add(user);
+                SelectedUser = user;
+                _UsersViewSource.View.Refresh();
+            }
+            catch (Exception ex)
+            {
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
+        }
+
+        #endregion
+
+        #region команда Добавить пользователя
+
+        /// <summary> /// Добавить пользователя /// </summary>
+        private ICommand _AddUserCommand;
+
+        /// <summary> /// Добавить пользователя /// </summary>
+        public ICommand AddUserCommand => _AddUserCommand
+               ??= new RelayCommand(OnAddUserCommandExecuted, CanAddUserCommandExecute);
+
+        /// <summary> /// Добавить пользователя /// </summary>
+        public bool CanAddUserCommandExecute(object? p) => true;
+
+        /// <summary> /// Добавить пользователя /// </summary>
+        public void OnAddUserCommandExecuted(object? p)
+        {
+            User user = new User();
+            bool result = _DialogService.Edit(user);
+            if (!result)
+            {
+                return;
+            }
+            try
+            {
+                _db.Add(user);
+                _db.SaveChanges();
+                Users.Add(user);
+                SelectedUser = user;
+                _UsersViewSource.View.Refresh();
+            }
+            catch (Exception ex)
+            {
+                _db.Remove(user);
+                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
+                    "\nВ ином случае обратитесь в службу поддержки" +
+                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+            }
+        }
+
+        #endregion
+
         public UsersViewModel(ApplicationContext db, IUserDialogService dialogService)
         {
             _db = db;

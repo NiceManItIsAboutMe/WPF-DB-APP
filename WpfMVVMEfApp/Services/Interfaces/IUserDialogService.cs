@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WpfMVVMEfApp.Models.PostgreSqlDB;
 
 namespace WpfMVVMEfApp.Services.Interfaces
 {
@@ -14,6 +16,13 @@ namespace WpfMVVMEfApp.Services.Interfaces
         /// <param name="item">Сущность, которую редактируем или добавляем</param>
         /// <returns></returns>
         bool Edit(object item);
+
+        /// <summary>
+        /// Изменение пароля
+        /// </summary>
+        /// <param name="item">Сущность, которую редактируем или добавляем</param>
+        /// <returns></returns>
+        bool EditPassword(object item);
 
         /// <summary>
         /// Показать информацию

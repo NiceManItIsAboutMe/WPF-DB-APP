@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
@@ -11,9 +12,10 @@ using WpfMVVMEfApp.Models.PostgreSqlDB;
 namespace WpfMVVMEfApp.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20221104115311_Add_Validation")]
+    partial class Add_Validation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,8 +141,8 @@ namespace WpfMVVMEfApp.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Birthday")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly>("Birthday")
+                        .HasColumnType("date");
 
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("boolean");
@@ -157,6 +159,7 @@ namespace WpfMVVMEfApp.Migrations
 
                     b.Property<byte[]>("Password")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("bytea");
 
                     b.Property<string>("Patronymic")

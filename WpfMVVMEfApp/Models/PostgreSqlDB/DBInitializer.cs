@@ -33,7 +33,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                 _logger.LogInformation("------------------------Инициализация БД------------------------");
 
                 //_logger.LogInformation("Удаление БД");
-                await _db.Database.EnsureDeletedAsync();
+                //await _db.Database.EnsureDeletedAsync();
                 //_logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
 
@@ -79,7 +79,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                        Surname = $"Фамилия {i}",
                        Name = $"Имя {i}",
                        Patronymic = $"Отчество {i}",
-                       Birthday = DateOnly.FromDateTime(DateTime.Now),
+                       Birthday = DateTime.Now.AddYears(-random.Next(18, 51)).Date,
                        Login = $"login{i}",
                        Password = User.HashPassword($"password{i}"),
                        IsAdmin = false,
@@ -108,7 +108,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                 _logger.LogInformation("------------------------Инициализация БД------------------------");
 
                 //_logger.LogInformation("Удаление БД");
-                _db.Database.EnsureDeleted();
+                //_db.Database.EnsureDeleted();
                 //_logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
 
@@ -154,7 +154,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                        Surname = $"Фамилия {i}",
                        Name = $"Имя {i}",
                        Patronymic = $"Отчество {i}",
-                       Birthday = DateOnly.FromDateTime(DateTime.Now.AddYears(-random.Next(18,51))),
+                       Birthday = DateTime.Now.AddYears(-random.Next(18,51)).Date,
                        Login = $"login{i}",
                        Password = User.HashPassword($"password{i}"),
                        IsAdmin = false,
