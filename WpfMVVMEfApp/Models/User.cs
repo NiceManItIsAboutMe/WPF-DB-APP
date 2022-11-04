@@ -13,11 +13,9 @@ namespace WpfMVVMEfApp.Models
         [StringLength(100,MinimumLength =5)]
         public string Login { get; set; }
 
-        [Required]
-        [StringLength(100, MinimumLength = 6)]
         public byte[] Password { get; set; }
 
-        public DateOnly Birthday { get; set; }
+        public DateTime Birthday { get; set; }
 
         public bool IsAdmin { get; set; }
 
