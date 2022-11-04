@@ -8,6 +8,7 @@ using System.Windows;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
+using WpfMVVMEfApp.ViewModels.AdminViewModels;
 using WpfMVVMEfApp.ViewModels.Editors;
 using WpfMVVMEfApp.Views.Windows.Dialogs;
 
@@ -33,6 +34,21 @@ namespace WpfMVVMEfApp.Services
                 case Category category:
                     {
                         return EditCategory(category);
+                    }
+                case User user:
+                    {
+                        return EditUser(user);
+                    }
+            }
+        }
+        public bool EditPassword(object item)
+        {
+            switch (item)
+            {
+                default: throw new NotSupportedException($"Редактирование объекта типа {item.GetType().Name} не поддерживается");
+                case User user:
+                    {
+                        return EditUser(user);
                     }
             }
         }
@@ -95,6 +111,20 @@ namespace WpfMVVMEfApp.Services
                new ObservableCollection<Book>(_db.Books));
 
             CategoryEditorWindow window = new CategoryEditorWindow()
+            {
+                DataContext = vm,
+                Owner = App.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            };
+            var result = window.ShowDialog();
+            return result ?? false;
+        }
+
+        private bool EditUser(User user)
+        {
+            UserEditorViewModel vm = new UserEditorViewModel(user);
+
+            UserEditorWindow window = new UserEditorWindow()
             {
                 DataContext = vm,
                 Owner = App.Current.MainWindow,

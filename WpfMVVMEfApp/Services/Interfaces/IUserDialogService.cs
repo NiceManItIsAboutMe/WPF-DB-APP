@@ -18,6 +18,13 @@ namespace WpfMVVMEfApp.Services.Interfaces
         bool Edit(object item);
 
         /// <summary>
+        /// Изменение пароля
+        /// </summary>
+        /// <param name="item">Сущность, которую редактируем или добавляем</param>
+        /// <returns></returns>
+        bool EditPassword(object item);
+
+        /// <summary>
         /// Показать информацию
         /// </summary>
         /// <param name="Information"> Информация </param>
