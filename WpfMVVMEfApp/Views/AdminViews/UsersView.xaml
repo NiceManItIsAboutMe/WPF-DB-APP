@@ -18,7 +18,7 @@
         <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding SearchFilter, 
             UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
         <DataGrid ItemsSource="{Binding UsersView}" SelectedItem="{Binding SelectedUser}" IsReadOnly="True" 
-                  AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45"
+                  AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,85"
                   VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
                   VirtualizingPanel.VirtualizationMode="Recycling">
             <DataGrid.ItemsPanel>
@@ -27,8 +27,6 @@
                 </ItemsPanelTemplate>
             </DataGrid.ItemsPanel>
 
-        <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
-        <DataGrid ItemsSource="{Binding UsersView}" SelectedItem="{Binding SelectedUser}" IsReadOnly="True" AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,85">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Фамилия" Binding="{Binding Surname}"/>
                 <DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
@@ -60,12 +58,10 @@
                 <DataGridTemplateColumn Header="Сброс пароля">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Сбросить пароль" 
+                                <Button Content="Сбросить пароль" 
                                     Command="{Binding UsersModel.EditSelectedUserCommand,Source={StaticResource Locator}}"
                                     CommandParameter="True"/>
-                            <Button Content="Сбросить пароль" Command="{Binding UsersModel.PasswordResetCommand,
-                                Source={StaticResource Locator}}"/>
-                        </DataTemplate>
+                            </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
