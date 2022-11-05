@@ -101,7 +101,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanPasswordResetCommandExecute(object? p) => SelectedUser is User;
 
         /// <summary> /// Сбросить пароль /// </summary>
-        public void OnPasswordResetCommandExecuted(object? p)
+        public async void OnPasswordResetCommandExecuted(object? p)
         {
             if (SelectedUser == null) return;
 
@@ -112,7 +112,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             {
                 SelectedUser.Password = User.HashPassword("PasswordResetedPleaseEnterNewPassword");
                 _db.Users.Update(SelectedUser);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
             }
         }
 
@@ -152,15 +152,15 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanRemoveSelectedUserCommandExecute(object? p) => SelectedUser is User;
 
         /// <summary> /// Удаление пользователя /// </summary>
-        public void OnRemoveSelectedUserCommandExecuted(object? p)
+        public async void OnRemoveSelectedUserCommandExecuted(object? p)
         {
             if (SelectedUser == null) return;
 
-            User user = _db.Users.First(u => u.Id == SelectedUser.Id);
+            User user = await _db.Users.FirstAsync(u => u.Id == SelectedUser.Id);
             if (!_DialogService.Confirm($"Вы действительно хотите удалить пользователя: {SelectedUser}?", "Удаление"))
                 return;
             _db.Remove(user);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             Users.Remove(SelectedUser);
         }
 
@@ -186,9 +186,9 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// Редактирование пользователя
         /// </summary>
         /// <param name="p"> bool - сброс пароля </param>
-        public void OnEditSelectedUserCommandExecuted(object? p)
+        public async void OnEditSelectedUserCommandExecuted(object? p)
         {
-            User user = _db.Users.First(u => u.Id == SelectedUser.Id);
+            User user = await _db.Users.FirstAsync(u => u.Id == SelectedUser.Id);
             if(p != null)
             {
                 if (Convert.ToBoolean(p))
@@ -204,7 +204,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             try
             {
                 _db.Update(user);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 _db.Entry(user).State = EntityState.Detached;
                 Users.Remove(SelectedUser);
                 Users.Add(user);
@@ -234,7 +234,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanAddUserCommandExecute(object? p) => true;
 
         /// <summary> /// Добавить пользователя /// </summary>
-        public void OnAddUserCommandExecuted(object? p)
+        public async void OnAddUserCommandExecuted(object? p)
         {
             User user = new User();
             bool result = _DialogService.Edit(user);
@@ -245,7 +245,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             try
             {
                 _db.Add(user);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 Users.Add(user);
                 SelectedUser = user;
                 _UsersViewSource.View.Refresh();

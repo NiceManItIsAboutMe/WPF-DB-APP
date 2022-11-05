@@ -122,18 +122,18 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanRemoveSelectedBookCommandExecute(object? p) => true;
 
         /// <summary> /// Удаление книги /// </summary>
-        public void OnRemoveSelectedBookCommandExecuted(object? p)
+        public async void OnRemoveSelectedBookCommandExecuted(object? p)
         {
             if (SelectedBook == null) return;
 
-            Book book = _db.Books.First(b => b.Id == SelectedBook.Id);
+            Book book = await _db.Books.FirstAsync(b => b.Id == SelectedBook.Id);
             if (!_DialogService.Confirm($"Вы действительно хотите удалить книгу: {SelectedBook.Name}" +
                 $", автора: {SelectedBook.Author}?",
                 "Удаление"))
                 return;
 
             _db.Remove(book);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             Books.Remove(SelectedBook);
         }
@@ -154,9 +154,9 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanEditSelectedBookCommandExecute(object? p) => SelectedBook is Book;
 
         /// <summary> /// Редактирование книги /// </summary>
-        public void OnEditSelectedBookCommandExecuted(object? p)
+        public async void OnEditSelectedBookCommandExecuted(object? p)
         {
-            Book book = _db.Books.Include(b => b.Categories).Include(b => b.Author).First(b => b.Id == SelectedBook.Id);
+            Book book = await _db.Books.Include(b => b.Categories).Include(b => b.Author).FirstAsync(b => b.Id == SelectedBook.Id);
             bool result=_DialogService.Edit(book);
             if (!result)
             {
@@ -167,7 +167,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             try
             {
                 _db.Update(book);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 _db.Entry(book).State = EntityState.Detached;
                 Books.Remove(SelectedBook);
                 Books.Add(book);
@@ -199,7 +199,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanAddBookCommandExecute(object? p) => true;
 
         /// <summary> /// Добавить книгу /// </summary>
-        public void OnAddBookCommandExecuted(object? p)
+        public async void OnAddBookCommandExecuted(object? p)
         {
             Book book = new Book();
             bool result = _DialogService.Edit(book);
@@ -207,7 +207,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             try
             {
                 _db.Add(book);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 Books.Add(book);
                 SelectedBook = book;
                 _BooksViewSource.View.Refresh();

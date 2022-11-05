@@ -218,15 +218,15 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanRemoveSelectedCategoryCommandExecute(object? p) => true;
 
         /// <summary> /// Удаление категории /// </summary>
-        public void OnRemoveSelectedCategoryCommandExecuted(object? p)
+        public async void OnRemoveSelectedCategoryCommandExecuted(object? p)
         {
             if (SelectedCategory == null) return;
 
-            Category category = _db.Categories.First(c => c.Id == SelectedCategory.Id);
+            Category category = await _db.Categories.FirstAsync(c => c.Id == SelectedCategory.Id);
             if (!_DialogService.Confirm($"Вы действительно хотите удалить категорию: {SelectedCategory}", "Удаление"))
                 return;
             _db.Remove(category);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             Categories.Remove(SelectedCategory);
         }
 
@@ -245,9 +245,9 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanEditSelectedCategoryCommandExecute(object? p) => SelectedCategory is Category;
 
         /// <summary> /// Редактирование категории /// </summary>
-        public void OnEditSelectedCategoryCommandExecuted(object? p)
+        public async void OnEditSelectedCategoryCommandExecuted(object? p)
         {
-            Category category = _db.Categories.Include(c=>c.Books).FirstOrDefault(c=>c.Id==SelectedCategory.Id);
+            Category category = await _db.Categories.Include(c=>c.Books).FirstAsync(c=>c.Id==SelectedCategory.Id);
             bool result = _DialogService.Edit(category);
             if (!result)
             {
@@ -258,7 +258,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             try
             {
                 _db.Update(category);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 _db.Entry(category).State = EntityState.Detached;
                 Categories.Remove(SelectedCategory);
                 Categories.Add(category);
@@ -288,7 +288,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanAddCategoryCommandExecute(object? p) => true;
 
         /// <summary> /// Добавление категории /// </summary>
-        public void OnAddCategoryCommandExecuted(object? p)
+        public async void OnAddCategoryCommandExecuted(object? p)
         {
             Category category = new Category();
             bool result = _DialogService.Edit(category);
@@ -299,7 +299,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             try
             {
                 _db.Add(category);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 Categories.Add(category);
                 SelectedCategory = category;
                 _CategoriesViewSource.View.Refresh();
@@ -328,17 +328,17 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanRemoveSelectedBookCommandExecute(object? p) => true;
 
         /// <summary> /// Удаление книги /// </summary>
-        public void OnRemoveSelectedBookCommandExecuted(object? p)
+        public async void OnRemoveSelectedBookCommandExecuted(object? p)
         {
             if (SelectedBook == null) return;
-            Book book = _db.Books.First(b => b.Id == SelectedBook.Id);
+            Book book = await _db.Books.FirstAsync(b => b.Id == SelectedBook.Id);
             if (!_DialogService.Confirm($"Вы действительно хотите удалить книгу: {SelectedBook.Name}" +
                 $", автора: {SelectedBook.Author}?",
                 "Удаление"))
                 return;
 
             _db.Remove(book);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             Books.Remove(SelectedBook);
         }
@@ -358,7 +358,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanAddBookCommandExecute(object? p) => true;
 
         /// <summary> /// Добавление книги /// </summary>
-        public void OnAddBookCommandExecuted(object? p)
+        public async void OnAddBookCommandExecuted(object? p)
         {
             Book book = new Book
             {
@@ -369,7 +369,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             try
             {
                 _db.Add(book);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 if (book.Categories.Contains(SelectedCategory))
                 {
                     Books.Add(book);
@@ -401,9 +401,9 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanEditSelectedBookCommandExecute(object? p) => true;
 
         /// <summary> /// Редактирование книги /// </summary>
-        public void OnEditSelectedBookCommandExecuted(object? p)
+        public async void OnEditSelectedBookCommandExecuted(object? p)
         {
-            Book book = _db.Books.Include(b => b.Categories).Include(b => b.Author).First(b => b.Id == SelectedBook.Id);
+            Book book = await _db.Books.Include(b => b.Categories).Include(b => b.Author).FirstAsync(b => b.Id == SelectedBook.Id);
             bool result = _DialogService.Edit(book);
             if (!result)
             {
@@ -414,7 +414,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             try
             {
                 _db.Update(book);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 _db.Entry(book).State = EntityState.Detached;
                 Books.Remove(SelectedBook);
                 if (book.Categories.Contains(SelectedCategory))
