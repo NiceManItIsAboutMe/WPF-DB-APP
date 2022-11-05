@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -132,6 +133,46 @@ namespace WpfMVVMEfApp.Services
             };
             var result = window.ShowDialog();
             return result ?? false;
+        }
+
+        public bool OpenFile(string Title, out string SelectedFile, string Filter = "Все файлы (*.*)|*.*")
+        {
+            var file_dialog = new OpenFileDialog
+            {
+                Title = Title,
+                Filter = Filter
+            };
+
+            if (file_dialog.ShowDialog() != true)
+            {
+                SelectedFile = null;
+                return false;
+            }
+
+            SelectedFile = file_dialog.FileName;
+
+            return true;
+        }
+
+        public bool SaveFile(string Title, out string SelectedFile, string DefaultFileName = null, string Filter = "Все файлы (*.*)|*.*")
+        {
+            var file_dialog = new SaveFileDialog
+            {
+                Title = Title,
+                Filter = Filter
+            };
+            if (!string.IsNullOrWhiteSpace(DefaultFileName))
+                file_dialog.FileName = DefaultFileName;
+
+            if (file_dialog.ShowDialog() != true)
+            {
+                SelectedFile = null;
+                return false;
+            }
+
+            SelectedFile = file_dialog.FileName;
+
+            return true;
         }
     }
 }

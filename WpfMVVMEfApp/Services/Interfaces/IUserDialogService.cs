@@ -24,6 +24,10 @@ namespace WpfMVVMEfApp.Services.Interfaces
         /// <returns></returns>
         bool EditPassword(object item);
 
+        bool OpenFile(string Title, out string SelectedFile, string Filter = "Все файлы (*.*)|*.*");
+
+        bool SaveFile(string Title, out string SelectedFile, string DefaultFileName = null, string Filter = "Все файлы (*.*)|*.*");
+
         /// <summary>
         /// Показать информацию
         /// </summary>
