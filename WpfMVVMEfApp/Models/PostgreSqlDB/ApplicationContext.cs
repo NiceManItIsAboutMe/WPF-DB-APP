@@ -19,6 +19,8 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
         
         public DbSet<Author> Authors { get; set; }
 
+        public DbSet<BookFile> BookFiles { get; set; }
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options):base(options){ }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

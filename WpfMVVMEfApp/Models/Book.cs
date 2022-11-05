@@ -4,6 +4,7 @@ using WpfMVVMEfApp.Models.Base;
 
 namespace WpfMVVMEfApp.Models
 {
+    // можно будет добавить поле цикл книг (серия книг)
     internal class Book : NamedEntity
     {
         [Required(ErrorMessage = "Не указано описание")]
@@ -11,12 +12,14 @@ namespace WpfMVVMEfApp.Models
         public string Description { get; set; }
 
         //virtual - ленивая загрузка (EF будет забирать из базы только в момент обращения) (грабля в двух концах )0)0
-        public virtual ICollection<Category> Category { get; set; }
+        public virtual ICollection<Category>? Categories { get; set; }
 
         [Required]
         public virtual Author Author { get; set; }
 
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<BookFile>? BookFiles { get; set; }
+
+        public virtual ICollection<User>? Users { get; set; }
 
     }
 }

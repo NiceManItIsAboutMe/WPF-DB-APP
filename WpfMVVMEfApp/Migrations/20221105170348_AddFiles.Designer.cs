@@ -12,8 +12,8 @@ using WpfMVVMEfApp.Models.PostgreSqlDB;
 namespace WpfMVVMEfApp.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20221104152937_DateTime")]
-    partial class DateTime
+    [Migration("20221105170348_AddFiles")]
+    partial class AddFiles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,12 +29,12 @@ namespace WpfMVVMEfApp.Migrations
                     b.Property<int>("BooksId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int>("CategoriesId")
                         .HasColumnType("integer");
 
-                    b.HasKey("BooksId", "CategoryId");
+                    b.HasKey("BooksId", "CategoriesId");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CategoriesId");
 
                     b.ToTable("BookCategory");
                 });
@@ -110,6 +110,33 @@ namespace WpfMVVMEfApp.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("WpfMVVMEfApp.Models.BookFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("integer");
+
+                    b.Property<byte[]>("File")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("BookFiles");
                 });
 
             modelBuilder.Entity("WpfMVVMEfApp.Models.Category", b =>
@@ -188,7 +215,7 @@ namespace WpfMVVMEfApp.Migrations
 
                     b.HasOne("WpfMVVMEfApp.Models.Category", null)
                         .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("CategoriesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -219,9 +246,25 @@ namespace WpfMVVMEfApp.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("WpfMVVMEfApp.Models.BookFile", b =>
+                {
+                    b.HasOne("WpfMVVMEfApp.Models.Book", "Book")
+                        .WithMany("BookFiles")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("WpfMVVMEfApp.Models.Author", b =>
                 {
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("WpfMVVMEfApp.Models.Book", b =>
+                {
+                    b.Navigation("BookFiles");
                 });
 #pragma warning restore 612, 618
         }

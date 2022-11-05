@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace WpfMVVMEfApp.Migrations
 {
-    public partial class Initial : Migration
+    public partial class AddFiles : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,9 +16,9 @@ namespace WpfMVVMEfApp.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Surname = table.Column<string>(type: "text", nullable: false),
-                    Patronymic = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Surname = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Patronymic = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -31,7 +31,7 @@ namespace WpfMVVMEfApp.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,13 +44,13 @@ namespace WpfMVVMEfApp.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Login = table.Column<string>(type: "text", nullable: false),
+                    Login = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Password = table.Column<byte[]>(type: "bytea", nullable: false),
-                    Birthday = table.Column<DateOnly>(type: "date", nullable: false),
+                    Birthday = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IsAdmin = table.Column<bool>(type: "boolean", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Surname = table.Column<string>(type: "text", nullable: false),
-                    Patronymic = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Surname = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Patronymic = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -63,9 +63,9 @@ namespace WpfMVVMEfApp.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "character varying(10000)", maxLength: 10000, nullable: false),
                     AuthorId = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -83,11 +83,11 @@ namespace WpfMVVMEfApp.Migrations
                 columns: table => new
                 {
                     BooksId = table.Column<int>(type: "integer", nullable: false),
-                    CategoryId = table.Column<int>(type: "integer", nullable: false)
+                    CategoriesId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookCategory", x => new { x.BooksId, x.CategoryId });
+                    table.PrimaryKey("PK_BookCategory", x => new { x.BooksId, x.CategoriesId });
                     table.ForeignKey(
                         name: "FK_BookCategory_Books_BooksId",
                         column: x => x.BooksId,
@@ -95,9 +95,30 @@ namespace WpfMVVMEfApp.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BookCategory_Categories_CategoryId",
-                        column: x => x.CategoryId,
+                        name: "FK_BookCategory_Categories_CategoriesId",
+                        column: x => x.CategoriesId,
                         principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BookFiles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    File = table.Column<byte[]>(type: "bytea", nullable: false),
+                    BookId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookFiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BookFiles_Books_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -133,9 +154,14 @@ namespace WpfMVVMEfApp.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookCategory_CategoryId",
+                name: "IX_BookCategory_CategoriesId",
                 table: "BookCategory",
-                column: "CategoryId");
+                column: "CategoriesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BookFiles_BookId",
+                table: "BookFiles",
+                column: "BookId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Books_AuthorId",
@@ -164,6 +190,9 @@ namespace WpfMVVMEfApp.Migrations
         {
             migrationBuilder.DropTable(
                 name: "BookCategory");
+
+            migrationBuilder.DropTable(
+                name: "BookFiles");
 
             migrationBuilder.DropTable(
                 name: "BookUser");
