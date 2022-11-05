@@ -190,7 +190,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public void OnLoadBooksSelectedAuthorsCommandExecuted(object? p)
         {
             Books = new ObservableCollection<Book>(_db.Books.Where(b => b.Author.Id== SelectedAuthor.Id)
-                .Include(b => b.Category).Include(b => b.Author).AsNoTracking());
+                .Include(b => b.Categories).Include(b => b.Author).AsNoTracking());
         }
 
         #endregion
@@ -351,7 +351,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Редактирование книги /// </summary>
         public void OnEditSelectedBookCommandExecuted(object? p)
         {
-            Book book = _db.Books.Include(b => b.Category).Include(b => b.Author).First(b => b.Id == SelectedBook.Id);
+            Book book = _db.Books.Include(b => b.Categories).Include(b => b.Author).First(b => b.Id == SelectedBook.Id);
             bool result = _DialogService.Edit(book);
             if (!result)
             {

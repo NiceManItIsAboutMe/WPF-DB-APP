@@ -198,8 +198,8 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Загрузка книг выбранной категории /// </summary>
         public void OnLoadBooksSelectedCategoriesCommandExecuted(object? p)
         {
-            Books = new ObservableCollection<Book>(_db.Books.Where(b => b.Category.Contains(SelectedCategory))
-                .Include(b=>b.Category).Include(b => b.Author).AsNoTracking());
+            Books = new ObservableCollection<Book>(_db.Books.Where(b => b.Categories.Contains(SelectedCategory))
+                .Include(b=>b.Categories).Include(b => b.Author).AsNoTracking());
         }
 
         #endregion
@@ -362,7 +362,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             Book book = new Book
             {
-                Category=new List<Category> { SelectedCategory}
+                Categories=new List<Category> { SelectedCategory}
             };
             bool result = _DialogService.Edit(book);
             if (!result) return;
@@ -370,7 +370,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             {
                 _db.Add(book);
                 _db.SaveChanges();
-                if (book.Category.Contains(SelectedCategory))
+                if (book.Categories.Contains(SelectedCategory))
                 {
                     Books.Add(book);
                     SelectedBook = book;
@@ -403,7 +403,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Редактирование книги /// </summary>
         public void OnEditSelectedBookCommandExecuted(object? p)
         {
-            Book book = _db.Books.Include(b => b.Category).Include(b => b.Author).First(b => b.Id == SelectedBook.Id);
+            Book book = _db.Books.Include(b => b.Categories).Include(b => b.Author).First(b => b.Id == SelectedBook.Id);
             bool result = _DialogService.Edit(book);
             if (!result)
             {
@@ -417,7 +417,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
                 _db.SaveChanges();
                 _db.Entry(book).State = EntityState.Detached;
                 Books.Remove(SelectedBook);
-                if (book.Category.Contains(SelectedCategory))
+                if (book.Categories.Contains(SelectedCategory))
                 {
                     Books.Add(book);
                     SelectedBook = book;

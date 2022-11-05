@@ -103,7 +103,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Загрузки книг /// </summary>
         public void OnLoadBooksCommandExecuted(object? p)
         {
-            Books = new ObservableCollection<Book>(_db.Books.Include(b=> b.Author).Include(b=>b.Category).OrderBy(b=> b.Name).AsNoTracking());
+            Books = new ObservableCollection<Book>(_db.Books.Include(b=> b.Author).Include(b=>b.Categories).OrderBy(b=> b.Name).AsNoTracking());
         }
 
         #endregion
@@ -156,7 +156,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Редактирование книги /// </summary>
         public void OnEditSelectedBookCommandExecuted(object? p)
         {
-            Book book = _db.Books.Include(b => b.Category).Include(b => b.Author).First(b => b.Id == SelectedBook.Id);
+            Book book = _db.Books.Include(b => b.Categories).Include(b => b.Author).First(b => b.Id == SelectedBook.Id);
             bool result=_DialogService.Edit(book);
             if (!result)
             {

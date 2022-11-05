@@ -130,12 +130,12 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         {
             if (Categories == null) return;
 
-            if (Book.Category == null) Book.Category = new ObservableCollection<Category>();
+            if (Book.Categories == null) Book.Categories = new ObservableCollection<Category>();
 
-            Book.Category.Clear();
+            Book.Categories.Clear();
             foreach (var item in Categories.Where(c => c.IsSelected == true))
             {
-                Book.Category.Add(item.Category);
+                Book.Categories.Add(item.Category);
             }
 
         }
@@ -157,9 +157,9 @@ namespace WpfMVVMEfApp.ViewModels.Editors
                 }
 
                 //заполняем коллекцию категорий, к которым относится данная книга
-                if (Book.Category != null)
+                if (Book.Categories != null)
                 {
-                    foreach (var item in Book.Category)
+                    foreach (var item in Book.Categories)
                     {
                         if (Categories.Where(c => c.Category.Id == item.Id).FirstOrDefault() is SelectedCategory category)
                             category.IsSelected = true;

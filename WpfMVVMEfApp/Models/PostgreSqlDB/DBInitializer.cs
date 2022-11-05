@@ -69,7 +69,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                    {
                        Name = $"Книга {i}",
                        Description =$"Описание книги {i}...",
-                       Category = _Categories.ToList().GetRange(random.Next(0,4), 2),
+                       Categories = _Categories.ToList().GetRange(random.Next(0,4), 2),
                        Author = random.NextItem<Author>(_Authors)
                    }).ToArray();
                 _Users = Enumerable
@@ -144,7 +144,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                    {
                        Name = $"Книга {i}",
                        Description = $"Описание книги {i}...\nКосмос — опасное место. Тут ты или хищник, или жертва, которую соседи быстро съедят. И если твои зубы недостаточно остры, за твоей спиной обязательно должна стоять сила, способная защитить тебя от других хищников. Раньше такой охраняющей Землю силой была великая раса гэкхо. Но гэкхо пали под натиском врагов, и теперь Земля должна защищать себя сама. И лучше сразу показать всем в космосе, что с человечеством Земли шутки плохи, поскольку у нашей планеты есть не только мощная Армия Земли и собственный космофлот, но и кое-что уникальное, чего нет ни у одной других расы. У Земли есть Комар и его мгновенно перемещающийся по Вселенной древний крейсер, ломающий все привычные рамки и законы войны.",
-                       Category = _Categories.ToList().GetRange(random.Next(0, 4), 2),
+                       Categories = _Categories.ToList().GetRange(random.Next(0, 4), 2),
                        Author = random.NextItem<Author>(_Authors)
                    }).ToArray();
                 _Users = Enumerable

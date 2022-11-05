@@ -86,7 +86,7 @@
                             <DataGridTemplateColumn Header="Категории">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding Category}" 
+                                        <ComboBox ItemsSource="{Binding Categories}" 
                                                   SelectedItem="{Binding CategoriesModel.SelectedCategory,Source={StaticResource Locator}}">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
