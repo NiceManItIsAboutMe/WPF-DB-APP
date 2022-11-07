@@ -20,7 +20,7 @@ namespace WpfMVVMEfApp.Models
 
         public bool IsAdmin { get; set; }
 
-        public virtual ICollection<Book> Books { get; set; }
+        public virtual ICollection<Book>? Books { get; set; }
 
         public static byte[] HashPassword(string Password) => SHA512.HashData(ASCIIEncoding.ASCII.GetBytes(Password));
 

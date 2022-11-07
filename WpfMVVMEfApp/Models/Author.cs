@@ -7,7 +7,7 @@ namespace WpfMVVMEfApp.Models
 {
     internal class Author : Person, ICloneable
     {
-        public virtual ICollection<Book> Books { get; set; }
+        public virtual ICollection<Book>? Books { get; set; }
 
         public Author(string name,string surname,string patronymic,ICollection<Book> books)
         {

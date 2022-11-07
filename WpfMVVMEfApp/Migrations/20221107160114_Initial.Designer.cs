@@ -12,8 +12,8 @@ using WpfMVVMEfApp.Models.PostgreSqlDB;
 namespace WpfMVVMEfApp.Migrations
 {
     [DbContext(typeof(BooksDbContext))]
-    [Migration("20221105170348_AddFiles")]
-    partial class AddFiles
+    [Migration("20221107160114_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

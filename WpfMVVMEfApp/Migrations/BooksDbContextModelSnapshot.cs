@@ -11,7 +11,7 @@ using WpfMVVMEfApp.Models.PostgreSqlDB;
 namespace WpfMVVMEfApp.Migrations
 {
     [DbContext(typeof(BooksDbContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    partial class BooksDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
