@@ -6,6 +6,7 @@ using System;
 using System.Windows;
 using System.Xaml;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
+using WpfMVVMEfApp.Repositories;
 using WpfMVVMEfApp.Services;
 using WpfMVVMEfApp.Services.Interfaces;
 using WpfMVVMEfApp.ViewModels;
@@ -36,6 +37,7 @@ namespace WpfMVVMEfApp
             .AddScoped<BooksViewModel>()
             .AddScoped<AuthorsViewModel>()
             .AddScoped<CategoriesViewModel>()
+            .AddRepositories()
 
             .AddDbContext<BooksDbContext>(opt => // не уверен как долго живет данный сервис, но раз офф документация советует, скорее всего закрывает как можно быстрее соединение с бд(надеюсь...)
                         {
