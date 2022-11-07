@@ -23,7 +23,7 @@ namespace WpfMVVMEfApp.ViewModels
     {
         #region поля
         private IUserDialogService _DialogService;
-        private ApplicationContext _db;
+        private BooksDbContext _db;
         public MainWindowViewModel _MainWindowViewModel { get; set; }
         private AdminViewModel _AdminViewModel;
 
@@ -118,7 +118,7 @@ namespace WpfMVVMEfApp.ViewModels
         }
         #endregion
 
-        public AuthorizationViewModel(ApplicationContext db,AdminViewModel adminViewModel, IUserDialogService dialogService)
+        public AuthorizationViewModel(BooksDbContext db,AdminViewModel adminViewModel, IUserDialogService dialogService)
         {
             _db = db;
             _DialogService = dialogService;

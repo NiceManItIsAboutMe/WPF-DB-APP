@@ -37,7 +37,7 @@ namespace WpfMVVMEfApp
             .AddScoped<AuthorsViewModel>()
             .AddScoped<CategoriesViewModel>()
 
-            .AddDbContext<ApplicationContext>(opt => // не уверен как долго живет данный сервис, но раз офф документация советует, скорее всего закрывает как можно быстрее соединение с бд(надеюсь...)
+            .AddDbContext<BooksDbContext>(opt => // не уверен как долго живет данный сервис, но раз офф документация советует, скорее всего закрывает как можно быстрее соединение с бд(надеюсь...)
                         {
                             //выбираем секцию из appsettings Database
                             var conf = host.Configuration.GetSection("Database");

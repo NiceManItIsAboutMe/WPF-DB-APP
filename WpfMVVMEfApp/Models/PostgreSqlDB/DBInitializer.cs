@@ -12,13 +12,13 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
     internal class DBInitializer
     {
 
-        private readonly ApplicationContext _db;
+        private readonly BooksDbContext _db;
         private readonly ILogger<DBInitializer> _logger;
         private Category[] _Categories;
         private Author[] _Authors;
         private Book[] _Books;
         private User[] _Users;
-        public DBInitializer(ApplicationContext db, ILogger<DBInitializer> logger)
+        public DBInitializer(BooksDbContext db, ILogger<DBInitializer> logger)
         {
             _db = db;
             _logger = logger;

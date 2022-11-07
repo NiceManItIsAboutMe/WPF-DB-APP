@@ -17,7 +17,7 @@ namespace WpfMVVMEfApp.Services
 {
     internal class WindowUserDialogService : IUserDialogService
     {
-        private ApplicationContext _db;
+        private BooksDbContext _db;
 
         public bool Edit(object item)
         {
@@ -70,7 +70,7 @@ namespace WpfMVVMEfApp.Services
         public void ShowWarning(string Information, string Caption) =>
             MessageBox.Show(Information, Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
 
-        public WindowUserDialogService(ApplicationContext db)
+        public WindowUserDialogService(BooksDbContext db)
         {
             _db = db;
         }
