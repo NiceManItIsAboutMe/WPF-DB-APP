@@ -84,7 +84,7 @@ namespace WpfMVVMEfApp.ViewModels
             {
                 var password = User.HashPassword(Password);
 
-                var user = await _db.Users.Where(u => u.Login == Login && u.Password == password).FirstOrDefaultAsync();
+                var user = await _db.Users.FirstOrDefaultAsync(u => u.Login == Login && u.Password == password);
 
                 if (user == null) { _DialogService.ShowWarning("Вы ввели неверный логин или пароль", "Предупреждение"); return; }
                 else if(!user.IsAdmin) // изменить потом
