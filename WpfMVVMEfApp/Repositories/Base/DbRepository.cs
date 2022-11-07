@@ -16,7 +16,7 @@ namespace WpfMVVMEfApp.Repositories.Base
         private readonly DbSet<T> _Set;
 
         public bool IsAutoSaveChanges { get; set; } = true;
-        public IQueryable<T> Items => _Set;
+        public virtual IQueryable<T> Items => _Set;
 
         public DbRepository(BooksDbContext db)
         {
