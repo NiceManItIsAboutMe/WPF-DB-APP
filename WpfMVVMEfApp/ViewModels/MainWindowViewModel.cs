@@ -16,7 +16,6 @@ namespace WpfMVVMEfApp.ViewModels
     internal class MainWindowViewModel : ViewModel
     {
         #region Поля
-        private ApplicationDbContext _db;
 
         private AuthorizationViewModel _AuthorizationViewModel;
 
@@ -59,9 +58,8 @@ namespace WpfMVVMEfApp.ViewModels
 
         #endregion
 
-        public MainWindowViewModel(ApplicationDbContext db,AuthorizationViewModel authorizationViewModel, IUserDialogService DialogService)
+        public MainWindowViewModel(AuthorizationViewModel authorizationViewModel, IUserDialogService DialogService)
         {
-            _db = db;
             _AuthorizationViewModel = authorizationViewModel;
             //чтобы создать авторизацию нам надо данный сервис а чтобы создать данный сервис надо авторизацию разрываем это кольцо
             _AuthorizationViewModel._MainWindowViewModel = this;

@@ -18,7 +18,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
     internal class CategoriesViewModel : ViewModel
     {
-        private ApplicationDbContext _db;
+        private IDbContextFactory<ApplicationDbContext> _dbFactory;
 
         private IUserDialogService _DialogService;
 
@@ -171,9 +171,10 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanLoadCategoriesDataCommandExecute(object? p) => true;
 
         /// <summary> /// Загрузка категорий /// </summary>
-        public void OnLoadCategoriesDataCommandExecuted(object? p)
+        public async void OnLoadCategoriesDataCommandExecuted(object? p)
         {
-            Categories = new ObservableCollection<Category>(_db.Categories.AsNoTracking());
+            using var db = await _dbFactory.CreateDbContextAsync();
+            Categories = new ObservableCollection<Category>(db.Categories.AsNoTracking());
         }
 
         #endregion
@@ -196,10 +197,11 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         }
 
         /// <summary> /// Загрузка книг выбранной категории /// </summary>
-        public void OnLoadBooksSelectedCategoriesCommandExecuted(object? p)
+        public async void OnLoadBooksSelectedCategoriesCommandExecuted(object? p)
         {
-            Books = new ObservableCollection<Book>(_db.Books.Where(b => b.Categories.Contains(SelectedCategory))
-                .Include(b=>b.Categories).Include(b => b.Author).AsNoTracking());
+            using var db = await _dbFactory.CreateDbContextAsync();
+            Books = new ObservableCollection<Book>(await db.Books.Where(b => b.Categories.Contains(SelectedCategory))
+                .Include(b=>b.Categories).Include(b => b.Author).AsNoTracking().ToListAsync());
         }
 
         #endregion
@@ -222,11 +224,11 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             if (SelectedCategory == null) return;
 
-            Category category = await _db.Categories.FirstAsync(c => c.Id == SelectedCategory.Id);
+            using var db = await _dbFactory.CreateDbContextAsync();
             if (!_DialogService.Confirm($"Вы действительно хотите удалить категорию: {SelectedCategory}", "Удаление"))
                 return;
-            _db.Remove(category);
-            await _db.SaveChangesAsync();
+            db.Remove(SelectedCategory);
+            await db.SaveChangesAsync();
             Categories.Remove(SelectedCategory);
         }
 
@@ -247,19 +249,17 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Редактирование категории /// </summary>
         public async void OnEditSelectedCategoryCommandExecuted(object? p)
         {
-            Category category = await _db.Categories.Include(c=>c.Books).FirstAsync(c=>c.Id==SelectedCategory.Id);
+            using var db = await _dbFactory.CreateDbContextAsync();
+            Category category = await db.Categories.Include(c=>c.Books).FirstAsync(c=>c.Id==SelectedCategory.Id);
             bool result = _DialogService.Edit(category);
             if (!result)
             {
-                // перестаем остлеживать данную сущность, иначе при следующем входе в редактор мы получим изменненую сущность, которая была закэширована EF
-                _db.Entry(category).State = EntityState.Detached;
                 return;
             }
             try
             {
-                _db.Update(category);
-                await _db.SaveChangesAsync();
-                _db.Entry(category).State = EntityState.Detached;
+                db.Update(category);
+                await db.SaveChangesAsync();
                 Categories.Remove(SelectedCategory);
                 Categories.Add(category);
                 SelectedCategory = category;
@@ -290,6 +290,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Добавление категории /// </summary>
         public async void OnAddCategoryCommandExecuted(object? p)
         {
+            using var db = await _dbFactory.CreateDbContextAsync();
             Category category = new Category();
             bool result = _DialogService.Edit(category);
             if (!result)
@@ -298,15 +299,14 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             }
             try
             {
-                _db.Add(category);
-                await _db.SaveChangesAsync();
+                db.Add(category);
+                await db.SaveChangesAsync();
                 Categories.Add(category);
                 SelectedCategory = category;
                 _CategoriesViewSource.View.Refresh();
             }
             catch(Exception ex)
             {
-                _db.Remove(category);
                 _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
                     "\nВ ином случае обратитесь в службу поддержки" +
                     $"\n{ex.Message}", "Ошибка сохранения объекта");
@@ -331,14 +331,16 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public async void OnRemoveSelectedBookCommandExecuted(object? p)
         {
             if (SelectedBook == null) return;
-            Book book = await _db.Books.FirstAsync(b => b.Id == SelectedBook.Id);
+
+            using var db = await _dbFactory.CreateDbContextAsync();
+
             if (!_DialogService.Confirm($"Вы действительно хотите удалить книгу: {SelectedBook.Name}" +
                 $", автора: {SelectedBook.Author}?",
                 "Удаление"))
                 return;
 
-            _db.Remove(book);
-            await _db.SaveChangesAsync();
+            db.Remove(SelectedBook);
+            await db.SaveChangesAsync();
 
             Books.Remove(SelectedBook);
         }
@@ -360,6 +362,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Добавление книги /// </summary>
         public async void OnAddBookCommandExecuted(object? p)
         {
+            using var db = await _dbFactory.CreateDbContextAsync();
             Book book = new Book
             {
                 Categories=new List<Category> { SelectedCategory}
@@ -368,8 +371,8 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             if (!result) return;
             try
             {
-                _db.Add(book);
-                await _db.SaveChangesAsync();
+                db.Add(book);
+                await db.SaveChangesAsync();
                 if (book.Categories.Contains(SelectedCategory))
                 {
                     Books.Add(book);
@@ -379,7 +382,6 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             }
             catch (Exception ex)
             {
-                _db.Remove(book);
                 _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
                     "\nВ ином случае обратитесь в службу поддержки" +
                     $"\n{ex.Message}", "Ошибка сохранения объекта");
@@ -403,19 +405,17 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Редактирование книги /// </summary>
         public async void OnEditSelectedBookCommandExecuted(object? p)
         {
-            Book book = await _db.Books.Include(b => b.Categories).Include(b => b.Author).FirstAsync(b => b.Id == SelectedBook.Id);
+            using var db = await _dbFactory.CreateDbContextAsync();
+            Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).FirstAsync(b => b.Id == SelectedBook.Id);
             bool result = _DialogService.Edit(book);
             if (!result)
             {
-                // перестаем остлеживать данную сущность, иначе при следующем входе в редактор мы получим изменненую сущность, которая была закэширована EF
-                _db.Entry(book).State = EntityState.Detached;
                 return;
             }
             try
             {
-                _db.Update(book);
-                await _db.SaveChangesAsync();
-                _db.Entry(book).State = EntityState.Detached;
+                db.Update(book);
+                await db.SaveChangesAsync();
                 Books.Remove(SelectedBook);
                 if (book.Categories.Contains(SelectedCategory))
                 {
@@ -435,9 +435,9 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-        public CategoriesViewModel(ApplicationDbContext db, IUserDialogService dialogService)
+        public CategoriesViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, IUserDialogService dialogService)
         {
-            _db = db;
+            _dbFactory = dbFactory;
             _DialogService = dialogService;
         }
 

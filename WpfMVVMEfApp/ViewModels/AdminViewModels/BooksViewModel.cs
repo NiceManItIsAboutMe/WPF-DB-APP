@@ -19,7 +19,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
     internal class BooksViewModel : ViewModel
     {
-        private ApplicationDbContext _db;
+        private IDbContextFactory<ApplicationDbContext> _dbFactory;
 
         private IUserDialogService _DialogService;
 
@@ -101,9 +101,15 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanLoadBooksCommandExecute(object? p) => true;
 
         /// <summary> /// Загрузки книг /// </summary>
-        public void OnLoadBooksCommandExecuted(object? p)
+        public async void OnLoadBooksCommandExecuted(object? p)
         {
-            Books = new ObservableCollection<Book>(_db.Books.Include(b=> b.Author).Include(b=>b.Categories).OrderBy(b=> b.Name).AsNoTracking());
+            using var db = await _dbFactory.CreateDbContextAsync();
+            Books = new ObservableCollection<Book>(await db.Books
+                .Include(b=> b.Author)
+                .Include(b=>b.Categories)
+                .OrderBy(b=> b.Name)
+                .AsNoTracking()
+                .ToListAsync());
         }
 
         #endregion
@@ -126,14 +132,15 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             if (SelectedBook == null) return;
 
-            Book book = await _db.Books.FirstAsync(b => b.Id == SelectedBook.Id);
+            using var db = await _dbFactory.CreateDbContextAsync();
+
             if (!_DialogService.Confirm($"Вы действительно хотите удалить книгу: {SelectedBook.Name}" +
                 $", автора: {SelectedBook.Author}?",
                 "Удаление"))
                 return;
 
-            _db.Remove(book);
-            await _db.SaveChangesAsync();
+            db.Remove(SelectedBook);
+            await db.SaveChangesAsync();
 
             Books.Remove(SelectedBook);
         }
@@ -156,19 +163,18 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Редактирование книги /// </summary>
         public async void OnEditSelectedBookCommandExecuted(object? p)
         {
-            Book book = await _db.Books.Include(b => b.Categories).Include(b => b.Author).FirstAsync(b => b.Id == SelectedBook.Id);
+            using var db = await _dbFactory.CreateDbContextAsync();
+
+            Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).FirstAsync(b => b.Id == SelectedBook.Id);
             bool result=_DialogService.Edit(book);
             if (!result)
             {
-                // перестаем остлеживать данную сущность, иначе при следующем входе в редактор мы получим изменненую сущность, которая была закэширована EF
-                _db.Entry(book).State = EntityState.Detached;
                 return;
             }
             try
             {
-                _db.Update(book);
-                await _db.SaveChangesAsync();
-                _db.Entry(book).State = EntityState.Detached;
+                db.Update(book);
+                await db.SaveChangesAsync();
                 Books.Remove(SelectedBook);
                 Books.Add(book);
                 SelectedBook = book;
@@ -201,20 +207,21 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Добавить книгу /// </summary>
         public async void OnAddBookCommandExecuted(object? p)
         {
+            using var db = await _dbFactory.CreateDbContextAsync();
             Book book = new Book();
             bool result = _DialogService.Edit(book);
             if (!result) return;
             try
             {
-                _db.Add(book);
-                await _db.SaveChangesAsync();
+                db.Add(book);
+                await db.SaveChangesAsync();
                 Books.Add(book);
                 SelectedBook = book;
                 _BooksViewSource.View.Refresh();
             }
             catch (Exception ex)
             {
-                _db.Remove(book);
+                db.Remove(book);
                 _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
                     "\nВ ином случае обратитесь в службу поддержки" +
                     $"\n{ex.Message}", "Ошибка сохранения объекта");
@@ -224,9 +231,9 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         #endregion
 
 
-        public BooksViewModel(ApplicationDbContext db, IUserDialogService dialogService)
+        public BooksViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, IUserDialogService dialogService)
         {
-            _db = db;
+            _dbFactory = dbFactory;
             _DialogService = dialogService;
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +18,7 @@ namespace WpfMVVMEfApp.Services
 {
     internal class WindowUserDialogService : IUserDialogService
     {
-        private ApplicationDbContext _db;
+        private IDbContextFactory<ApplicationDbContext> _dbFactory;
 
         public bool Edit(object item)
         {
@@ -70,17 +71,17 @@ namespace WpfMVVMEfApp.Services
         public void ShowWarning(string Information, string Caption) =>
             MessageBox.Show(Information, Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
 
-        public WindowUserDialogService(ApplicationDbContext db)
+        public WindowUserDialogService(IDbContextFactory<ApplicationDbContext> dbFactory)
         {
-            _db = db;
+            _dbFactory = dbFactory;
         }
 
         private bool EditBook(Book book)
         {
-
+            using var db = _dbFactory.CreateDbContext();
             BookEditorViewModel vm = new BookEditorViewModel(book,
-                new ObservableCollection<Category>(_db.Categories),
-                new ObservableCollection<Author>(_db.Authors));
+                new ObservableCollection<Category>(db.Categories),
+                new ObservableCollection<Author>(db.Authors));
 
             BookEditorWindow window = new BookEditorWindow()
             {
@@ -108,8 +109,9 @@ namespace WpfMVVMEfApp.Services
 
         private bool EditCategory(Category category)
         {
+            using var db = _dbFactory.CreateDbContext();
             CategoryEditorViewModel vm=new CategoryEditorViewModel(category,
-               new ObservableCollection<Book>(_db.Books));
+               new ObservableCollection<Book>(db.Books));
 
             CategoryEditorWindow window = new CategoryEditorWindow()
             {
