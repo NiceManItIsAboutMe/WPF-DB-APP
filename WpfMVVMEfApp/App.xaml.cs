@@ -37,7 +37,27 @@ namespace WpfMVVMEfApp
             .AddScoped<AuthorsViewModel>()
             .AddScoped<CategoriesViewModel>()
 
-            .AddDbContext<ApplicationContext>(opt => // не уверен как долго живет данный сервис, но раз офф документация советует, скорее всего закрывает как можно быстрее соединение с бд(надеюсь...)
+            .AddDbContextFactory<ApplicationDbContext>(opt => // не уверен как долго живет данный сервис, но раз офф документация советует, скорее всего закрывает как можно быстрее соединение с бд(надеюсь...)
+            {
+                //выбираем секцию из appsettings Database
+                var conf = host.Configuration.GetSection("Database");
+                var type = conf["Type"];
+                switch (type)
+                {
+                    case null: throw new InvalidOperationException("Не определен тип БД в appsettings.json");
+                    default: throw new InvalidOperationException($"Тип подключения {type} не поддерживается");
+
+                    case "Postgres":
+                        opt.UseNpgsql(conf.GetConnectionString(type));
+                        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true); // для добавления дат (Постгрес ругается что добавляем дату не в UTC)
+                        break;
+                    case "Local":
+                        opt.UseInMemoryDatabase(conf.GetConnectionString(type));
+                        break;
+                }
+            })
+
+            .AddDbContext<ApplicationDbContext>(opt => // не уверен как долго живет данный сервис, но раз офф документация советует, скорее всего закрывает как можно быстрее соединение с бд(надеюсь...)
                         {
                             //выбираем секцию из appsettings Database
                             var conf = host.Configuration.GetSection("Database");

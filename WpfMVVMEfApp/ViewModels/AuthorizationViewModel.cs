@@ -23,7 +23,7 @@ namespace WpfMVVMEfApp.ViewModels
     {
         #region поля
         private IUserDialogService _DialogService;
-        private ApplicationContext _db;
+        private IDbContextFactory<ApplicationDbContext> _dbFactory;
         public MainWindowViewModel _MainWindowViewModel { get; set; }
         private AdminViewModel _AdminViewModel;
 
@@ -83,17 +83,19 @@ namespace WpfMVVMEfApp.ViewModels
             try
             {
                 var password = User.HashPassword(Password);
-
-                var user = await _db.Users.Where(u => u.Login == Login && u.Password == password).FirstOrDefaultAsync();
-
-                if (user == null) { _DialogService.ShowWarning("Вы ввели неверный логин или пароль", "Предупреждение"); return; }
-                else if(!user.IsAdmin) // изменить потом
+                using (var db = await _dbFactory.CreateDbContextAsync())
                 {
-                    _MainWindowViewModel.CurrrentViewModel = _AdminViewModel;
-                }
-                else
-                {
+                    var user = await db.Users.Where(u => u.Login == Login && u.Password == password).FirstOrDefaultAsync();
 
+                    if (user == null) { _DialogService.ShowWarning("Вы ввели неверный логин или пароль", "Предупреждение"); return; }
+                    else if (!user.IsAdmin) // изменить потом
+                    {
+                        _MainWindowViewModel.CurrrentViewModel = _AdminViewModel;
+                    }
+                    else
+                    {
+
+                    }
                 }
             }
             catch (NpgsqlException ex)
@@ -118,9 +120,9 @@ namespace WpfMVVMEfApp.ViewModels
         }
         #endregion
 
-        public AuthorizationViewModel(ApplicationContext db,AdminViewModel adminViewModel, IUserDialogService dialogService)
+        public AuthorizationViewModel(IDbContextFactory<ApplicationDbContext> dbFactory,AdminViewModel adminViewModel, IUserDialogService dialogService)
         {
-            _db = db;
+            _dbFactory = dbFactory;
             _DialogService = dialogService;
             _AdminViewModel = adminViewModel;
         }

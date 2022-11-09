@@ -18,7 +18,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
     internal class CategoriesViewModel : ViewModel
     {
-        private ApplicationContext _db;
+        private ApplicationDbContext _db;
 
         private IUserDialogService _DialogService;
 
@@ -435,7 +435,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-        public CategoriesViewModel(ApplicationContext db, IUserDialogService dialogService)
+        public CategoriesViewModel(ApplicationDbContext db, IUserDialogService dialogService)
         {
             _db = db;
             _DialogService = dialogService;

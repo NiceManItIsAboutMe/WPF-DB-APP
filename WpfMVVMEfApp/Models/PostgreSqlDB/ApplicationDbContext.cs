@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace WpfMVVMEfApp.Models.PostgreSqlDB
 {
     //Диспетчер пакетов -> Add-Migration Initial -> Update-Database
-    internal class ApplicationContext:DbContext
+    internal class ApplicationDbContext:DbContext
     {
         public DbSet<Book> Books { get; set; }
 
@@ -21,7 +21,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
 
         public DbSet<BookFile> BookFiles { get; set; }
 
-        public ApplicationContext(DbContextOptions<ApplicationContext> options):base(options){ }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options):base(options){ }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,14 +40,14 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
     /// <summary>
     /// Для создания миграций
     /// </summary>
-    internal class YourDbContextFactory : IDesignTimeDbContextFactory<ApplicationContext>
+    internal class YourDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
     {
-        public ApplicationContext CreateDbContext(string[] args)
+        public ApplicationDbContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
             optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=Bookinist;Username=postgres;Password=postgres");
 
-            return new ApplicationContext(optionsBuilder.Options);
+            return new ApplicationDbContext(optionsBuilder.Options);
         }
     }
 }

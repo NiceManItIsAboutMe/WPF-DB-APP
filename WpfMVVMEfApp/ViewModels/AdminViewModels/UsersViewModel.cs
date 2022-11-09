@@ -22,7 +22,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
     internal class UsersViewModel : ViewModel
     {
-        private ApplicationContext _db;
+        private ApplicationDbContext _db;
 
         private IUserDialogService _DialogService;
 
@@ -261,7 +261,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-        public UsersViewModel(ApplicationContext db, IUserDialogService dialogService)
+        public UsersViewModel(ApplicationDbContext db, IUserDialogService dialogService)
         {
             _db = db;
             _DialogService = dialogService;
