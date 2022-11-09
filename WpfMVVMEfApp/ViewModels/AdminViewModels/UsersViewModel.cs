@@ -22,7 +22,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
     internal class UsersViewModel : ViewModel
     {
-        private ApplicationDbContext _db;
+        private IDbContextFactory<ApplicationDbContext> _dbFactory;
 
         private IUserDialogService _DialogService;
 
@@ -111,8 +111,11 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             if (result)
             {
                 SelectedUser.Password = User.HashPassword("PasswordResetedPleaseEnterNewPassword");
-                _db.Users.Update(SelectedUser);
-                await _db.SaveChangesAsync();
+                using (var db = await _dbFactory.CreateDbContextAsync())
+                {
+                    db.Users.Update(SelectedUser);
+                    await db.SaveChangesAsync();
+                }
             }
         }
 
@@ -132,9 +135,10 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public bool CanLoadUsersDataCommandExecute(object? p) => true;
 
         /// <summary> /// Загрузка данных пользователей из бд /// </summary>
-        public void OnLoadUsersDataCommandExecuted(object? p)
+        public async void OnLoadUsersDataCommandExecuted(object? p)
         {
-            Users = new ObservableCollection<User>(_db.Users.Include(a => a.Books).AsNoTracking());
+            using var db = await _dbFactory.CreateDbContextAsync();
+            Users = new ObservableCollection<User>(db.Users.Include(a => a.Books).AsNoTracking());
         }
 
         #endregion
@@ -156,11 +160,13 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             if (SelectedUser == null) return;
 
-            User user = await _db.Users.FirstAsync(u => u.Id == SelectedUser.Id);
+            using var db = await _dbFactory.CreateDbContextAsync();
+
+            User user = await db.Users.FirstAsync(u => u.Id == SelectedUser.Id);
             if (!_DialogService.Confirm($"Вы действительно хотите удалить пользователя: {SelectedUser}?", "Удаление"))
                 return;
-            _db.Remove(user);
-            await _db.SaveChangesAsync();
+            db.Remove(user);
+            await db.SaveChangesAsync();
             Users.Remove(SelectedUser);
         }
 
@@ -188,24 +194,25 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <param name="p"> bool - сброс пароля </param>
         public async void OnEditSelectedUserCommandExecuted(object? p)
         {
-            User user = await _db.Users.FirstAsync(u => u.Id == SelectedUser.Id);
+            using var db = await _dbFactory.CreateDbContextAsync();
+
+            User user = await db.Users.FirstAsync(u => u.Id == SelectedUser.Id);
+
             if(p != null)
             {
                 if (Convert.ToBoolean(p))
                     user.Password = null;
             }
+
             bool result = _DialogService.Edit(user);
             if (!result)
             {
-                // перестаем остлеживать данную сущность, иначе при следующем входе в редактор мы получим изменненую сущность, которая была закэширована EF
-                _db.Entry(user).State = EntityState.Detached;
                 return;
             }
             try
             {
-                _db.Update(user);
-                await _db.SaveChangesAsync();
-                _db.Entry(user).State = EntityState.Detached;
+                db.Update(user);
+                await db.SaveChangesAsync();
                 Users.Remove(SelectedUser);
                 Users.Add(user);
                 SelectedUser = user;
@@ -236,6 +243,8 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Добавить пользователя /// </summary>
         public async void OnAddUserCommandExecuted(object? p)
         {
+            using var db = await _dbFactory.CreateDbContextAsync();
+
             User user = new User();
             bool result = _DialogService.Edit(user);
             if (!result)
@@ -244,15 +253,15 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             }
             try
             {
-                _db.Add(user);
-                await _db.SaveChangesAsync();
+                db.Add(user);
+                await db.SaveChangesAsync();
                 Users.Add(user);
                 SelectedUser = user;
                 _UsersViewSource.View.Refresh();
             }
             catch (Exception ex)
             {
-                _db.Remove(user);
+                db.Remove(user);
                 _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
                     "\nВ ином случае обратитесь в службу поддержки" +
                     $"\n{ex.Message}", "Ошибка сохранения объекта");
@@ -261,9 +270,9 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-        public UsersViewModel(ApplicationDbContext db, IUserDialogService dialogService)
+        public UsersViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, IUserDialogService dialogService)
         {
-            _db = db;
+            _dbFactory = dbFactory;
             _DialogService = dialogService;
         }
 
