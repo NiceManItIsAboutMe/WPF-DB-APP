@@ -138,7 +138,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public async void OnLoadUsersDataCommandExecuted(object? p)
         {
             using var db = await _dbFactory.CreateDbContextAsync();
-            Users = new ObservableCollection<User>(db.Users.Include(a => a.Books).AsNoTracking());
+            Users = new ObservableCollection<User>(await db.Users.Include(a => a.Books).AsNoTracking().ToListAsync());
         }
 
         #endregion

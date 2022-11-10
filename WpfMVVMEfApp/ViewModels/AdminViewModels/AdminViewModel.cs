@@ -18,9 +18,6 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
     internal class AdminViewModel : ViewModel
     {
         #region Поля
-        private ApplicationDbContext _db;
-
-
         #region UsersViewModel
 
         /// <summary> /// UsersViewModel /// </summary>
@@ -61,19 +58,8 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-
-
-
-
-        
-
-
-
-
-
-
-
         #endregion
+
         /*
                 #region Команды
                 #region команда Обновление данных в бд
@@ -220,10 +206,10 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
                 #endregion
                 #endregion
         */
+
         // разобьем данную модель на каждый tabitem не уверен на сколько это правильно, зато создам множество viewModel и view и потренеруюсь
-        public AdminViewModel(ApplicationDbContext db, IUserDialogService dialogService, UsersViewModel usersViewModel,AuthorsViewModel authorsViewModel,CategoriesViewModel categoriesViewModel, BooksViewModel booksViewModel)
+        public AdminViewModel(IUserDialogService dialogService, UsersViewModel usersViewModel,AuthorsViewModel authorsViewModel,CategoriesViewModel categoriesViewModel, BooksViewModel booksViewModel)
         {
-            _db = db;
             UsersViewModel = usersViewModel;
             AuthorsViewModel = authorsViewModel;
             CategoriesViewModel = categoriesViewModel;

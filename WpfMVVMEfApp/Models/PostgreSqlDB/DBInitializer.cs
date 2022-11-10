@@ -12,15 +12,15 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
     internal class DBInitializer
     {
 
-        private readonly ApplicationDbContext _db;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbFactory;
         private readonly ILogger<DBInitializer> _logger;
         private Category[] _Categories;
         private Author[] _Authors;
         private Book[] _Books;
         private User[] _Users;
-        public DBInitializer(ApplicationDbContext db, ILogger<DBInitializer> logger)
+        public DBInitializer(IDbContextFactory<ApplicationDbContext> dbFactory, ILogger<DBInitializer> logger)
         {
-            _db = db;
+            _dbFactory = dbFactory;
             _logger = logger;
         }
 
@@ -31,28 +31,30 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
 
                 var timer = Stopwatch.StartNew();
                 _logger.LogInformation("------------------------Инициализация БД------------------------");
+                using var db = await _dbFactory.CreateDbContextAsync();
 
                 //_logger.LogInformation("Удаление БД");
-                //await _db.Database.EnsureDeletedAsync();
+                //await db.Database.EnsureDeletedAsync();
                 //_logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
 
                 _logger.LogInformation("Миграция БД");
 
-                if (_db.Database.IsInMemory())
-                    await _db.Database.EnsureCreatedAsync();
+                if (db.Database.IsInMemory())
+                    await db.Database.EnsureCreatedAsync();
                 else
-                    await _db.Database.MigrateAsync();
+                    await db.Database.MigrateAsync();
 
                 _logger.LogInformation("Миграция БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
                 // если в базе уже что-то есть не инициализируем
-                if (await _db.Books.AnyAsync()) { _logger.LogInformation("База данных существует и полна"); return; }
+                if (await db.Books.AnyAsync()) { _logger.LogInformation("База данных существует и полна"); return; }
 
                 Random random = new Random();
                 _Categories = Enumerable
                     .Range(1, 5)
                     .Select(i => new Category { Name = $"Категория {i}" }).ToArray();
+                await db.AddRangeAsync(_Categories);
 
                 _Authors = Enumerable
                     .Range(1, 5)
@@ -62,6 +64,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                         Name = $"Автор {i}",
                         Patronymic = $"Отчество {i}",
                     }).ToArray();
+                await db.AddRangeAsync(_Authors);
 
                 _Books = Enumerable
                    .Range(1, 500)
@@ -72,6 +75,9 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                        Categories = _Categories.ToList().GetRange(random.Next(0,4), 2),
                        Author = random.NextItem<Author>(_Authors)
                    }).ToArray();
+                await db.AddRangeAsync(_Books);
+
+
                 _Users = Enumerable
                    .Range(1, 5)
                    .Select(i => new User
@@ -85,12 +91,9 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                        IsAdmin = false,
                        Books= _Books.ToList().GetRange(random.Next(1,490),10)
                    }).ToArray();
+                await db.AddRangeAsync(_Users);
 
-                await _db.AddRangeAsync(_Categories);
-                await _db.AddRangeAsync(_Authors);
-                await _db.AddRangeAsync(_Users);
-                await _db.AddRangeAsync(_Books);
-                await _db.SaveChangesAsync();
+                await db.SaveChangesAsync();
                 _logger.LogInformation("Инициализация завершена {0} мс", timer.ElapsedMilliseconds);
             }
             catch (NpgsqlException ex)
@@ -106,23 +109,24 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
 
                 var timer = Stopwatch.StartNew();
                 _logger.LogInformation("------------------------Инициализация БД------------------------");
+                using var db = _dbFactory.CreateDbContext();
 
                 //_logger.LogInformation("Удаление БД");
-                //_db.Database.EnsureDeleted();
+                //db.Database.EnsureDeleted();
                 //_logger.LogInformation("Удаление БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
 
                 _logger.LogInformation("Миграция БД");
 
-                if (_db.Database.IsInMemory())
-                    _db.Database.EnsureCreated();
+                if (db.Database.IsInMemory())
+                    db.Database.EnsureCreated();
                 else
-                    _db.Database.Migrate();
+                    db.Database.Migrate();
 
                 _logger.LogInformation("Миграция БД выполнено спустя {0} мс", timer.ElapsedMilliseconds);
 
                 // если в базе уже что-то есть не инициализируем
-                if (_db.Books.Any()) { _logger.LogInformation("База данных существует и полна"); return; }
+                if (db.Books.Any()) { _logger.LogInformation("База данных существует и полна"); return; }
 
                 Random random = new Random();
                 _Categories = Enumerable
@@ -161,11 +165,11 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                        Books = _Books.ToList().GetRange(random.Next(1, 490), 10)
                    }).ToArray();
 
-                _db.AddRange(_Categories);
-                _db.AddRange(_Authors);
-                _db.AddRange(_Users);
-                _db.AddRange(_Books);
-                _db.SaveChanges();
+                db.AddRange(_Categories);
+                db.AddRange(_Authors);
+                db.AddRange(_Users);
+                db.AddRange(_Books);
+                db.SaveChanges();
                 _logger.LogInformation("Инициализация завершена {0} мс", timer.ElapsedMilliseconds);
             }
             catch (NpgsqlException ex)

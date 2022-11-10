@@ -1,16 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
-using WpfMVVMEfApp.ViewModels.AdminViewModels;
 using WpfMVVMEfApp.ViewModels.Editors;
 using WpfMVVMEfApp.Views.Windows.Dialogs;
 
