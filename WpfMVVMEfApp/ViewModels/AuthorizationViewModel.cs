@@ -88,7 +88,7 @@ namespace WpfMVVMEfApp.ViewModels
                     var user = await db.Users.Where(u => u.Login == Login && u.Password == password).FirstOrDefaultAsync();
 
                     if (user == null) { _DialogService.ShowWarning("Вы ввели неверный логин или пароль", "Предупреждение"); return; }
-                    else if (!user.IsAdmin) // изменить потом
+                    else if (user.IsAdmin) // изменить потом
                     {
                         _MainWindowViewModel.CurrrentViewModel = _AdminViewModel;
                     }

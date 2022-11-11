@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,16 +14,9 @@ namespace WpfMVVMEfApp.Services.Interfaces
         /// <summary>
         /// Редактирование и добавление
         /// </summary>
-        /// <param name="item">Сущность, которую редактируем или добавляем</param>
+        /// <param name="item">Сущность, которую редактируем или добавляем. Или ViewModel нужного Editor'а</param>
         /// <returns></returns>
         bool Edit(object item);
-
-        /// <summary>
-        /// Изменение пароля
-        /// </summary>
-        /// <param name="item">Сущность, которую редактируем или добавляем</param>
-        /// <returns></returns>
-        bool EditPassword(object item);
 
         bool OpenFile(string Title, out string SelectedFile, string Filter = "Все файлы (*.*)|*.*");
 

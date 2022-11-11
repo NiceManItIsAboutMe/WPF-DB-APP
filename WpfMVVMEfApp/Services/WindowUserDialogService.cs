@@ -2,50 +2,54 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
+using System.Windows.Navigation;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
 using WpfMVVMEfApp.ViewModels.Editors;
 using WpfMVVMEfApp.Views.Windows.Dialogs;
+using static WpfMVVMEfApp.ViewModels.Editors.CategoryEditorViewModel;
 
 namespace WpfMVVMEfApp.Services
 {
     internal class WindowUserDialogService : IUserDialogService
     {
-        private IDbContextFactory<ApplicationDbContext> _dbFactory;
+
+
+        public WindowUserDialogService()
+        {
+        }
 
         public bool Edit(object item)
         {
             switch (item)
             {
                 default: throw new NotSupportedException($"Редактирование объекта типа {item.GetType().Name} не поддерживается");
-                case Book book:
+                case BookEditorViewModel vm:
                     {
-                        return EditBook(book);
+                        return EditBook(vm);
+                    }
+                case CategoryEditorViewModel vm:
+                    {
+                        return EditCategory(vm);
                     }
                 case Author author:
                     {
                         return EditAuthor(author);
                     }
+                case User user:
+                    {
+                        return EditUser(user);
+                    }
+                case Book book:
+                    {
+                        return EditBook(book);
+                    }
                 case Category category:
                     {
                         return EditCategory(category);
-                    }
-                case User user:
-                    {
-                        return EditUser(user);
-                    }
-            }
-        }
-        public bool EditPassword(object item)
-        {
-            switch (item)
-            {
-                default: throw new NotSupportedException($"Редактирование объекта типа {item.GetType().Name} не поддерживается");
-                case User user:
-                    {
-                        return EditUser(user);
                     }
             }
         }
@@ -66,23 +70,33 @@ namespace WpfMVVMEfApp.Services
         public void ShowWarning(string Information, string Caption) =>
             MessageBox.Show(Information, Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
 
-        public WindowUserDialogService(IDbContextFactory<ApplicationDbContext> dbFactory)
-        {
-            _dbFactory = dbFactory;
-        }
 
         private bool EditBook(Book book)
         {
-            using var db = _dbFactory.CreateDbContext();
-            BookEditorViewModel vm = new BookEditorViewModel(book,
-                new ObservableCollection<Category>(db.Categories),
-                new ObservableCollection<Author>(db.Authors));
+            BookEditorViewModel vm = new BookEditorViewModel(book, this);
 
             BookEditorWindow window = new BookEditorWindow()
             {
                 DataContext = vm,
-                Owner=App.Current.MainWindow,
+                Owner= Application.Current.MainWindow,
                 WindowStartupLocation=WindowStartupLocation.CenterOwner,
+            };
+            var result = window.ShowDialog();
+            return result ?? false;
+        }
+
+        /// <summary>
+        /// Предпочтительный метод. Позволяет менять категории и авторов.
+        /// </summary>
+        /// <param name="vm"> ViewModel </param>
+        /// <returns>save or not</returns>
+        private bool EditBook(BookEditorViewModel vm)
+        {
+            BookEditorWindow window = new BookEditorWindow()
+            {
+                DataContext = vm,
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
             };
             var result = window.ShowDialog();
             return result ?? false;
@@ -95,7 +109,7 @@ namespace WpfMVVMEfApp.Services
             AuthorEditorWindow window = new AuthorEditorWindow()
             {
                 DataContext = vm,
-                Owner = App.Current.MainWindow,
+                Owner = Application.Current.MainWindow,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
             };
             var result = window.ShowDialog();
@@ -104,20 +118,34 @@ namespace WpfMVVMEfApp.Services
 
         private bool EditCategory(Category category)
         {
-            using var db = _dbFactory.CreateDbContext();
-            CategoryEditorViewModel vm=new CategoryEditorViewModel(category,
-               new ObservableCollection<Book>(db.Books));
+            CategoryEditorViewModel vm = new CategoryEditorViewModel(category);
 
             CategoryEditorWindow window = new CategoryEditorWindow()
             {
                 DataContext = vm,
-                Owner = App.Current.MainWindow,
+                Owner = Application.Current.MainWindow,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
             };
             var result = window.ShowDialog();
             return result ?? false;
         }
 
+        /// <summary>
+        /// Предпочтительный метод. Позволяет выбирать книги.
+        /// </summary>
+        /// <param name="vm"> ViewModel </param>
+        /// <returns>save or not</returns>
+        private bool EditCategory(CategoryEditorViewModel vm)
+        {
+            CategoryEditorWindow window = new CategoryEditorWindow()
+            {
+                DataContext = vm,
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            };
+            var result = window.ShowDialog();
+            return result ?? false;
+        }
         private bool EditUser(User user)
         {
             UserEditorViewModel vm = new UserEditorViewModel(user);
@@ -125,7 +153,7 @@ namespace WpfMVVMEfApp.Services
             UserEditorWindow window = new UserEditorWindow()
             {
                 DataContext = vm,
-                Owner = App.Current.MainWindow,
+                Owner = Application.Current.MainWindow,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
             };
             var result = window.ShowDialog();

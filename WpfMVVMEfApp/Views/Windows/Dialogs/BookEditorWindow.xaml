@@ -35,22 +35,38 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Column="0" Grid.Row="0" Text="Название:"/>
         <TextBlock Grid.Column="0" Grid.Row="1" Text="Автор:"/>
-        <TextBlock Grid.Column="0" Grid.Row="2" Text="Описание:"/>
-        <TextBlock Grid.Column="0" Grid.Row="3" Text="Категории:"/>
+        <TextBlock Grid.Column="0" Grid.Row="2" Text="Файлы:"/>
+        <TextBlock Grid.Column="0" Grid.Row="3" Text="Описание:"/>
+        <TextBlock Grid.Column="0" Grid.Row="4" Text="Категории:"/>
 
         <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Book.Name, UpdateSourceTrigger=PropertyChanged}"/>
         <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Authors, UpdateSourceTrigger=PropertyChanged}" 
                   SelectedItem="{Binding Book.Author, UpdateSourceTrigger=PropertyChanged}"/>
-        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Book.Description, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" MaxWidth="650"/>
-        <TextBox Grid.Column="1" Grid.Row="3" materialDesign:HintAssist.Hint="Поиск" 
+
+        <Grid Grid.Column="1" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ComboBox Grid.Row="0"  ItemsSource="{Binding BookFiles, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedFile}"/>
+            <Button Grid.Row="1"  Content="Загрузить" Width="400" HorizontalAlignment="Left"
+                    Command="{Binding UploadFileCommand}"/>
+            <Button Grid.Row="1"  Content="Удалить" Width="100" HorizontalAlignment="Right" Background="Red"
+                    Command="{Binding DeleteFileCommand}"/>
+        </Grid>
+
+        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Book.Description, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" MaxWidth="650"/>
+        <TextBox Grid.Column="1" Grid.Row="4" materialDesign:HintAssist.Hint="Поиск" 
                      Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}"/>
-        <ListBox Grid.Column="1" Grid.Row="4" ItemsSource="{Binding CategoriesView}">
+        <ListBox Grid.Column="1" Grid.Row="5" ItemsSource="{Binding CategoriesView}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -65,22 +81,22 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Button Grid.Column="1" Grid.Row="5" Content="Отменить"
+        <Button Grid.Column="1" Grid.Row="6" Content="Отменить"
                 VerticalAlignment="Bottom" HorizontalAlignment="Right"  
                 Width="150" Background="Orange" 
                 Command="{StaticResource DialogResultCommand}"
                 CommandParameter="False"/>
-        <Button Grid.Column="1" Grid.Row="5" Content="Сохранить"
+        <Button Grid.Column="1" Grid.Row="6" Content="Сохранить"
                 VerticalAlignment="Bottom" HorizontalAlignment="Left" 
                 Width="250" Background="Green"
-                Command="{Binding ChangeBookCategoriesCommand}">
+                Command="{Binding SaveButtonClickCommand}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Click">
                     <i:InvokeCommandAction Command="{StaticResource DialogResultCommand}" CommandParameter="True"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Button>
- 
+
     </Grid>
     <!--<UniformGrid DockPanel.Dock="Bottom" Rows="1" Margin="0,0,0,10">
                     <Button Content="Ok" Margin="10,0" Padding="35,5" IsDefault="True" FontWeight="Bold"/>

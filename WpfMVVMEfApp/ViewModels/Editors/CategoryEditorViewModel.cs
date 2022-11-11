@@ -129,7 +129,7 @@ namespace WpfMVVMEfApp.ViewModels.Editors
 
         #endregion
 
-        public CategoryEditorViewModel(Category category, ObservableCollection<Book>? books)
+        public CategoryEditorViewModel(Category category, ObservableCollection<Book>? books = null)
         {
             Category = category;
 

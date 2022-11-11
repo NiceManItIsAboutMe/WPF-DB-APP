@@ -13,6 +13,7 @@ using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
+using WpfMVVMEfApp.ViewModels.Editors;
 using static WpfMVVMEfApp.ViewModels.Editors.BookEditorViewModel;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
@@ -105,15 +106,14 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             using var db = await _dbFactory.CreateDbContextAsync();
             Books = new ObservableCollection<Book>(await db.Books
-                .Include(b=> b.Author)
-                .Include(b=>b.Categories)
-                .OrderBy(b=> b.Name)
+                .Include(b => b.Author)
+                .Include(b => b.Categories)
+                .OrderBy(b => b.Name)
                 .AsNoTracking()
                 .ToListAsync());
         }
 
         #endregion
-
 
         #region команда Удаление книги
 
@@ -147,7 +147,6 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-
         #region команда Редактирование книги
 
         /// <summary> /// Редактирование книги /// </summary>
@@ -166,31 +165,21 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             using var db = await _dbFactory.CreateDbContextAsync();
 
             Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).FirstAsync(b => b.Id == SelectedBook.Id);
-            bool result=_DialogService.Edit(book);
-            if (!result)
-            {
-                return;
-            }
-            try
-            {
-                db.Update(book);
-                await db.SaveChangesAsync();
-                Books.Remove(SelectedBook);
-                Books.Add(book);
-                SelectedBook = book;
-                _BooksViewSource.View.Refresh();
-            }
-            catch (Exception ex)
-            {
-                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
-                    "\nВ ином случае обратитесь в службу поддержки" +
-                    $"\n{ex.Message}", "Ошибка сохранения объекта");
-            }
+            BookEditorViewModel vm = new BookEditorViewModel(
+                book,
+                _DialogService,
+                new ObservableCollection<Category>(await db.Categories.ToListAsync()),
+                new ObservableCollection<Author>(await db.Authors.ToListAsync()));
 
+            bool result = _DialogService.Edit(vm);
+            if (!result) return;
+            await db.SaveChangesAsync();
+            Books.Remove(SelectedBook);
+            SelectedBook = book;
+            Books.Add(SelectedBook);
         }
 
         #endregion
-
 
         #region команда Добавить книгу
 
@@ -209,23 +198,19 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             using var db = await _dbFactory.CreateDbContextAsync();
             Book book = new Book();
-            bool result = _DialogService.Edit(book);
+            BookEditorViewModel vm = new BookEditorViewModel(
+                book,
+                _DialogService,
+                new ObservableCollection<Category>(await db.Categories.ToListAsync()),
+                new ObservableCollection<Author>(await db.Authors.ToListAsync()));
+
+            bool result = _DialogService.Edit(vm);
             if (!result) return;
-            try
-            {
-                db.Add(book);
-                await db.SaveChangesAsync();
-                Books.Add(book);
-                SelectedBook = book;
-                _BooksViewSource.View.Refresh();
-            }
-            catch (Exception ex)
-            {
-                db.Remove(book);
-                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
-                    "\nВ ином случае обратитесь в службу поддержки" +
-                    $"\n{ex.Message}", "Ошибка сохранения объекта");
-            }
+
+            db.Add(book);
+            await db.SaveChangesAsync();
+            SelectedBook = book;
+            Books.Add(SelectedBook);
         }
 
         #endregion
