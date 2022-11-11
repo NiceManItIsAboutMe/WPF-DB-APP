@@ -132,13 +132,12 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             if (SelectedBook == null) return;
 
-            using var db = await _dbFactory.CreateDbContextAsync();
-
             if (!_DialogService.Confirm($"Вы действительно хотите удалить книгу: {SelectedBook.Name}" +
                 $", автора: {SelectedBook.Author}?",
                 "Удаление"))
                 return;
 
+            using var db = await _dbFactory.CreateDbContextAsync();
             db.Remove(SelectedBook);
             await db.SaveChangesAsync();
 
