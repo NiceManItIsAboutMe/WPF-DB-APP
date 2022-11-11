@@ -13,6 +13,7 @@ using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
+using WpfMVVMEfApp.ViewModels.Editors;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
@@ -174,11 +175,10 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public async void OnLoadCategoriesDataCommandExecuted(object? p)
         {
             using var db = await _dbFactory.CreateDbContextAsync();
-            Categories = new ObservableCollection<Category>(db.Categories.AsNoTracking());
+            Categories = new ObservableCollection<Category>(await db.Categories.AsNoTracking().ToListAsync());
         }
 
         #endregion
-
 
         #region команда Загрузка книг выбранной категории
 
@@ -201,11 +201,10 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             using var db = await _dbFactory.CreateDbContextAsync();
             Books = new ObservableCollection<Book>(await db.Books.Where(b => b.Categories.Contains(SelectedCategory))
-                .Include(b=>b.Categories).Include(b => b.Author).AsNoTracking().ToListAsync());
+                .Include(b => b.Categories).Include(b => b.Author).AsNoTracking().ToListAsync());
         }
 
         #endregion
-
 
         #region команда Удаление категории
 
@@ -224,9 +223,10 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             if (SelectedCategory == null) return;
 
-            using var db = await _dbFactory.CreateDbContextAsync();
             if (!_DialogService.Confirm($"Вы действительно хотите удалить категорию: {SelectedCategory}", "Удаление"))
                 return;
+
+            using var db = await _dbFactory.CreateDbContextAsync();
             db.Remove(SelectedCategory);
             await db.SaveChangesAsync();
             Categories.Remove(SelectedCategory);
@@ -250,27 +250,16 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public async void OnEditSelectedCategoryCommandExecuted(object? p)
         {
             using var db = await _dbFactory.CreateDbContextAsync();
-            Category category = await db.Categories.Include(c=>c.Books).FirstAsync(c=>c.Id==SelectedCategory.Id);
-            bool result = _DialogService.Edit(category);
-            if (!result)
-            {
-                return;
-            }
-            try
-            {
-                db.Update(category);
-                await db.SaveChangesAsync();
-                Categories.Remove(SelectedCategory);
-                Categories.Add(category);
-                SelectedCategory = category;
-                _CategoriesViewSource.View.Refresh();
-            }
-            catch (Exception ex)
-            {
-                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
-                    "\nВ ином случае обратитесь в службу поддержки" +
-                    $"\n{ex.Message}", "Ошибка сохранения объекта");
-            }
+            Category category = await db.Categories.Include(c => c.Books).FirstAsync(c => c.Id == SelectedCategory.Id);
+            CategoryEditorViewModel vm = new CategoryEditorViewModel(category,
+                new ObservableCollection<Book>(await db.Books.ToListAsync()));
+            bool result = _DialogService.Edit(vm);
+            if (!result) return;
+
+            await db.SaveChangesAsync();
+            Categories.Remove(SelectedCategory);
+            Categories.Add(category);
+            SelectedCategory = category;
         }
 
         #endregion
@@ -292,25 +281,15 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             using var db = await _dbFactory.CreateDbContextAsync();
             Category category = new Category();
-            bool result = _DialogService.Edit(category);
-            if (!result)
-            {
-                return;
-            }
-            try
-            {
-                db.Add(category);
-                await db.SaveChangesAsync();
-                Categories.Add(category);
-                SelectedCategory = category;
-                _CategoriesViewSource.View.Refresh();
-            }
-            catch(Exception ex)
-            {
-                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
-                    "\nВ ином случае обратитесь в службу поддержки" +
-                    $"\n{ex.Message}", "Ошибка сохранения объекта");
-            }
+            CategoryEditorViewModel vm = new CategoryEditorViewModel(category,
+                new ObservableCollection<Book>(await db.Books.ToListAsync()));
+            bool result = _DialogService.Edit(vm);
+            if (!result) return;
+
+            db.Add(category);
+            await db.SaveChangesAsync();
+            Categories.Add(category);
+            SelectedCategory = category;
         }
 
         #endregion
@@ -332,13 +311,12 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             if (SelectedBook == null) return;
 
-            using var db = await _dbFactory.CreateDbContextAsync();
-
             if (!_DialogService.Confirm($"Вы действительно хотите удалить книгу: {SelectedBook.Name}" +
                 $", автора: {SelectedBook.Author}?",
                 "Удаление"))
                 return;
 
+            using var db = await _dbFactory.CreateDbContextAsync();
             db.Remove(SelectedBook);
             await db.SaveChangesAsync();
 
@@ -365,26 +343,22 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             using var db = await _dbFactory.CreateDbContextAsync();
             Book book = new Book
             {
-                Categories=new List<Category> { SelectedCategory}
+                Categories = new List<Category> { SelectedCategory }
             };
-            bool result = _DialogService.Edit(book);
+            BookEditorViewModel vm = new BookEditorViewModel(
+                book,
+                _DialogService,
+                new ObservableCollection<Category>(await db.Categories.ToListAsync()),
+                new ObservableCollection<Author>(await db.Authors.ToListAsync()));
+
+            bool result = _DialogService.Edit(vm);
             if (!result) return;
-            try
+            db.Add(book);
+            await db.SaveChangesAsync();
+            if (book.Categories.FirstOrDefault(c => c.Id == SelectedCategory.Id) != null)
             {
-                db.Add(book);
-                await db.SaveChangesAsync();
-                if (book.Categories.Contains(SelectedCategory))
-                {
-                    Books.Add(book);
-                    SelectedBook = book;
-                }
-                _BooksViewSource.View.Refresh();
-            }
-            catch (Exception ex)
-            {
-                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
-                    "\nВ ином случае обратитесь в службу поддержки" +
-                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+                SelectedBook = book;
+                Books.Add(book);
             }
         }
 
@@ -407,30 +381,22 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             using var db = await _dbFactory.CreateDbContextAsync();
             Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).FirstAsync(b => b.Id == SelectedBook.Id);
-            bool result = _DialogService.Edit(book);
-            if (!result)
+            BookEditorViewModel vm = new BookEditorViewModel(
+               book,
+               _DialogService,
+               new ObservableCollection<Category>(await db.Categories.ToListAsync()),
+               new ObservableCollection<Author>(await db.Authors.ToListAsync()));
+
+            bool result = _DialogService.Edit(vm);
+            if (!result) return;
+            db.Update(book);
+            await db.SaveChangesAsync();
+            Books.Remove(SelectedBook);
+            if (book.Categories.FirstOrDefault(c=>c.Id==SelectedCategory.Id) != null)
             {
-                return;
+                SelectedBook = book;
+                Books.Add(book);
             }
-            try
-            {
-                db.Update(book);
-                await db.SaveChangesAsync();
-                Books.Remove(SelectedBook);
-                if (book.Categories.Contains(SelectedCategory))
-                {
-                    Books.Add(book);
-                    SelectedBook = book;
-                }
-                _BooksViewSource.View.Refresh();
-            }
-            catch (Exception ex)
-            {
-                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
-                    "\nВ ином случае обратитесь в службу поддержки" +
-                    $"\n{ex.Message}", "Ошибка сохранения объекта");
-            }
-            
         }
 
         #endregion
@@ -453,7 +419,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             if (!(e.Item is Category category) || string.IsNullOrEmpty(CategoriesSearchFilter)) return;
 
-            if (!category.Name.Contains(_CategoriesSearchFilter,StringComparison.OrdinalIgnoreCase))
+            if (!category.Name.Contains(_CategoriesSearchFilter, StringComparison.OrdinalIgnoreCase))
                 e.Accepted = false;
         }
     }
