@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
@@ -11,9 +12,10 @@ using WpfMVVMEfApp.Models.PostgreSqlDB;
 namespace WpfMVVMEfApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20221112130928_BookFilesDescription")]
+    partial class BookFilesDescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,17 +120,11 @@ namespace WpfMVVMEfApp.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("BookFileDescriptionId")
-                        .HasColumnType("integer");
-
                     b.Property<byte[]>("File")
                         .IsRequired()
                         .HasColumnType("bytea");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BookFileDescriptionId")
-                        .IsUnique();
 
                     b.ToTable("BookFiles");
                 });
@@ -144,6 +140,9 @@ namespace WpfMVVMEfApp.Migrations
                     b.Property<int>("BookId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("FileId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -152,6 +151,9 @@ namespace WpfMVVMEfApp.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
+
+                    b.HasIndex("FileId")
+                        .IsUnique();
 
                     b.ToTable("BookFilesDescription");
                 });
@@ -263,17 +265,6 @@ namespace WpfMVVMEfApp.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("WpfMVVMEfApp.Models.BookFile", b =>
-                {
-                    b.HasOne("WpfMVVMEfApp.Models.BookFileDescription", "BookFileDescription")
-                        .WithOne("File")
-                        .HasForeignKey("WpfMVVMEfApp.Models.BookFile", "BookFileDescriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BookFileDescription");
-                });
-
             modelBuilder.Entity("WpfMVVMEfApp.Models.BookFileDescription", b =>
                 {
                     b.HasOne("WpfMVVMEfApp.Models.Book", "Book")
@@ -282,7 +273,15 @@ namespace WpfMVVMEfApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WpfMVVMEfApp.Models.BookFile", "File")
+                        .WithOne("BookFileDescription")
+                        .HasForeignKey("WpfMVVMEfApp.Models.BookFileDescription", "FileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Book");
+
+                    b.Navigation("File");
                 });
 
             modelBuilder.Entity("WpfMVVMEfApp.Models.Author", b =>
@@ -295,9 +294,9 @@ namespace WpfMVVMEfApp.Migrations
                     b.Navigation("BookFilesDescription");
                 });
 
-            modelBuilder.Entity("WpfMVVMEfApp.Models.BookFileDescription", b =>
+            modelBuilder.Entity("WpfMVVMEfApp.Models.BookFile", b =>
                 {
-                    b.Navigation("File")
+                    b.Navigation("BookFileDescription")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

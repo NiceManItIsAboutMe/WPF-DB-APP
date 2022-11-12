@@ -94,6 +94,7 @@ namespace WpfMVVMEfApp.ViewModels
                     }
                     else
                     {
+                        _MainWindowViewModel.CurrrentViewModel = _AdminViewModel;
 
                     }
                 }

@@ -64,20 +64,20 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         #region Файлы
 
         /// <summary> /// Файлы /// </summary>
-        private ObservableCollection<BookFile> _BookFiles;
+        private ObservableCollection<BookFileDescription> _BookFiles;
 
         /// <summary> /// Файлы /// </summary>
-        public ObservableCollection<BookFile> BookFiles { get => _BookFiles; set => Set(ref _BookFiles, value); }
+        public ObservableCollection<BookFileDescription> BookFiles { get => _BookFiles; set => Set(ref _BookFiles, value); }
 
         #endregion
 
         #region Выбранный файл
 
         /// <summary> /// Выбранный файл /// </summary>
-        private BookFile _SelectedFile;
+        private BookFileDescription _SelectedFile;
 
         /// <summary> /// Выбранный файл /// </summary>
-        public BookFile SelectedFile { get => _SelectedFile; set => Set(ref _SelectedFile, value); }
+        public BookFileDescription SelectedFile { get => _SelectedFile; set => Set(ref _SelectedFile, value); }
 
         #endregion
 
@@ -143,19 +143,19 @@ namespace WpfMVVMEfApp.ViewModels.Editors
             var result = _DialogService.OpenFile("Загрузка книги", out string path);
             if (!result)
                 return;
-
-            var file = File.ReadAllBytes(path);
+            var file = new BookFile();
+            file.File = File.ReadAllBytes(path);
 
             var fileName = path.Split(@"\")[^1];
-            BookFile bookFile = new BookFile()
+            BookFileDescription bookFileDescription = new BookFileDescription()
             {
                 Name = fileName,
                 Book = Book,
                 File = file
             };
 
-            BookFiles.Add(bookFile);
-            SelectedFile = bookFile;
+            BookFiles.Add(bookFileDescription);
+            SelectedFile = bookFileDescription;
         }
 
         #endregion
@@ -169,7 +169,7 @@ namespace WpfMVVMEfApp.ViewModels.Editors
                ??= new RelayCommand(OnDeleteFileCommandExecuted, CanDeleteFileCommandExecute);
 
         /// <summary> /// Удалить файл /// </summary>
-        public bool CanDeleteFileCommandExecute(object? p) => SelectedFile is BookFile;
+        public bool CanDeleteFileCommandExecute(object? p) => SelectedFile is BookFileDescription;
 
         /// <summary> /// Удалить файл /// </summary>
         public void OnDeleteFileCommandExecuted(object? p)
@@ -203,7 +203,7 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         /// <summary> /// SaveButtonClick Изменяем выбранные категории в книге /// </summary>
         public void OnSaveButtonClickCommandExecuted(object? p)
         {
-            Book.BookFiles = BookFiles;
+            Book.BookFilesDescription = BookFiles;
 
             if (Categories == null) return;
 
@@ -229,8 +229,8 @@ namespace WpfMVVMEfApp.ViewModels.Editors
             _DialogService = dialogService;
             Authors = authors;
             Book = book;
-            if (Book.BookFiles != null) BookFiles = new ObservableCollection<BookFile>(book.BookFiles);
-            else BookFiles = new ObservableCollection<BookFile>();
+            if (Book.BookFilesDescription != null) BookFiles = new ObservableCollection<BookFileDescription>(book.BookFilesDescription);
+            else BookFiles = new ObservableCollection<BookFileDescription>();
 
             if (categories != null)
             {

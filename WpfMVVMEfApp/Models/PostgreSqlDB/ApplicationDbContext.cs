@@ -19,6 +19,8 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
         
         public DbSet<Author> Authors { get; set; }
 
+        public DbSet<BookFileDescription> BookFilesDescription { get; set; }
+
         public DbSet<BookFile> BookFiles { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options):base(options){ }

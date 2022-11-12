@@ -17,7 +17,7 @@ namespace WpfMVVMEfApp.Models
         [Required]
         public virtual Author Author { get; set; }
 
-        public virtual ICollection<BookFile>? BookFiles { get; set; }
+        public virtual ICollection<BookFileDescription>? BookFilesDescription { get; set; }
 
         public virtual ICollection<User>? Users { get; set; }
 
