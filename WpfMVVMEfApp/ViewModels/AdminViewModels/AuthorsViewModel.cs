@@ -13,6 +13,7 @@ using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
+using WpfMVVMEfApp.ViewModels.Editors;
 using WpfMVVMEfApp.Views.AdminViews;
 using static WpfMVVMEfApp.ViewModels.Editors.BookEditorViewModel;
 
@@ -39,12 +40,15 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         private string _AuthorsSearchFilter;
 
         /// <summary> /// Поиск авторов /// </summary>
-        public string AuthorsSearchFilter { get => _AuthorsSearchFilter;
+        public string AuthorsSearchFilter
+        {
+            get => _AuthorsSearchFilter;
             set
             {
                 if (Set(ref _AuthorsSearchFilter, value))
                     _AuthorsViewSource.View.Refresh();
-            } }
+            }
+        }
 
         #endregion
 
@@ -73,13 +77,15 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         private ObservableCollection<Author> _Authors;
 
         /// <summary> /// Авторы /// </summary>
-        public ObservableCollection<Author> Authors { get => _Authors; set
+        public ObservableCollection<Author> Authors
+        {
+            get => _Authors; set
             {
-                if(Set(ref _Authors, value))
+                if (Set(ref _Authors, value))
                 {
                     _AuthorsViewSource = new CollectionViewSource
                     {
-                        Source=Authors,
+                        Source = Authors,
                         SortDescriptions =
                         {
                             new SortDescription(nameof(Author.Surname),ListSortDirection.Ascending),
@@ -90,7 +96,8 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
                     _AuthorsViewSource.View.Refresh();
                 }
 
-            } }
+            }
+        }
         #endregion
 
         #region Выбранный автор
@@ -99,13 +106,16 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         private Author _SelectedAuthor;
 
         /// <summary> /// Выбранный автор /// </summary>
-        public Author SelectedAuthor { get => _SelectedAuthor;
+        public Author SelectedAuthor
+        {
+            get => _SelectedAuthor;
             set
             {
                 Set(ref _SelectedAuthor, value);
                 if (CanLoadBooksSelectedAuthorsCommandExecute(null))
                     OnLoadBooksSelectedAuthorsCommandExecuted(null);
-            } }
+            }
+        }
 
         #endregion
 
@@ -191,8 +201,8 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public async void OnLoadBooksSelectedAuthorsCommandExecuted(object? p)
         {
             using var db = await _dbFactory.CreateDbContextAsync();
-            Books = new ObservableCollection<Book>(await db.Books.Where(b => b.Author.Id== SelectedAuthor.Id)
-                .Include(b => b.Categories).Include(b => b.Author).AsNoTracking() .ToListAsync());
+            Books = new ObservableCollection<Book>(await db.Books.Where(b => b.Author.Id == SelectedAuthor.Id)
+                .Include(b => b.Categories).Include(b => b.Author).Include(b => b.BookFilesDescription).AsNoTracking().ToListAsync());
         }
 
         #endregion
@@ -242,7 +252,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public async void OnEditAuthorCommandExecuted(object? p)
         {
             using var db = await _dbFactory.CreateDbContextAsync();
-            Author author = await db.Authors.FirstAsync(a=>a.Id==SelectedAuthor.Id);
+            Author author = await db.Authors.FirstAsync(a => a.Id == SelectedAuthor.Id);
             bool result = _DialogService.Edit(author);
             if (!result)
             {
@@ -356,32 +366,25 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             using var db = await _dbFactory.CreateDbContextAsync();
 
-            Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).FirstAsync(b => b.Id == SelectedBook.Id);
-            bool result = _DialogService.Edit(book);
-            if (!result)
+            Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).Include(b => b.BookFilesDescription)
+                .FirstAsync(b => b.Id == SelectedBook.Id);
+            BookEditorViewModel vm = new BookEditorViewModel(
+                 book,
+                 _DialogService,
+                 new ObservableCollection<Category>(await db.Categories.ToListAsync()),
+                 new ObservableCollection<Author>(await db.Authors.ToListAsync()));
+
+            bool result = _DialogService.Edit(vm);
+            if (!result) return;
+
+            await db.SaveChangesAsync();
+            Books.Remove(SelectedBook);
+            if (book.Author.Id == SelectedAuthor.Id)
             {
-                return;
+                Books.Add(book);
+                SelectedBook = book;
             }
-            try
-            {
-                db.Update(book);
-                await db.SaveChangesAsync();
-                db.Entry(book).State = EntityState.Detached;
-                Books.Remove(SelectedBook);
-                if (book.Author == SelectedAuthor)
-                {
-                    Books.Add(book);
-                    SelectedBook = book;
-                }
-                _BooksViewSource.View.Refresh();
-            }
-            catch (Exception ex)
-            {
-                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
-                    "\nВ ином случае обратитесь в службу поддержки" +
-                    $"\n{ex.Message}", "Ошибка сохранения объекта");
-            }
-            
+            _BooksViewSource.View.Refresh();
         }
 
         #endregion
@@ -401,26 +404,23 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Добавить книгу /// </summary>
         public async void OnAddBookCommandExecuted(object? p)
         {
-            Book book = new Book { Author=SelectedAuthor};
+            Book book = new Book { Author = SelectedAuthor };
             using var db = await _dbFactory.CreateDbContextAsync();
-            bool result = _DialogService.Edit(book);
+            BookEditorViewModel vm = new BookEditorViewModel(
+                book,
+                _DialogService,
+                new ObservableCollection<Category>(await db.Categories.ToListAsync()),
+                new ObservableCollection<Author>(await db.Authors.ToListAsync()));
+
+            bool result = _DialogService.Edit(vm);
             if (!result) return;
-            try
+
+            db.Add(book);
+            await db.SaveChangesAsync();
+            if (book.Author.Id == SelectedAuthor.Id)
             {
-                db.Add(book);
-                await db.SaveChangesAsync();
-                if (book.Author == SelectedAuthor)
-                {
-                    Books.Add(book);
-                    SelectedBook = book;
-                }
-            }
-            catch (Exception ex)
-            {
-                db.Remove(book);
-                _DialogService.ShowError("Возможно вы попытались создать объект, имя которого уже существует." +
-                    "\nВ ином случае обратитесь в службу поддержки" +
-                    $"\n{ex.Message}", "Ошибка сохранения объекта");
+                Books.Add(book);
+                SelectedBook = book;
             }
         }
 
@@ -445,7 +445,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             if (!(e.Item is Author author) || string.IsNullOrEmpty(AuthorsSearchFilter)) return;
 
-            if (!author.Name.Contains(AuthorsSearchFilter, StringComparison.OrdinalIgnoreCase) 
+            if (!author.Name.Contains(AuthorsSearchFilter, StringComparison.OrdinalIgnoreCase)
                 && !author.Surname.Contains(AuthorsSearchFilter, StringComparison.OrdinalIgnoreCase)
                 && !author.Patronymic.Contains(AuthorsSearchFilter, StringComparison.OrdinalIgnoreCase))
                 e.Accepted = false;

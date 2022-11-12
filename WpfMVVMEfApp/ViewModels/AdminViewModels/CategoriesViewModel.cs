@@ -158,7 +158,6 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-
         #region команда Загрузка категорий
 
         /// <summary> /// Загрузка категорий /// </summary>
@@ -201,7 +200,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             using var db = await _dbFactory.CreateDbContextAsync();
             Books = new ObservableCollection<Book>(await db.Books.Where(b => b.Categories.Contains(SelectedCategory))
-                .Include(b => b.Categories).Include(b => b.Author).AsNoTracking().ToListAsync());
+                .Include(b => b.Categories).Include(b => b.Author).Include(b=>b.BookFilesDescription).AsNoTracking().ToListAsync());
         }
 
         #endregion
@@ -353,6 +352,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
             bool result = _DialogService.Edit(vm);
             if (!result) return;
+
             db.Add(book);
             await db.SaveChangesAsync();
             if (book.Categories.FirstOrDefault(c => c.Id == SelectedCategory.Id) != null)
@@ -380,7 +380,8 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         public async void OnEditSelectedBookCommandExecuted(object? p)
         {
             using var db = await _dbFactory.CreateDbContextAsync();
-            Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).FirstAsync(b => b.Id == SelectedBook.Id);
+            Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).Include(b=>b.BookFilesDescription)
+                .FirstAsync(b => b.Id == SelectedBook.Id);
             BookEditorViewModel vm = new BookEditorViewModel(
                book,
                _DialogService,
