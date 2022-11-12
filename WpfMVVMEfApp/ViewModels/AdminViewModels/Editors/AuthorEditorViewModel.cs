@@ -9,7 +9,7 @@ using WpfDBApp.ViewModels.Base;
 using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 
-namespace WpfMVVMEfApp.ViewModels.Editors
+namespace WpfMVVMEfApp.ViewModels.AdminViewModels.Editors
 {
     internal class AuthorEditorViewModel : ViewModel
     {

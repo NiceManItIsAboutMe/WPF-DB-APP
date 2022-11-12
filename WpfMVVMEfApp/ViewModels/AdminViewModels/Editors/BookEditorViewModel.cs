@@ -17,7 +17,7 @@ using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
 using static System.Reflection.Metadata.BlobBuilder;
 
-namespace WpfMVVMEfApp.ViewModels.Editors
+namespace WpfMVVMEfApp.ViewModels.AdminViewModels.Editors
 {
     internal class BookEditorViewModel : ViewModel
     {
@@ -176,7 +176,7 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         {
             var result = _DialogService.Confirm($"Вы уверены, что хотите удалить файл: {SelectedFile.Name}?", "Удаление файла");
             if (!result) return;
-            
+
             BookFiles.Remove(SelectedFile);
         }
         #endregion
@@ -220,9 +220,9 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         #endregion
 
         public BookEditorViewModel(
-            Book book, 
+            Book book,
             IUserDialogService dialogService,
-            ObservableCollection<Category>? categories = null, 
+            ObservableCollection<Category>? categories = null,
             ObservableCollection<Author>? authors = null
             )
         {

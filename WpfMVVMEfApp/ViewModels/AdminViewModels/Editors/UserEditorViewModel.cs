@@ -9,7 +9,7 @@ using WpfDBApp.ViewModels.Base;
 using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 
-namespace WpfMVVMEfApp.ViewModels.Editors
+namespace WpfMVVMEfApp.ViewModels.AdminViewModels.Editors
 {
     internal class UserEditorViewModel : ViewModel
     {
@@ -51,11 +51,11 @@ namespace WpfMVVMEfApp.ViewModels.Editors
             var results = new List<ValidationResult>();
             if (!Validator.TryValidateObject(User, context, results, true)) return false;
 
-            if ( (User.Password==null || User.Password?.Length==0) 
-                && (String.IsNullOrEmpty(Password) || Password?.Length < 6))
+            if ((User.Password == null || User.Password?.Length == 0)
+                && (string.IsNullOrEmpty(Password) || Password?.Length < 6))
                 return false;
 
-            if (!String.IsNullOrEmpty(Password) && Password?.Length < 6) return false;
+            if (!string.IsNullOrEmpty(Password) && Password?.Length < 6) return false;
 
             return true;
         }
@@ -63,7 +63,7 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         /// <summary> /// SaveChangesButtonClick сохранить изменения /// </summary>
         public void OnSaveChangesCommandExecuted(object? p)
         {
-            if (String.IsNullOrEmpty(Password)) return;
+            if (string.IsNullOrEmpty(Password)) return;
 
             User.Password = User.HashPassword(Password);
         }

@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace WpfMVVMEfApp.Views.Windows.Dialogs
 {
     /// <summary>
-    /// Логика взаимодействия для AuthorEditorWindow.xaml
+    /// Логика взаимодействия для DownloadBookFileWindow.xaml
     /// </summary>
-    public partial class AuthorEditorWindow : Window
+    public partial class DownloadBookFileWindow : Window
     {
-        public AuthorEditorWindow()
+        public DownloadBookFileWindow()
         {
             InitializeComponent();
         }

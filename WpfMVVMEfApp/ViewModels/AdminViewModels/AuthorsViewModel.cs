@@ -13,9 +13,9 @@ using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
-using WpfMVVMEfApp.ViewModels.Editors;
+using WpfMVVMEfApp.ViewModels.AdminViewModels.Editors;
 using WpfMVVMEfApp.Views.AdminViews;
-using static WpfMVVMEfApp.ViewModels.Editors.BookEditorViewModel;
+using static WpfMVVMEfApp.ViewModels.AdminViewModels.Editors.BookEditorViewModel;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {

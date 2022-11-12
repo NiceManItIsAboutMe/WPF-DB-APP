@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace WpfMVVMEfApp.Views.Windows.Dialogs
+namespace WpfMVVMEfApp.Views.Windows.Dialogs.Editors
 {
     /// <summary>
     /// Логика взаимодействия для CategoryEditorWindow.xaml

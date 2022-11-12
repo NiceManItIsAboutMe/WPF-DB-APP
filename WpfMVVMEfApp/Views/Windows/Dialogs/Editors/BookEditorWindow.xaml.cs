@@ -12,14 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace WpfMVVMEfApp.Views.Windows.Dialogs
+namespace WpfMVVMEfApp.Views.Windows.Dialogs.Editors
 {
     /// <summary>
-    /// Логика взаимодействия для UserEditorWindow.xaml
+    /// Логика взаимодействия для BookEditorWindow.xaml
     /// </summary>
-    public partial class UserEditorWindow : Window
+    public partial class BookEditorWindow : Window
     {
-        public UserEditorWindow()
+        public BookEditorWindow()
         {
             InitializeComponent();
         }

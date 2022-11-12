@@ -1,15 +1,16 @@
-﻿<Window x:Class="WpfMVVMEfApp.Views.Windows.Dialogs.UserEditorWindow"
+﻿<Window x:Class="WpfMVVMEfApp.Views.Windows.Dialogs.Editors.CategoryEditorWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfMVVMEfApp.Views.Windows.Dialogs"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:vm="clr-namespace:WpfMVVMEfApp.ViewModels.Editors"
+        xmlns:vm="clr-namespace:WpfMVVMEfApp.ViewModels.AdminViewModels.Editors"
+        xmlns:local="clr-namespace:WpfMVVMEfApp.Views.Windows.Dialogs.Editors"
         mc:Ignorable="d"
-        Title="Редактор пользователя" Height="246" Width="650"
-        d:DataContext="{d:DesignInstance vm:UserEditorViewModel}" WindowStartupLocation="CenterOwner" Cursor="Hand">
-    <Grid>
+        Title="Редактор категории" Height="500" Width="700"
+        d:DataContext="{d:DesignInstance vm:CategoryEditorViewModel}" WindowStartupLocation="CenterOwner" Cursor="Hand">
+    <Grid Margin="3" Cursor="Hand">
         <Grid.Resources>
             <Style TargetType="TextBlock">
                 <Style.Triggers>
@@ -32,37 +33,37 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Column="0" Grid.Row="0" Text="Фамилия:"/>
-        <TextBlock Grid.Column="0" Grid.Row="1" Text="Имя:"/>
-        <TextBlock Grid.Column="0" Grid.Row="2" Text="Отчество:"/>
-        <TextBlock Grid.Column="0" Grid.Row="3" Text="Логин:"/>
-        <TextBlock Grid.Column="0" Grid.Row="4" Text="Новый пароль:"/>
-        <TextBlock Grid.Column="0" Grid.Row="5" Text="Дата рождения:"/>
-        <TextBlock Grid.Column="0" Grid.Row="6" Text="Права администратора:"/>
+        <TextBlock Grid.Column="0" Grid.Row="0" Text="Название:"/>
+        <TextBlock Grid.Column="0" Grid.Row="1" Text="Книги:"/>
 
-        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding User.Surname, UpdateSourceTrigger=PropertyChanged}"/>
-        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding User.Name, UpdateSourceTrigger=PropertyChanged}"/>
-        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding User.Patronymic, UpdateSourceTrigger=PropertyChanged}"/>
-        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding User.Login, UpdateSourceTrigger=PropertyChanged}"/>
-        <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"/>
-        <DatePicker Grid.Column="1" Grid.Row="5" SelectedDate="{Binding User.Birthday, StringFormat='dd.MM.yyyy', UpdateSourceTrigger=PropertyChanged}"/>
-        <CheckBox Grid.Column="1" Grid.Row="6" IsChecked="{Binding User.IsAdmin}"/>
+        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Category.Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Column="1" Grid.Row="1" materialDesign:HintAssist.Hint="Поиск" 
+                     Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}"/>
+        <ListBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding BooksView}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="400"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding Book}"/>
+                        <CheckBox Grid.Column="1" IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
-        <Button Grid.Column="1" Grid.Row="8" Content="Отменить"
+        <Button Grid.Column="1" Grid.Row="4" Content="Отменить"
                 VerticalAlignment="Bottom" HorizontalAlignment="Right"  
                 Width="150" Background="Orange" 
                 Command="{StaticResource DialogResultCommand}"
                 CommandParameter="False"/>
-        <Button Grid.Column="1" Grid.Row="8" Content="Сохранить"
+        <Button Grid.Column="1" Grid.Row="4" Content="Сохранить"
                 VerticalAlignment="Bottom" HorizontalAlignment="Left" 
                 Width="250" Background="Green"
                 Command="{Binding SaveChangesCommand}">
@@ -72,5 +73,6 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Button>
+
     </Grid>
 </Window>

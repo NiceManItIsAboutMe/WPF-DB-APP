@@ -1,16 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
-using System.Windows.Navigation;
 using WpfMVVMEfApp.Models;
-using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
-using WpfMVVMEfApp.ViewModels.Editors;
-using WpfMVVMEfApp.Views.Windows.Dialogs;
-using static WpfMVVMEfApp.ViewModels.Editors.CategoryEditorViewModel;
+using WpfMVVMEfApp.ViewModels.AdminViewModels.Editors;
+using WpfMVVMEfApp.Views.Windows.Dialogs.Editors;
 
 namespace WpfMVVMEfApp.Services
 {

@@ -13,7 +13,7 @@ using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
-using WpfMVVMEfApp.ViewModels.Editors;
+using WpfMVVMEfApp.ViewModels.AdminViewModels.Editors;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
@@ -379,6 +379,8 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Редактирование книги /// </summary>
         public async void OnEditSelectedBookCommandExecuted(object? p)
         {
+            if (SelectedBook == null) return;
+
             using var db = await _dbFactory.CreateDbContextAsync();
             Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).Include(b=>b.BookFilesDescription)
                 .FirstAsync(b => b.Id == SelectedBook.Id);

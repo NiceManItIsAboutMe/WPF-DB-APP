@@ -1,14 +1,14 @@
-﻿<Window x:Class="WpfMVVMEfApp.Views.Windows.Dialogs.AuthorEditorWindow"
+﻿<Window x:Class="WpfMVVMEfApp.Views.Windows.Dialogs.Editors.UserEditorWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:WpfMVVMEfApp.ViewModels.Editors"
-        xmlns:local="clr-namespace:WpfMVVMEfApp.Views.Windows.Dialogs"
+        xmlns:local="clr-namespace:WpfMVVMEfApp.Views.Windows.Dialogs.Editors"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:vm="clr-namespace:WpfMVVMEfApp.ViewModels.AdminViewModels.Editors"
         mc:Ignorable="d"
-        Title="Редактор автора" Height="150" Width="500"
-        d:DataContext="{d:DesignInstance vm:AuthorEditorViewModel}" WindowStartupLocation="CenterOwner" Cursor="Hand">
+        Title="Редактор пользователя" Height="246" Width="650"
+        d:DataContext="{d:DesignInstance vm:UserEditorViewModel}" WindowStartupLocation="CenterOwner" Cursor="Hand">
     <Grid>
         <Grid.Resources>
             <Style TargetType="TextBlock">
@@ -34,31 +34,41 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
+
         <TextBlock Grid.Column="0" Grid.Row="0" Text="Фамилия:"/>
         <TextBlock Grid.Column="0" Grid.Row="1" Text="Имя:"/>
         <TextBlock Grid.Column="0" Grid.Row="2" Text="Отчество:"/>
+        <TextBlock Grid.Column="0" Grid.Row="3" Text="Логин:"/>
+        <TextBlock Grid.Column="0" Grid.Row="4" Text="Новый пароль:"/>
+        <TextBlock Grid.Column="0" Grid.Row="5" Text="Дата рождения:"/>
+        <TextBlock Grid.Column="0" Grid.Row="6" Text="Права администратора:"/>
 
-        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding SelectedAuthor.Surname, UpdateSourceTrigger=PropertyChanged}"/>
-        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding SelectedAuthor.Name, UpdateSourceTrigger=PropertyChanged}"/>
-        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding SelectedAuthor.Patronymic, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding User.Surname, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding User.Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding User.Patronymic, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding User.Login, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"/>
+        <DatePicker Grid.Column="1" Grid.Row="5" SelectedDate="{Binding User.Birthday, StringFormat='dd.MM.yyyy', UpdateSourceTrigger=PropertyChanged}"/>
+        <CheckBox Grid.Column="1" Grid.Row="6" IsChecked="{Binding User.IsAdmin}"/>
 
-
-        <Button Grid.Column="1" Grid.Row="5" Content="Отменить"
+        <Button Grid.Column="1" Grid.Row="8" Content="Отменить"
                 VerticalAlignment="Bottom" HorizontalAlignment="Right"  
                 Width="150" Background="Orange" 
                 Command="{StaticResource DialogResultCommand}"
                 CommandParameter="False"/>
-        <Button Grid.Column="1" Grid.Row="5" Content="Сохранить"
+        <Button Grid.Column="1" Grid.Row="8" Content="Сохранить"
                 VerticalAlignment="Bottom" HorizontalAlignment="Left" 
                 Width="250" Background="Green"
                 Command="{Binding SaveChangesCommand}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Click">
-                    <i:InvokeCommandAction Command="{StaticResource DialogResultCommand}" 
-                                           CommandParameter="True"/>
+                    <i:InvokeCommandAction Command="{StaticResource DialogResultCommand}" CommandParameter="True"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </Button>

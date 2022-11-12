@@ -15,8 +15,8 @@ using WpfMVVMEfApp.Services.Interfaces;
 using System.Windows.Data;
 using System.ComponentModel;
 using WpfMVVMEfApp.Views.AdminViews;
-using static WpfMVVMEfApp.ViewModels.Editors.CategoryEditorViewModel;
-using static WpfMVVMEfApp.ViewModels.Editors.BookEditorViewModel;
+using static WpfMVVMEfApp.ViewModels.AdminViewModels.Editors.CategoryEditorViewModel;
+using static WpfMVVMEfApp.ViewModels.AdminViewModels.Editors.BookEditorViewModel;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
