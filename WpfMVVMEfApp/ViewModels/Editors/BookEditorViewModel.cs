@@ -175,8 +175,9 @@ namespace WpfMVVMEfApp.ViewModels.Editors
         public void OnDeleteFileCommandExecuted(object? p)
         {
             var result = _DialogService.Confirm($"Вы уверены, что хотите удалить файл: {SelectedFile.Name}?", "Удаление файла");
-            if (result)
-                BookFiles.Remove(SelectedFile);
+            if (!result) return;
+            
+            BookFiles.Remove(SelectedFile);
         }
         #endregion
 

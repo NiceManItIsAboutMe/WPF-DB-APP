@@ -88,7 +88,6 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-
         #region команда Загрузки книг
 
         /// <summary> /// Загрузки книг /// </summary>
@@ -111,6 +110,13 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
                 .OrderBy(b => b.Name)
                 .AsNoTracking()
                 .ToListAsync());
+            var files = await db.BookFiles.Select(f => new BookFile { Name = f.Name, Id = f.Id, Book = f.Book }).AsNoTracking().ToListAsync();
+
+            foreach (var item in files.GroupBy(f => f.Book))
+            {
+                var list = item.ToList();
+                Books.First(b => b.Id == list[0].Book.Id).BookFiles = list;
+            }
         }
 
         #endregion
@@ -164,6 +170,8 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             using var db = await _dbFactory.CreateDbContextAsync();
 
             Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).FirstAsync(b => b.Id == SelectedBook.Id);
+            var files = await db.BookFiles.Where(f=>f.Book==book).Select(f => new BookFile { Name = f.Name, Id = f.Id, Book = f.Book }).ToListAsync();
+            book.BookFiles = files;
             BookEditorViewModel vm = new BookEditorViewModel(
                 book,
                 _DialogService,
@@ -172,10 +180,20 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
             bool result = _DialogService.Edit(vm);
             if (!result) return;
+
+            foreach (var item in files)
+            {
+                if (!book.BookFiles.Contains(item))
+                    db.BookFiles.Remove(item);
+                else if (book.BookFiles.First(f => f.Id == item.Id).File == null)
+                    book.BookFiles.Remove(item);
+            }
             await db.SaveChangesAsync();
             Books.Remove(SelectedBook);
             SelectedBook = book;
             Books.Add(SelectedBook);
+
+            _BooksViewSource.View.Refresh();
         }
 
         #endregion
