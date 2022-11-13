@@ -254,10 +254,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             using var db = await _dbFactory.CreateDbContextAsync();
             Author author = await db.Authors.FirstAsync(a => a.Id == SelectedAuthor.Id);
             bool result = _DialogService.Edit(author);
-            if (!result)
-            {
-                return;
-            }
+            if (!result) return;
             try
             {
                 db.Update(author);

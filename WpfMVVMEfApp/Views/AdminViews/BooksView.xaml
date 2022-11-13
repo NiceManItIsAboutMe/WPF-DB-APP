@@ -16,9 +16,14 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
-        <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
-        <DataGrid ItemsSource="{Binding BooksView}" SelectedItem="{Binding SelectedBook}" IsReadOnly="True" 
-                  AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBox Grid.Row="0" materialDesign:HintAssist.Hint="Поиск" Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}"/>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding BooksView}" SelectedItem="{Binding SelectedBook}" IsReadOnly="True" 
+                  AutoGenerateColumns="False" CanUserReorderColumns="False"
                   VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
                   VirtualizingPanel.VirtualizationMode="Recycling">
             <DataGrid.ItemsPanel>
@@ -45,7 +50,6 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <!--<DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="250"/>-->
                 <DataGridTemplateColumn Header="Редактировать">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -67,7 +71,12 @@
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
-        <Button Content="Добавить книгу" Margin="10,10,10,10" VerticalAlignment="Bottom"
+        <StackPanel Grid.Row="2">
+            <Button Content="{Binding DownloadButtonContent}" Margin="0.5"
+                Command="{Binding DownloadBookFileCommand}"/>
+            <Button Content="Добавить книгу" Margin="0.5"
                 Command="{Binding AddBookCommand}"/>
+        </StackPanel>
+        
     </Grid>
 </UserControl>

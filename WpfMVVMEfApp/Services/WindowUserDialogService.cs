@@ -3,7 +3,9 @@ using System;
 using System.Windows;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Services.Interfaces;
+using WpfMVVMEfApp.ViewModels;
 using WpfMVVMEfApp.ViewModels.AdminViewModels.Editors;
+using WpfMVVMEfApp.Views.Windows.Dialogs;
 using WpfMVVMEfApp.Views.Windows.Dialogs.Editors;
 
 namespace WpfMVVMEfApp.Services
@@ -14,6 +16,18 @@ namespace WpfMVVMEfApp.Services
 
         public WindowUserDialogService()
         {
+        }
+
+        public bool OpenDialogWindow(object item)
+        {
+            switch (item)
+            {
+                default: throw new NotSupportedException($"Редактирование объекта типа {item.GetType().Name} не поддерживается");
+                case DownloadBookFileViewModel vm:
+                    {
+                        return DownloadBookFile(vm);
+                    }
+            }
         }
 
         public bool Edit(object item)
@@ -64,7 +78,47 @@ namespace WpfMVVMEfApp.Services
         public void ShowWarning(string Information, string Caption) =>
             MessageBox.Show(Information, Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
 
+        public bool OpenFile(string Title, out string SelectedFile, string Filter = "Все файлы (*.*)|*.*")
+        {
+            var file_dialog = new OpenFileDialog
+            {
+                Title = Title,
+                Filter = Filter
+            };
 
+            if (file_dialog.ShowDialog() != true)
+            {
+                SelectedFile = null;
+                return false;
+            }
+
+            SelectedFile = file_dialog.FileName;
+
+            return true;
+        }
+
+        public bool SaveFile(string Title, out string SelectedFile, string DefaultFileName = null, string Filter = "Все файлы (*.*)|*.*")
+        {
+            var file_dialog = new SaveFileDialog
+            {
+                Title = Title,
+                Filter = Filter
+            };
+            if (!string.IsNullOrWhiteSpace(DefaultFileName))
+                file_dialog.FileName = DefaultFileName;
+
+            if (file_dialog.ShowDialog() != true)
+            {
+                SelectedFile = null;
+                return false;
+            }
+
+            SelectedFile = file_dialog.FileName;
+
+            return true;
+        }
+
+        #region private
         private bool EditBook(Book book)
         {
             BookEditorViewModel vm = new BookEditorViewModel(book, this);
@@ -154,44 +208,19 @@ namespace WpfMVVMEfApp.Services
             return result ?? false;
         }
 
-        public bool OpenFile(string Title, out string SelectedFile, string Filter = "Все файлы (*.*)|*.*")
+        private bool DownloadBookFile(DownloadBookFileViewModel vm)
         {
-            var file_dialog = new OpenFileDialog
+            DownloadBookFileWindow window = new DownloadBookFileWindow()
             {
-                Title = Title,
-                Filter = Filter
+                DataContext = vm,
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
             };
-
-            if (file_dialog.ShowDialog() != true)
-            {
-                SelectedFile = null;
-                return false;
-            }
-
-            SelectedFile = file_dialog.FileName;
-
+            window.ShowDialog();
             return true;
         }
+        #endregion
 
-        public bool SaveFile(string Title, out string SelectedFile, string DefaultFileName = null, string Filter = "Все файлы (*.*)|*.*")
-        {
-            var file_dialog = new SaveFileDialog
-            {
-                Title = Title,
-                Filter = Filter
-            };
-            if (!string.IsNullOrWhiteSpace(DefaultFileName))
-                file_dialog.FileName = DefaultFileName;
 
-            if (file_dialog.ShowDialog() != true)
-            {
-                SelectedFile = null;
-                return false;
-            }
-
-            SelectedFile = file_dialog.FileName;
-
-            return true;
-        }
     }
 }

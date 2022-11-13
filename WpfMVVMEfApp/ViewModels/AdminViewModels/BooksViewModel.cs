@@ -21,7 +21,6 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
     internal class BooksViewModel : ViewModel
     {
         private IDbContextFactory<ApplicationDbContext> _dbFactory;
-
         private IUserDialogService _DialogService;
 
         #region Строка поиска
@@ -84,7 +83,25 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         private Book _SelectedBook;
 
         /// <summary> /// Выбранная книга /// </summary>
-        public Book SelectedBook { get => _SelectedBook; set => Set(ref _SelectedBook, value); }
+        public Book SelectedBook { get => _SelectedBook;
+            set {
+                Set(ref _SelectedBook, value);
+                if (value?.BookFilesDescription?.Any() ?? false)
+                    DownloadButtonContent = "Скачать";
+                else
+                    DownloadButtonContent = "Скоро добавим";
+            } }
+
+
+        #region DownloadButtonContent
+
+        /// <summary> /// DownloadButtonContent /// </summary>
+        private string _DownloadButtonContent = "Скоро добавим";
+
+        /// <summary> /// DownloadButtonContent /// </summary>
+        public string DownloadButtonContent { get => _DownloadButtonContent; set => Set(ref _DownloadButtonContent, value); }
+
+        #endregion
 
         #endregion
 
@@ -218,6 +235,26 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
+        #region команда Скачивание книги
+
+        /// <summary> /// Скачивание книги /// </summary>
+        private ICommand _DownloadBookFileCommand;
+
+        /// <summary> /// Скачивание книги /// </summary>
+        public ICommand DownloadBookFileCommand => _DownloadBookFileCommand
+               ??= new RelayCommand(OnDownloadBookFileCommandExecuted, CanDownloadBookFileCommandExecute);
+
+        /// <summary> /// Скачивание книги /// </summary>
+        public bool CanDownloadBookFileCommandExecute(object? p) => SelectedBook?.BookFilesDescription?.Any() ?? false;
+
+        /// <summary> /// Скачивание книги /// </summary>
+        public void OnDownloadBookFileCommandExecuted(object? p)
+        {
+            DownloadBookFileViewModel vm = new DownloadBookFileViewModel(SelectedBook, _dbFactory, _DialogService);
+            _DialogService.OpenDialogWindow(vm);
+        }
+
+        #endregion
 
         public BooksViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, IUserDialogService dialogService)
         {

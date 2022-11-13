@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfMVVMEfApp.Views.Windows.Dialogs"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:vm="clr-namespace:WpfMVVMEfApp.ViewModels"
         mc:Ignorable="d"
-        Title="Выбор файла" Height="150" Width="350">
+        Title="Выбор файла" Height="150" Width="350"
+        d:DataContext="{d:DesignInstance vm:DownloadBookFileViewModel}">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -23,9 +25,9 @@
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Автор: "/>
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Выбор файла: "/>
 
-        <TextBlock Grid.Row="0" Grid.Column="1" Text="Книга: "/>
-        <TextBlock Grid.Row="1" Grid.Column="1" Text="Автор: "/>
-        <ComboBox Grid.Row="2" Grid.Column="1" />
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Book}"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Book.Author}"/>
+        <ComboBox Grid.Row="2" Grid.Column="1"  ItemsSource="{Binding BookFiles}" SelectedItem="{Binding SelectedFile}"/>
 
         <Button Grid.Column="1" Grid.Row="4" Content="Назад"
                 VerticalAlignment="Bottom" HorizontalAlignment="Right"  
@@ -35,12 +37,7 @@
         <Button Grid.Column="1" Grid.Row="4" Content="Скачать"
                 VerticalAlignment="Bottom" HorizontalAlignment="Left" 
                 Width="150" Background="Green"
-                Command="{Binding SaveButtonClickCommand}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Click">
-                    <i:InvokeCommandAction Command="{StaticResource DialogResultCommand}" CommandParameter="True"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+                Command="{Binding DownloadBookFileCommand}">
         </Button>
     </Grid>
 </Window>
