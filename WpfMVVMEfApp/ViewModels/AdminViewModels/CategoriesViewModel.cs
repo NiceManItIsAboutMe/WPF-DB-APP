@@ -17,19 +17,11 @@ using WpfMVVMEfApp.ViewModels.AdminViewModels.Editors;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
-    internal class CategoriesViewModel : ViewModel
+    internal class CategoriesViewModel : BooksViewModel
     {
-        private IDbContextFactory<ApplicationDbContext> _dbFactory;
-
-        private IUserDialogService _DialogService;
-
         private CollectionViewSource _CategoriesViewSource;
 
         public ICollectionView CategoriesView => _CategoriesViewSource?.View;
-
-        private CollectionViewSource _BooksViewSource;
-
-        public ICollectionView BooksView => _BooksViewSource?.View;
 
         #region Поиск категорий
 
@@ -48,25 +40,6 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         }
 
         #endregion
-
-        #region Поиск книг
-
-        /// <summary> /// Поиск книг /// </summary>
-        private string _BooksSearchFilter;
-
-        /// <summary> /// Поиск книг /// </summary>
-        public string BooksSearchFilter
-        {
-            get => _BooksSearchFilter;
-            set
-            {
-                if (Set(ref _BooksSearchFilter, value))
-                    _BooksViewSource.View.Refresh();
-            }
-        }
-
-        #endregion
-
 
         #region Категории
 
@@ -104,57 +77,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         private Category _SelectedCategory;
 
         /// <summary> /// Выбранная категория /// </summary>
-        public Category SelectedCategory
-        {
-            get => _SelectedCategory;
-            set
-            {
-                Set(ref _SelectedCategory, value);
-                if (CanLoadBooksSelectedCategoriesCommandExecute(null))
-                    OnLoadBooksSelectedCategoriesCommandExecuted(null);
-            }
-        }
-
-        #endregion
-
-
-        #region Книги
-
-        /// <summary> /// Книги /// </summary>
-        private ObservableCollection<Book> _Books;
-
-        /// <summary> /// Книги /// </summary>
-        public ObservableCollection<Book> Books
-        {
-            get => _Books;
-            set
-            {
-                if (Set(ref _Books, value))
-                {
-                    _BooksViewSource = new CollectionViewSource
-                    {
-                        Source = Books,
-                        SortDescriptions =
-                        {
-                            new SortDescription(nameof(Book.Name), ListSortDirection.Ascending),
-                        }
-                    };
-                    _BooksViewSource.Filter += OnBooksSearchFilter;
-                    OnPropertyChanged(nameof(BooksView));
-                    _BooksViewSource.View.Refresh();
-                }
-            }
-        }
-
-        #endregion
-
-        #region Выбранная книга
-
-        /// <summary> /// Выбранная книга /// </summary>
-        private Book _SelectedBook;
-
-        /// <summary> /// Выбранная книга /// </summary>
-        public Book SelectedBook { get => _SelectedBook; set => Set(ref _SelectedBook, value); }
+        public Category SelectedCategory{ get => _SelectedCategory; set => Set(ref _SelectedCategory, value);}
 
         #endregion
 
@@ -180,27 +103,20 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         #endregion
 
         #region команда Загрузка книг выбранной категории
+        /// <summary> /// Загрузка книг выбранной категории /// </summary>
+        public override bool CanLoadBooksCommandExecute(object? p) => SelectedCategory is Category;
 
         /// <summary> /// Загрузка книг выбранной категории /// </summary>
-        private ICommand _LoadBooksSelectedCategoriesCommand;
-
-        /// <summary> /// Загрузка книг выбранной категории /// </summary>
-        public ICommand LoadBooksSelectedCategoriesCommand => _LoadBooksSelectedCategoriesCommand
-               ??= new RelayCommand(OnLoadBooksSelectedCategoriesCommandExecuted, CanLoadBooksSelectedCategoriesCommandExecute);
-
-        /// <summary> /// Загрузка книг выбранной категории /// </summary>
-        public bool CanLoadBooksSelectedCategoriesCommandExecute(object? p)
-        {
-            if (SelectedCategory == null) return false;
-            return true;
-        }
-
-        /// <summary> /// Загрузка книг выбранной категории /// </summary>
-        public async void OnLoadBooksSelectedCategoriesCommandExecuted(object? p)
+        public override async void OnLoadBooksCommandExecuted(object? p)
         {
             using var db = await _dbFactory.CreateDbContextAsync();
-            Books = new ObservableCollection<Book>(await db.Books.Where(b => b.Categories.Contains(SelectedCategory))
-                .Include(b => b.Categories).Include(b => b.Author).Include(b=>b.BookFilesDescription).AsNoTracking().ToListAsync());
+            Books = new ObservableCollection<Book>(await db.Books
+                .Where(b => b.Categories.Contains(SelectedCategory))
+                .Include(b => b.Categories)
+                .Include(b => b.Author)
+                .Include(b => b.BookFilesDescription)
+                .AsNoTracking()
+                .ToListAsync());
         }
 
         #endregion
@@ -293,51 +209,9 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-        #region команда Удаление книги
-
-        /// <summary> /// Удаление книги /// </summary>
-        private ICommand _RemoveSelectedBookCommand;
-
-        /// <summary> /// Удаление книги /// </summary>
-        public ICommand RemoveSelectedBookCommand => _RemoveSelectedBookCommand
-               ??= new RelayCommand(OnRemoveSelectedBookCommandExecuted, CanRemoveSelectedBookCommandExecute);
-
-        /// <summary> /// Удаление книги /// </summary>
-        public bool CanRemoveSelectedBookCommandExecute(object? p) => true;
-
-        /// <summary> /// Удаление книги /// </summary>
-        public async void OnRemoveSelectedBookCommandExecuted(object? p)
-        {
-            if (SelectedBook == null) return;
-
-            if (!_DialogService.Confirm($"Вы действительно хотите удалить книгу: {SelectedBook.Name}" +
-                $", автора: {SelectedBook.Author}?",
-                "Удаление"))
-                return;
-
-            using var db = await _dbFactory.CreateDbContextAsync();
-            db.Remove(SelectedBook);
-            await db.SaveChangesAsync();
-
-            Books.Remove(SelectedBook);
-        }
-
-        #endregion
-
         #region команда Добавление книги
-
         /// <summary> /// Добавление книги /// </summary>
-        private ICommand _AddBookCommand;
-
-        /// <summary> /// Добавление книги /// </summary>
-        public ICommand AddBookCommand => _AddBookCommand
-               ??= new RelayCommand(OnAddBookCommandExecuted, CanAddBookCommandExecute);
-
-        /// <summary> /// Добавление книги /// </summary>
-        public bool CanAddBookCommandExecute(object? p) => true;
-
-        /// <summary> /// Добавление книги /// </summary>
-        public async void OnAddBookCommandExecuted(object? p)
+        public override async void OnAddBookCommandExecuted(object? p)
         {
             using var db = await _dbFactory.CreateDbContextAsync();
             Book book = new Book
@@ -365,19 +239,8 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         #endregion
 
         #region команда Редактирование книги
-
         /// <summary> /// Редактирование книги /// </summary>
-        private ICommand _EditSelectedBookCommand;
-
-        /// <summary> /// Редактирование книги /// </summary>
-        public ICommand EditSelectedBookCommand => _EditSelectedBookCommand
-               ??= new RelayCommand(OnEditSelectedBookCommandExecuted, CanEditSelectedBookCommandExecute);
-
-        /// <summary> /// Редактирование книги /// </summary>
-        public bool CanEditSelectedBookCommandExecute(object? p) => true;
-
-        /// <summary> /// Редактирование книги /// </summary>
-        public async void OnEditSelectedBookCommandExecuted(object? p)
+        public override async void OnEditSelectedBookCommandExecuted(object? p)
         {
             if (SelectedBook == null) return;
 
@@ -404,20 +267,11 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-        public CategoriesViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, IUserDialogService dialogService)
+        public CategoriesViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, IUserDialogService dialogService) : base(dbFactory,dialogService)
         {
             _dbFactory = dbFactory;
             _DialogService = dialogService;
         }
-
-        private void OnBooksSearchFilter(object sender, FilterEventArgs e)
-        {
-            if (!(e.Item is Book book) || string.IsNullOrEmpty(BooksSearchFilter)) return;
-
-            if (!book.Name.Contains(_BooksSearchFilter, StringComparison.OrdinalIgnoreCase))
-                e.Accepted = false;
-        }
-
         private void OnCategoriesSearchFilter(object sender, FilterEventArgs e)
         {
             if (!(e.Item is Category category) || string.IsNullOrEmpty(CategoriesSearchFilter)) return;

@@ -21,7 +21,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBox Grid.Row="0" materialDesign:HintAssist.Hint="Поиск" Text="{Binding SearchFilter, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Row="0" materialDesign:HintAssist.Hint="Поиск" Text="{Binding BooksSearchFilter, UpdateSourceTrigger=PropertyChanged}"/>
         <DataGrid Grid.Row="1" ItemsSource="{Binding BooksView}" SelectedItem="{Binding SelectedBook}" IsReadOnly="True" 
                   AutoGenerateColumns="False" CanUserReorderColumns="False"
                   VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 

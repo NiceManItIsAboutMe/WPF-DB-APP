@@ -37,6 +37,13 @@
                     <ListBox ItemsSource="{Binding AuthorsView}" SelectedItem="{Binding SelectedAuthor}" Margin="0,30,0,75"
                              VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
                              VirtualizingPanel.VirtualizationMode="Recycling">
+                        
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding LoadBooksCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <VirtualizingStackPanel/>
