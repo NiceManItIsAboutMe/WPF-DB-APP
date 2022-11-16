@@ -4,12 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:c="clr-namespace:WpfMVVMEfApp.ViewModels.Converters"
+        xmlns:fa5="http://schemas.fontawesome.com/icons/"
         xmlns:local="clr-namespace:WpfMVVMEfApp"
         mc:Ignorable="d"
         DataContext="{Binding MainWindowModel,Source={StaticResource Locator}}"
-        Name="MainWindowName"
-        Title="{Binding Title}" Height="600" Width="1200" WindowStartupLocation="CenterScreen">
+        Title="{Binding Title}" Icon="pack://application:,,,/Resources/Images/bookicon.png"
+        Height="600" Width="1200" WindowStartupLocation="CenterScreen">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding SelectAuthorizationViewModelCommand}"/>
@@ -20,6 +20,8 @@
             <MenuItem Header="Помощь" Height="20">
                 <MenuItem Header="О программе"/>
             </MenuItem>
+            <MenuItem Header="Сменить интерфейс" Height="20" 
+                      Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         </Menu>
         <Grid>
             <ContentControl Content="{Binding CurrrentViewModel}"/>

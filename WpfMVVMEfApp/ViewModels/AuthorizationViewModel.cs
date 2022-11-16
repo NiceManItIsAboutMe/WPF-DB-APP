@@ -19,7 +19,7 @@ using WpfMVVMEfApp.Views.Windows;
 
 namespace WpfMVVMEfApp.ViewModels
 {
-    internal class AuthorizationViewModel:ViewModel
+    internal class AuthorizationViewModel : ViewModel
     {
         #region поля
         private IUserDialogService _DialogService;
@@ -80,48 +80,32 @@ namespace WpfMVVMEfApp.ViewModels
         {
             if (String.IsNullOrEmpty(Login)) { _DialogService.ShowWarning("Введите логин", "Предупреждение"); return; }
             if (String.IsNullOrEmpty(Password)) { _DialogService.ShowWarning("Введите пароль", "Предупреждение"); return; }
-            try
+
+            var password = User.HashPassword(Password);
+            using (var db = await _dbFactory.CreateDbContextAsync())
             {
-                var password = User.HashPassword(Password);
-                using (var db = await _dbFactory.CreateDbContextAsync())
+                var user = await db.Users
+                    .Where(u => u.Login == Login && u.Password == password)
+                    .Include(u => u.Books)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+
+                if (user == null) { _DialogService.ShowWarning("Вы ввели неверный логин или пароль", "Предупреждение"); return; }
+                else if (user.IsAdmin) // изменить потом
                 {
-                    var user = await db.Users.Where(u => u.Login == Login && u.Password == password).FirstOrDefaultAsync();
-
-                    if (user == null) { _DialogService.ShowWarning("Вы ввели неверный логин или пароль", "Предупреждение"); return; }
-                    else if (user.IsAdmin) // изменить потом
-                    {
-                        _MainWindowViewModel.CurrrentViewModel = _AdminViewModel;
-                    }
-                    else
-                    {
-                        _MainWindowViewModel.CurrrentViewModel = _AdminViewModel;
-
-                    }
+                    _MainWindowViewModel.User = user;
+                    _MainWindowViewModel.CurrrentViewModel = _AdminViewModel;
                 }
-            }
-            catch (NpgsqlException ex)
-            {
-                _DialogService.ShowError("Нет доступа к базе данных. Обратитесь в службу поддержки" + Environment.NewLine
-                    + "Код ошибки:" + ex.ErrorCode
-                    + Environment.NewLine + ex.Message,
-                    "Ошибка связи с базой данных");
-            }
-            catch (InvalidOperationException ex)
-            {
-                _DialogService.ShowError("Нет доступа к базе данных. Обратитесь в службу поддержки" + Environment.NewLine
-                    + ex.Message,
-                    "Ошибка связи с базой данных");
-            }
-            catch (Exception ex)
-            {
-                _DialogService.ShowError("Возникла ошибка. Обратитесь в службу поддержки." + Environment.NewLine
-                    + ex.Message,
-                    "Непредвиденная ошибка");
+                else
+                {
+                    _MainWindowViewModel.User = user;
+                    _MainWindowViewModel.CurrrentViewModel = _AdminViewModel;
+                }
             }
         }
         #endregion
 
-        public AuthorizationViewModel(IDbContextFactory<ApplicationDbContext> dbFactory,AdminViewModel adminViewModel, IUserDialogService dialogService)
+        public AuthorizationViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, AdminViewModel adminViewModel, IUserDialogService dialogService)
         {
             _dbFactory = dbFactory;
             _DialogService = dialogService;

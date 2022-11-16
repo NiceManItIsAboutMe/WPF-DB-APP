@@ -6,6 +6,7 @@
              xmlns:c="clr-namespace:WpfMVVMEfApp.ViewModels.Converters"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:fa5="http://schemas.fontawesome.com/icons/"
              xmlns:local="clr-namespace:WpfMVVMEfApp.Views.AdminViews"
              mc:Ignorable="d" 
              DataContext="{Binding BooksModel, Source={StaticResource Locator}}"
@@ -50,17 +51,11 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Редактировать">
+                <DataGridTemplateColumn Header="Скачать">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Редактировать" Command="{Binding BooksModel.EditSelectedBookCommand, Source={StaticResource Locator}}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Удалить" Width="*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Удалить" Command="{Binding BooksModel.RemoveSelectedBookCommand, Source={StaticResource Locator}}"/>
+                            <Button fa5:Awesome.Content="Solid_FileDownload"
+                                Command="{Binding BooksModel.DownloadBookFileCommand, Source={StaticResource Locator}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -71,10 +66,13 @@
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
-        <StackPanel Grid.Row="2">
-            <Button Content="{Binding DownloadButtonContent}" Margin="0.5"
-                Command="{Binding DownloadBookFileCommand}"/>
-            <Button Content="Добавить книгу" Margin="0.5"
+        <StackPanel Grid.Row="2"
+                    Visibility="{Binding MainWindowModel.IsAdmin, Source={StaticResource Locator}, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Button Content="Удалить" Margin="0.5" Height="30" BorderThickness="30"
+                    Command="{Binding BooksModel.RemoveSelectedBookCommand, Source={StaticResource Locator}}"/>
+            <Button Content="Редактировать" Margin="0.5" Height="30"
+                    Command="{Binding BooksModel.EditSelectedBookCommand, Source={StaticResource Locator}}"/>
+            <Button Content="Добавить книгу" Margin="0.5" Height="30" BorderThickness="50,0,50,30"
                 Command="{Binding AddBookCommand}"/>
         </StackPanel>
         

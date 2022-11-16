@@ -85,17 +85,6 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         /// <summary> /// Выбранная книга /// </summary>
         public Book SelectedBook { get => _SelectedBook; set => Set(ref _SelectedBook, value); }
 
-
-        #region DownloadButtonContent
-
-        /// <summary> /// DownloadButtonContent /// </summary>
-        private string _DownloadButtonContent = "Скоро добавим";
-
-        /// <summary> /// DownloadButtonContent /// </summary>
-        public string DownloadButtonContent { get => _DownloadButtonContent; set => Set(ref _DownloadButtonContent, value); }
-
-        #endregion
-
         #endregion
 
         #region команда Загрузки книг

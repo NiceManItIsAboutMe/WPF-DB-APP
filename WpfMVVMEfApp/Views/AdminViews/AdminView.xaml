@@ -9,19 +9,20 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <TabControl>
-            <TabItem Header="Пользователи">
-                <ContentControl Content="{Binding UsersViewModel}"/>
-            </TabItem>
-            <TabItem Header="Категории" >
-                <ContentControl Content="{Binding CategoriesViewModel}"/>
-            </TabItem>
-            <TabItem Header="Авторы">
-                <ContentControl Content="{Binding AuthorsViewModel}"/>
-            </TabItem>
             <TabItem Header="Книги">
                 <Grid>
                     <ContentControl Content="{Binding BooksViewModel}"/>
                 </Grid>
+            </TabItem>
+            <TabItem Header="Авторы">
+                <ContentControl Content="{Binding AuthorsViewModel}"/>
+            </TabItem>
+            <TabItem Header="Категории" >
+                <ContentControl Content="{Binding CategoriesViewModel}"/>
+            </TabItem>
+            <TabItem Header="Пользователи" 
+                     Visibility="{Binding MainWindowModel.IsAdmin, Source={StaticResource Locator}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ContentControl Content="{Binding UsersViewModel}"/>
             </TabItem>
         </TabControl>
     </Grid>

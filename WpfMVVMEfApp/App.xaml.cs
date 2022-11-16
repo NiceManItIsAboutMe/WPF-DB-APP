@@ -4,13 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Windows;
-using System.Xaml;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services;
 using WpfMVVMEfApp.Services.Interfaces;
 using WpfMVVMEfApp.ViewModels;
-using WpfMVVMEfApp.ViewModels.AdminViewModels;
-using WpfMVVMEfApp.Views;
 
 namespace WpfMVVMEfApp
 {

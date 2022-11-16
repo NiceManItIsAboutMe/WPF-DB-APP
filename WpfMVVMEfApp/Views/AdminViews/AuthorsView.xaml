@@ -7,6 +7,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:WpfMVVMEfApp.Views.AdminViews"
+             xmlns:fa5="http://schemas.fontawesome.com/icons/"
              mc:Ignorable="d" 
              DataContext="{Binding AuthorsModel,Source={StaticResource Locator}}"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -21,120 +22,124 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="250"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <GroupBox Header="Авторы" Grid.Column="0">
-                <Grid>
-                    <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding AuthorsSearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
-                    <ListBox ItemsSource="{Binding AuthorsView}" SelectedItem="{Binding SelectedAuthor}" Margin="0,30,0,75"
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <GroupBox Header="Авторы" Grid.Column="0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding AuthorsSearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
+                <ListBox Grid.Row="1" ItemsSource="{Binding AuthorsView}" SelectedItem="{Binding SelectedAuthor}" Margin="0.5"
                              VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
                              VirtualizingPanel.VirtualizationMode="Recycling">
-                        
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding LoadBooksCommand}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <VirtualizingStackPanel/>
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
-               
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <DockPanel>
-                                        <TextBlock Text="{Binding Surname}" Margin="2,2,2,2"/>
-                                        <TextBlock Text="{Binding Name}" Margin="2,2,2,2"/>
-                                        <TextBlock Text="{Binding Patronymic}" Margin="2,2,2,2"/>
-                                    </DockPanel>
-                                    <Button Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="3,0"
-                                            Background="Transparent" BorderThickness="0" Foreground="Red"
-                                            FontWeight="Bold"
-                                            Command="{Binding AuthorsModel.RemoveSelectedAuthorCommand, Source={StaticResource Locator}}"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Grid>
-            </GroupBox>
-            
-            <Button Content="Редактировать автора" Grid.Column="0" VerticalAlignment="Bottom" Margin="10,50"
+
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding LoadBooksCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <DockPanel>
+                                    <TextBlock Text="{Binding Surname}" Margin="2,2,2,2"/>
+                                    <TextBlock Text="{Binding Name}" Margin="2,2,2,2"/>
+                                    <TextBlock Text="{Binding Patronymic}" Margin="2,2,2,2"/>
+                                </DockPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <StackPanel Grid.Row="2"
+                            Visibility="{Binding MainWindowModel.IsAdmin, Source={StaticResource Locator}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button Content="Удалить автора" Margin="0.5" Height="30" BorderThickness="30"
+                    Command="{Binding RemoveSelectedAuthorCommand}"/>
+                    <Button Content="Редактировать автора" Margin="1" Height="30"
                     Command="{Binding EditAuthorCommand}"/>
-            <Button Content="Добавить автора" Grid.Column="0" VerticalAlignment="Bottom" Margin="10"
+                    <Button Content="Добавить автора" Margin="0.5" Height="30" BorderThickness="50,0,50,30"
                     Command="{Binding AddAuthorCommand}"/>
-            
-            <GroupBox Header="{Binding SelectedAuthor, Converter={StaticResource FullNameConverter}, FallbackValue='Книги'}" Grid.Column="1">
-                <Grid>
-                    <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding BooksSearchFilter, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top"/>
-                    <DataGrid ItemsSource="{Binding BooksView}" SelectedItem="{Binding SelectedBook}" IsReadOnly="True" 
-                              AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0,30,0,45"
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="{Binding SelectedAuthor, Converter={StaticResource FullNameConverter}, FallbackValue='Книги'}" Grid.Column="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBox materialDesign:HintAssist.Hint="Поиск" Text="{Binding BooksSearchFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGrid Grid.Row="1"
+                    ItemsSource="{Binding BooksView}" SelectedItem="{Binding SelectedBook}" IsReadOnly="True" 
+                              AutoGenerateColumns="False" CanUserReorderColumns="False" Margin="0.5"
                               VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
                               VirtualizingPanel.VirtualizationMode="Recycling">
-                        <DataGrid.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <VirtualizingStackPanel/>
-                            </ItemsPanelTemplate>
-                        </DataGrid.ItemsPanel>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
-                            <DataGridTextColumn Header="Автор" Binding="{Binding Author,Converter={StaticResource FullNameConverter}}"/>
-                            <DataGridTemplateColumn Header="Категории">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox ItemsSource="{Binding Categories}" SelectedIndex="0">
-                                            <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Name}"/>
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </ComboBox>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Редактировать">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Редактировать" 
-                                                Command="{Binding CategoriesModel.EditSelectedBookCommand, Source={StaticResource Locator}}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Удалить" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="Удалить" 
-                                                Command="{Binding CategoriesModel.RemoveSelectedBookCommand, Source={StaticResource Locator}}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                        <DataGrid.RowDetailsTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" MaxWidth="800" FontSize="14"/>
-                            </DataTemplate>
-                        </DataGrid.RowDetailsTemplate>
-                    </DataGrid>
-                </Grid>
-            </GroupBox>
-            <Button Content="Добавить книгу" Grid.Column="1" Margin="10" VerticalAlignment="Bottom"
+                    <DataGrid.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel/>
+                        </ItemsPanelTemplate>
+                    </DataGrid.ItemsPanel>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Название" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="Автор" Binding="{Binding Author,Converter={StaticResource FullNameConverter}}"/>
+                        <DataGridTemplateColumn Header="Категории">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding Categories}" SelectedIndex="0">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        
+                        <DataGridTemplateColumn Header="Скачать">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button fa5:Awesome.Content="Solid_FileDownload"
+                                        Command="{Binding CategoriesModel.DownloadBookFileCommand, Source={StaticResource Locator}}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                    <DataGrid.RowDetailsTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap" MaxWidth="800" FontSize="14"/>
+                        </DataTemplate>
+                    </DataGrid.RowDetailsTemplate>
+                </DataGrid>
+                <StackPanel Grid.Row="2"
+                    Visibility="{Binding MainWindowModel.IsAdmin, Source={StaticResource Locator}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button Content="Удалить книгу" Margin="0.5" BorderThickness="30"
+                        Command="{Binding RemoveSelectedBookCommand}"/>
+                    <Button Content="Редактировать книгу" Margin="1"
+                        Command="{Binding EditSelectedBookCommand}"/>
+                    <Button Content="Добавить книгу" Margin="0.5" BorderThickness="50,0,50,30"
                     Command="{Binding AddBookCommand}"/>
-        </Grid>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
     </Grid>
 
 </UserControl>

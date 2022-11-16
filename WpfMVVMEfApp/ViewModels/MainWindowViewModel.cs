@@ -1,21 +1,32 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using WpfDBApp.ViewModels.Base;
 using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
-using WpfMVVMEfApp.Models.PostgreSqlDB;
-using WpfMVVMEfApp.Services.Interfaces;
 
 namespace WpfMVVMEfApp.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
         #region Поля
+        #region User
+
+        /// <summary> /// User /// </summary>
+        private User _User;
+
+        /// <summary> /// User /// </summary>
+        public User User { get => _User; set { if (Set(ref _User, value)) IsAdmin = value.IsAdmin; }}
+
+        #endregion
+
+        #region IsAdmin
+
+        /// <summary> /// IsAdmin /// </summary>
+        private bool _IsAdmin = false;
+
+        /// <summary> /// IsAdmin /// </summary>
+        public bool IsAdmin { get => _IsAdmin; set => Set(ref _IsAdmin, value); }
+
+        #endregion
 
         private AuthorizationViewModel _AuthorizationViewModel;
 
@@ -24,7 +35,6 @@ namespace WpfMVVMEfApp.ViewModels
 
         public string Title { get => _Title; set => Set(ref _Title, value); }
         #endregion
-
 
         #region Текущая ViewModel
 
@@ -36,7 +46,6 @@ namespace WpfMVVMEfApp.ViewModels
 
         #endregion
         #endregion
-
 
         #region команда Переводим окно в режим авторизации
 
@@ -58,7 +67,7 @@ namespace WpfMVVMEfApp.ViewModels
 
         #endregion
 
-        public MainWindowViewModel(AuthorizationViewModel authorizationViewModel, IUserDialogService DialogService)
+        public MainWindowViewModel(AuthorizationViewModel authorizationViewModel)
         {
             _AuthorizationViewModel = authorizationViewModel;
             //чтобы создать авторизацию нам надо данный сервис а чтобы создать данный сервис надо авторизацию разрываем это кольцо
