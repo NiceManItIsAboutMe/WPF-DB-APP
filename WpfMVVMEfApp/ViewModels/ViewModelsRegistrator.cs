@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System.Runtime.CompilerServices;
 using WpfMVVMEfApp.ViewModels.AdminViewModels;
 
 namespace WpfMVVMEfApp.ViewModels

@@ -71,8 +71,8 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                    .Select(i => new Book
                    {
                        Name = $"Книга {i}",
-                       Description =$"Описание книги {i}...",
-                       Categories = _Categories.ToList().GetRange(random.Next(0,4), 2),
+                       Description = $"Описание книги {i}...",
+                       Categories = _Categories.ToList().GetRange(random.Next(0, 4), 2),
                        Author = random.NextItem<Author>(_Authors)
                    }).ToArray();
                 await db.AddRangeAsync(_Books);
@@ -89,7 +89,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                        Login = $"login{i}",
                        Password = User.HashPassword($"password{i}"),
                        IsAdmin = false,
-                       Books= _Books.ToList().GetRange(random.Next(1,490),10)
+                       Books = _Books.ToList().GetRange(random.Next(1, 490), 10)
                    }).ToArray();
                 await db.AddRangeAsync(_Users);
 
@@ -158,7 +158,7 @@ namespace WpfMVVMEfApp.Models.PostgreSqlDB
                        Surname = $"Фамилия {i}",
                        Name = $"Имя {i}",
                        Patronymic = $"Отчество {i}",
-                       Birthday = DateTime.Now.AddYears(-random.Next(18,51)).Date,
+                       Birthday = DateTime.Now.AddYears(-random.Next(18, 51)).Date,
                        Login = $"login{i}",
                        Password = User.HashPassword($"password{i}"),
                        IsAdmin = false,

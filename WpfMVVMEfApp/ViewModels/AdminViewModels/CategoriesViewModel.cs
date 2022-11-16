@@ -4,11 +4,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
-using WpfDBApp.ViewModels.Base;
 using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
@@ -77,7 +74,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         private Category _SelectedCategory;
 
         /// <summary> /// Выбранная категория /// </summary>
-        public Category SelectedCategory{ get => _SelectedCategory; set => Set(ref _SelectedCategory, value);}
+        public Category SelectedCategory { get => _SelectedCategory; set => Set(ref _SelectedCategory, value); }
 
         #endregion
 
@@ -245,7 +242,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             if (SelectedBook == null) return;
 
             using var db = await _dbFactory.CreateDbContextAsync();
-            Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).Include(b=>b.BookFilesDescription)
+            Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).Include(b => b.BookFilesDescription)
                 .FirstAsync(b => b.Id == SelectedBook.Id);
             BookEditorViewModel vm = new BookEditorViewModel(
                book,
@@ -258,7 +255,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             db.Update(book);
             await db.SaveChangesAsync();
             Books.Remove(SelectedBook);
-            if (book.Categories.FirstOrDefault(c=>c.Id==SelectedCategory.Id) != null)
+            if (book.Categories.FirstOrDefault(c => c.Id == SelectedCategory.Id) != null)
             {
                 SelectedBook = book;
                 Books.Add(book);
@@ -267,7 +264,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-        public CategoriesViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, IUserDialogService dialogService) : base(dbFactory,dialogService)
+        public CategoriesViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, IUserDialogService dialogService) : base(dbFactory, dialogService)
         {
             _dbFactory = dbFactory;
             _DialogService = dialogService;

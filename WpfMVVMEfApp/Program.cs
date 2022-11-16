@@ -11,7 +11,7 @@ namespace WpfMVVMEfApp
         [STAThread]
         public static void Main()
         {
-            var app=new App();
+            var app = new App();
             app.InitializeComponent();
             app.Run();
         }

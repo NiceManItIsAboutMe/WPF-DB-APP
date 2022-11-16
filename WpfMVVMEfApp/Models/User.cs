@@ -7,10 +7,10 @@ using WpfMVVMEfApp.Models.Base;
 
 namespace WpfMVVMEfApp.Models
 {
-    internal class User: Person
+    internal class User : Person
     {
         [Required]
-        [StringLength(100,MinimumLength =5)]
+        [StringLength(100, MinimumLength = 5)]
         public string Login { get; set; }
 
         public byte[] Password { get; set; }

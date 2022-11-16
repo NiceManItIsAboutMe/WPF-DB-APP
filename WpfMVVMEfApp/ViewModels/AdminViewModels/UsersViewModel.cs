@@ -1,22 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows;
 using WpfDBApp.ViewModels.Base;
 using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
-using System.Windows.Data;
-using System.ComponentModel;
-using WpfMVVMEfApp.Views.AdminViews;
-using static WpfMVVMEfApp.ViewModels.AdminViewModels.Editors.CategoryEditorViewModel;
-using static WpfMVVMEfApp.ViewModels.AdminViewModels.Editors.BookEditorViewModel;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
@@ -71,7 +63,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
             get => _Users;
             set
             {
-                if(Set(ref _Users, value))
+                if (Set(ref _Users, value))
                 {
                     _UsersViewSource = new CollectionViewSource
                     {
@@ -198,7 +190,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
             User user = await db.Users.FirstAsync(u => u.Id == SelectedUser.Id);
 
-            if(p != null)
+            if (p != null)
             {
                 if (Convert.ToBoolean(p))
                     user.Password = null;
@@ -282,7 +274,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
             if (!user.Name.Contains(_SearchFilter, StringComparison.OrdinalIgnoreCase)
                 && !user.Surname.Contains(_SearchFilter, StringComparison.OrdinalIgnoreCase)
-                && !user.Patronymic.Contains(_SearchFilter, StringComparison.OrdinalIgnoreCase) 
+                && !user.Patronymic.Contains(_SearchFilter, StringComparison.OrdinalIgnoreCase)
                 && !user.Login.Contains(_SearchFilter, StringComparison.OrdinalIgnoreCase))
                 e.Accepted = false;
         }

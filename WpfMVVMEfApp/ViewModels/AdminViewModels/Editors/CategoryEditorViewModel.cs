@@ -4,15 +4,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 using WpfDBApp.ViewModels.Base;
 using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
-using WpfMVVMEfApp.Views.AdminViews;
-using static WpfMVVMEfApp.ViewModels.AdminViewModels.Editors.BookEditorViewModel;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels.Editors
 {

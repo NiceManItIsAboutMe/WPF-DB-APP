@@ -8,7 +8,7 @@ namespace WpfMVVMEfApp.Models.Base
     internal abstract class NamedEntity : Entity
     {
         [Required]
-        [StringLength(100,MinimumLength = 2)]
+        [StringLength(100, MinimumLength = 2)]
         public virtual string Name { get; set; }
 
         public override string ToString()

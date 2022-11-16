@@ -14,7 +14,7 @@ namespace WpfMVVMEfApp.ViewModels
         private User _User;
 
         /// <summary> /// User /// </summary>
-        public User User { get => _User; set { if (Set(ref _User, value)) IsAdmin = value.IsAdmin; }}
+        public User User { get => _User; set { if (Set(ref _User, value)) IsAdmin = value.IsAdmin; } }
 
         #endregion
 

@@ -1,21 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
-using WpfDBApp.ViewModels.Base;
 using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
 using WpfMVVMEfApp.ViewModels.AdminViewModels.Editors;
-using WpfMVVMEfApp.Views.AdminViews;
-using static WpfMVVMEfApp.ViewModels.AdminViewModels.Editors.BookEditorViewModel;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
@@ -82,7 +76,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         private Author _SelectedAuthor;
 
         /// <summary> /// Выбранный автор /// </summary>
-        public Author SelectedAuthor {get => _SelectedAuthor; set => Set(ref _SelectedAuthor, value);}
+        public Author SelectedAuthor { get => _SelectedAuthor; set => Set(ref _SelectedAuthor, value); }
 
         #endregion
 
@@ -289,7 +283,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         #endregion
 
 
-        public AuthorsViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, IUserDialogService dialogService):base(dbFactory,dialogService)
+        public AuthorsViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, IUserDialogService dialogService) : base(dbFactory, dialogService)
         {
             _dbFactory = dbFactory;
             _DialogService = dialogService;

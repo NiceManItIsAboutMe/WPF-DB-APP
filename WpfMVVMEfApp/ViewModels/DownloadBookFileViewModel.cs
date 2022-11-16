@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using WpfDBApp.ViewModels.Base;
 using WpfMVVMEfApp.Commands.Base;
@@ -15,7 +10,7 @@ using WpfMVVMEfApp.Services.Interfaces;
 
 namespace WpfMVVMEfApp.ViewModels
 {
-    internal class DownloadBookFileViewModel :ViewModel
+    internal class DownloadBookFileViewModel : ViewModel
     {
         private IDbContextFactory<ApplicationDbContext> _dbFactory;
         private IUserDialogService _DialogService;
@@ -75,7 +70,7 @@ namespace WpfMVVMEfApp.ViewModels
 
         #endregion
 
-        public DownloadBookFileViewModel(Book book, 
+        public DownloadBookFileViewModel(Book book,
             IDbContextFactory<ApplicationDbContext> dbFactory,
             IUserDialogService dialogService)
         {

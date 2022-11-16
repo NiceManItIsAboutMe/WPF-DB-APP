@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using System.Windows;
-using WpfDBApp.ViewModels.Base;
-using WpfMVVMEfApp.Commands.Base;
-using WpfMVVMEfApp.Models;
-using WpfMVVMEfApp.Models.PostgreSqlDB;
-using Microsoft.EntityFrameworkCore;
-using WpfMVVMEfApp.Services.Interfaces;
+﻿using WpfDBApp.ViewModels.Base;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {

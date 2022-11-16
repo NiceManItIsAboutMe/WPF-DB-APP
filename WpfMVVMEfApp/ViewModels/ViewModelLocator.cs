@@ -1,9 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WpfMVVMEfApp.ViewModels.AdminViewModels;
 
 namespace WpfMVVMEfApp.ViewModels
@@ -19,7 +14,7 @@ namespace WpfMVVMEfApp.ViewModels
     //тоже самое но вместо обращения к App сервисы будут вытакскиваться из конструктора
     internal class ViewModelLocator
     {
-        
+
 
         public AuthorizationViewModel AuthorizationModel => App.Services.GetRequiredService<AuthorizationViewModel>();
 
@@ -29,9 +24,9 @@ namespace WpfMVVMEfApp.ViewModels
         public AdminViewModel AdminModel => App.Services.GetRequiredService<AdminViewModel>();
 
         public UsersViewModel UsersModel => App.Services.GetRequiredService<UsersViewModel>();
-        public AuthorsViewModel AuthorsModel=> App.Services.GetRequiredService<AuthorsViewModel>();
-        public CategoriesViewModel CategoriesModel=> App.Services.GetRequiredService<CategoriesViewModel>();
-        public BooksViewModel BooksModel=> App.Services.GetRequiredService<BooksViewModel>();
+        public AuthorsViewModel AuthorsModel => App.Services.GetRequiredService<AuthorsViewModel>();
+        public CategoriesViewModel CategoriesModel => App.Services.GetRequiredService<CategoriesViewModel>();
+        public BooksViewModel BooksModel => App.Services.GetRequiredService<BooksViewModel>();
         #endregion
 
         #region NotAdminViewModel

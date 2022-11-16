@@ -1,11 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 using WpfDBApp.ViewModels.Base;
@@ -14,7 +11,6 @@ using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
 using WpfMVVMEfApp.ViewModels.AdminViewModels.Editors;
-using static WpfMVVMEfApp.ViewModels.AdminViewModels.Editors.BookEditorViewModel;
 
 namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 {
@@ -162,7 +158,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
         {
             using var db = await _dbFactory.CreateDbContextAsync();
 
-            Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).Include(b=>b.BookFilesDescription)
+            Book book = await db.Books.Include(b => b.Categories).Include(b => b.Author).Include(b => b.BookFilesDescription)
                 .FirstAsync(b => b.Id == SelectedBook.Id);
             BookEditorViewModel vm = new BookEditorViewModel(
                 book,

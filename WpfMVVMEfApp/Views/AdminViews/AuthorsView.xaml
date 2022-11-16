@@ -118,7 +118,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button fa5:Awesome.Content="Solid_FileDownload"
-                                        Command="{Binding CategoriesModel.DownloadBookFileCommand, Source={StaticResource Locator}}"/>
+                                        Command="{Binding AuthorsModel.DownloadBookFileCommand, Source={StaticResource Locator}}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

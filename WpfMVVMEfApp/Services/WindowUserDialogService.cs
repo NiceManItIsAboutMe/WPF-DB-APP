@@ -69,7 +69,7 @@ namespace WpfMVVMEfApp.Services
                 == MessageBoxResult.Yes;
         }
 
-        public void ShowError(string Information, string Caption) => 
+        public void ShowError(string Information, string Caption) =>
             MessageBox.Show(Information, Caption, MessageBoxButton.OK, MessageBoxImage.Error);
 
         public void ShowInformation(string Information, string Caption) =>
@@ -126,8 +126,8 @@ namespace WpfMVVMEfApp.Services
             BookEditorWindow window = new BookEditorWindow()
             {
                 DataContext = vm,
-                Owner= Application.Current.MainWindow,
-                WindowStartupLocation=WindowStartupLocation.CenterOwner,
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
             };
             var result = window.ShowDialog();
             return result ?? false;

@@ -1,21 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Npgsql;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
-using System.Xaml;
 using WpfDBApp.ViewModels.Base;
 using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
 using WpfMVVMEfApp.ViewModels.AdminViewModels;
-using WpfMVVMEfApp.Views;
-using WpfMVVMEfApp.Views.Windows;
 
 namespace WpfMVVMEfApp.ViewModels
 {
