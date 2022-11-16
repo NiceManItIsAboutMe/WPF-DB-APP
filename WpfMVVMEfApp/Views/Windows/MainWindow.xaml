@@ -20,8 +20,8 @@
             <MenuItem Header="Помощь" Height="20">
                 <MenuItem Header="О программе"/>
             </MenuItem>
-            <MenuItem Header="Сменить интерфейс" Height="20" 
-                      Visibility="{Binding IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <MenuItem Header="Сменить интерфейс" Height="20" Command="{Binding SwitchInterfaceCommand}"
+                      Visibility="{Binding User.IsAdmin, Converter={StaticResource BooleanToVisibilityConverter},FallbackValue=Hidden}"/>
         </Menu>
         <Grid>
             <ContentControl Content="{Binding CurrrentViewModel}"/>

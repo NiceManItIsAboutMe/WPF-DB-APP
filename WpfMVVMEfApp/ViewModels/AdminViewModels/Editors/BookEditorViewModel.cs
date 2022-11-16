@@ -138,13 +138,13 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels.Editors
         public bool CanUploadFileCommandExecute(object? p) => true;
 
         /// <summary> /// Загрузка файла книги /// </summary>
-        public void OnUploadFileCommandExecuted(object? p)
+        public async void OnUploadFileCommandExecuted(object? p)
         {
             var result = _DialogService.OpenFile("Загрузка книги", out string path);
             if (!result)
                 return;
             var file = new BookFile();
-            file.File = File.ReadAllBytes(path);
+            file.File = await File.ReadAllBytesAsync(path);
 
             var fileName = path.Split(@"\")[^1];
             BookFileDescription bookFileDescription = new BookFileDescription()

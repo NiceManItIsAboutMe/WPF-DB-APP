@@ -67,6 +67,26 @@ namespace WpfMVVMEfApp.ViewModels
 
         #endregion
 
+        #region команда Сменить интерфейс
+
+        /// <summary> /// Сменить интерфейс /// </summary>
+        private ICommand _SwitchInterfaceCommand;
+
+        /// <summary> /// Сменить интерфейс /// </summary>
+        public ICommand SwitchInterfaceCommand => _SwitchInterfaceCommand
+               ??= new RelayCommand(OnSwitchInterfaceCommandExecuted, CanSwitchInterfaceCommandExecute);
+
+        /// <summary> /// Сменить интерфейс /// </summary>
+        public bool CanSwitchInterfaceCommandExecute(object? p) => true;
+
+        /// <summary> /// Сменить интерфейс /// </summary>
+        public void OnSwitchInterfaceCommandExecuted(object? p)
+        {
+            IsAdmin = !IsAdmin;
+        }
+
+        #endregion
+
         public MainWindowViewModel(AuthorizationViewModel authorizationViewModel)
         {
             _AuthorizationViewModel = authorizationViewModel;
