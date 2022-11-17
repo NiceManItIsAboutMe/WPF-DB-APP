@@ -32,6 +32,7 @@
                       Visibility="{Binding User,Converter={StaticResource NullableToVisibilityConverter}}"
                       Command="{Binding ExitProfileCommand}"/>
         </Menu>
+        <Separator DockPanel.Dock="Top"/>
         <Grid>
             <ContentControl Content="{Binding CurrrentViewModel}"/>
         </Grid>
