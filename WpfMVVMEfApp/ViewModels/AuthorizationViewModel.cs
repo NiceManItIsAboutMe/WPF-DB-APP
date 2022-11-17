@@ -54,7 +54,6 @@ namespace WpfMVVMEfApp.ViewModels
 
         #endregion
 
-
         #region команда Команда входа
 
         /// <summary> /// Команда входа /// </summary>
@@ -83,21 +82,20 @@ namespace WpfMVVMEfApp.ViewModels
                     .FirstOrDefaultAsync();
 
                 if (user == null) { _DialogService.ShowWarning("Вы ввели неверный логин или пароль", "Предупреждение"); return; }
-                else if (user.IsAdmin) // изменить потом
-                {
-                    _MainWindowViewModel.User = user;
-                    _MainWindowViewModel.CurrrentViewModel = _AdminViewModel;
-                }
                 else
                 {
                     _MainWindowViewModel.User = user;
                     _MainWindowViewModel.CurrrentViewModel = _AdminViewModel;
+                    Login = String.Empty;
+                    Password = String.Empty;
                 }
             }
         }
         #endregion
 
-        public AuthorizationViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, AdminViewModel adminViewModel, IUserDialogService dialogService)
+        public AuthorizationViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, 
+            AdminViewModel adminViewModel, 
+            IUserDialogService dialogService)
         {
             _dbFactory = dbFactory;
             _DialogService = dialogService;

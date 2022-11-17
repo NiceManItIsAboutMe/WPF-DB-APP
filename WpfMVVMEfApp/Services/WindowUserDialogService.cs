@@ -27,6 +27,17 @@ namespace WpfMVVMEfApp.Services
                     {
                         return DownloadBookFile(vm);
                     }
+                case string str:
+                    {
+                        if (str == "About")
+                        {
+                            AboutProgramWindow window = new() {Owner = Application.Current.MainWindow};
+                            window.Show();
+                            return true;
+                        }
+                        else
+                            throw new NotSupportedException($"Редактирование объекта типа {item.GetType().Name} не поддерживается");
+                    }
             }
         }
 

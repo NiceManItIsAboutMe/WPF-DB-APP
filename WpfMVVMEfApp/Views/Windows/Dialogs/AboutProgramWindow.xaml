@@ -1,0 +1,27 @@
+﻿<Window x:Class="WpfMVVMEfApp.Views.Windows.Dialogs.AboutProgramWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfMVVMEfApp.Views.Windows.Dialogs"
+        mc:Ignorable="d"
+        Title="Библиотека: Сведения" Height="200" Width="300" ResizeMode="NoResize" WindowStyle="ToolWindow">
+    <Grid>
+        <StackPanel>
+            <Grid Background="CadetBlue">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Source="pack://application:,,,/Resources/Images/bookicon.png" Height="50"/>
+                <TextBlock Grid.Column="1" Text="Библиотека" FontSize="20" VerticalAlignment="Center"/>
+            </Grid>
+            <Separator Margin="5" Foreground="Gray"/>
+            <TextBlock Text="Version 1.0" Margin="3"/>
+            <TextBlock Text="Created by Konstantin Khaidayev" Margin="3"/>
+        </StackPanel>
+        <Button Content="Ok" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                Height="30" Margin="5,5,3,3" Background="CadetBlue"
+                Command="Close"/>
+    </Grid>
+</Window>

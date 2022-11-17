@@ -17,11 +17,20 @@
     </i:Interaction.Triggers>
     <DockPanel>
         <Menu DockPanel.Dock="Top" Height="20">
-            <MenuItem Header="Помощь" Height="20">
-                <MenuItem Header="О программе"/>
+            <MenuItem Header="Файл" Height="20">
+                <MenuItem Header="Справка"/>
+                <MenuItem Header="О программе"
+                          Command="{Binding AboutProgramCommand}"/>
+                <MenuItem Header="Выйти"
+                      Visibility="{Binding User,Converter={StaticResource NullableToVisibilityConverter}}"/>
             </MenuItem>
+            <MenuItem Header="Профиль" Height="20"
+                      Visibility="{Binding User,Converter={StaticResource NullableToVisibilityConverter}}"/>
             <MenuItem Header="Сменить интерфейс" Height="20" Command="{Binding SwitchInterfaceCommand}"
-                      Visibility="{Binding User.IsAdmin, Converter={StaticResource BooleanToVisibilityConverter},FallbackValue=Hidden}"/>
+                      Visibility="{Binding User.IsAdmin, Converter={StaticResource BooleanToVisibilityConverter},FallbackValue=Collapsed}"/>
+            <MenuItem Header="Выйти" Height="20" HorizontalAlignment="Right"
+                      Visibility="{Binding User,Converter={StaticResource NullableToVisibilityConverter}}"
+                      Command="{Binding ExitProfileCommand}"/>
         </Menu>
         <Grid>
             <ContentControl Content="{Binding CurrrentViewModel}"/>
