@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:WpfMVVMEfApp.ViewModels.AdminViewModels.Editors"
+        xmlns:vm="clr-namespace:WpfMVVMEfApp.ViewModels.Editors"
         xmlns:local="clr-namespace:WpfMVVMEfApp.Views.Windows.Dialogs.Editors"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"

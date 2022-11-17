@@ -1,13 +1,13 @@
 ﻿using System.Windows.Controls;
 
-namespace WpfMVVMEfApp.Views.AdminViews
+namespace WpfMVVMEfApp.Views.MainViews
 {
     /// <summary>
     /// Логика взаимодействия для AdminView.xaml
     /// </summary>
-    public partial class AdminView : UserControl
+    public partial class MainView : UserControl
     {
-        public AdminView()
+        public MainView()
         {
             InitializeComponent();
         }

@@ -125,6 +125,7 @@ namespace WpfMVVMEfApp.ViewModels
         /// <summary> /// Выход из профиля /// </summary>
         public void OnExitProfileCommandExecuted(object? p)
         {
+            if (!_DialogService.Confirm("Вы уверены, что хотите выйти из аккаунта", "Выход")) return;
             User = null;
             CurrrentViewModel = _AuthorizationViewModel;
         }

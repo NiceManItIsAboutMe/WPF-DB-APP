@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using WpfMVVMEfApp.ViewModels.AdminViewModels;
+using WpfMVVMEfApp.ViewModels.MainView;
 
 namespace WpfMVVMEfApp.ViewModels
 {
@@ -8,7 +8,7 @@ namespace WpfMVVMEfApp.ViewModels
         public static IServiceCollection AddViewModels(this IServiceCollection services) => services
             .AddScoped<AuthorizationViewModel>()
             .AddScoped<MainWindowViewModel>()
-            .AddScoped<AdminViewModel>()
+            .AddScoped<MainViewViewModel>()
             .AddScoped<UsersViewModel>()
             .AddScoped<BooksViewModel>()
             .AddScoped<AuthorsViewModel>()

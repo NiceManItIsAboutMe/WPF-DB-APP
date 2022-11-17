@@ -12,7 +12,7 @@ using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Services.Interfaces;
 
-namespace WpfMVVMEfApp.ViewModels.AdminViewModels.Editors
+namespace WpfMVVMEfApp.ViewModels.Editors
 {
     internal class BookEditorViewModel : ViewModel
     {

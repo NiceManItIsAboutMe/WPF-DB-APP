@@ -10,7 +10,7 @@ using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
 
-namespace WpfMVVMEfApp.ViewModels.AdminViewModels
+namespace WpfMVVMEfApp.ViewModels.MainView
 {
     internal class UsersViewModel : ViewModel
     {

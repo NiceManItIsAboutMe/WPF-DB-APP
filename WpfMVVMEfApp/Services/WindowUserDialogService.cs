@@ -4,7 +4,7 @@ using System.Windows;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Services.Interfaces;
 using WpfMVVMEfApp.ViewModels;
-using WpfMVVMEfApp.ViewModels.AdminViewModels.Editors;
+using WpfMVVMEfApp.ViewModels.Editors;
 using WpfMVVMEfApp.Views.Windows.Dialogs;
 using WpfMVVMEfApp.Views.Windows.Dialogs.Editors;
 

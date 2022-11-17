@@ -7,7 +7,7 @@ using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
-using WpfMVVMEfApp.ViewModels.AdminViewModels;
+using WpfMVVMEfApp.ViewModels.MainView;
 
 namespace WpfMVVMEfApp.ViewModels
 {
@@ -17,7 +17,7 @@ namespace WpfMVVMEfApp.ViewModels
         private IUserDialogService _DialogService;
         private IDbContextFactory<ApplicationDbContext> _dbFactory;
         public MainWindowViewModel _MainWindowViewModel { get; set; }
-        private AdminViewModel _AdminViewModel;
+        private MainViewViewModel _AdminViewModel;
 
         #region Заголовок string Title
 
@@ -94,7 +94,7 @@ namespace WpfMVVMEfApp.ViewModels
         #endregion
 
         public AuthorizationViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, 
-            AdminViewModel adminViewModel, 
+            MainViewViewModel adminViewModel, 
             IUserDialogService dialogService)
         {
             _dbFactory = dbFactory;

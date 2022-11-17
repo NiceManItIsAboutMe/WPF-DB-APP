@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using WpfMVVMEfApp.ViewModels.AdminViewModels;
+using WpfMVVMEfApp.ViewModels.MainView;
 
 namespace WpfMVVMEfApp.ViewModels
 {
@@ -11,7 +11,7 @@ namespace WpfMVVMEfApp.ViewModels
 
         public MainWindowViewModel MainWindowModel => App.Services.GetRequiredService<MainWindowViewModel>();
 
-        public AdminViewModel AdminModel => App.Services.GetRequiredService<AdminViewModel>();
+        public MainViewViewModel MainModel => App.Services.GetRequiredService<MainViewViewModel>();
 
         public UsersViewModel UsersModel => App.Services.GetRequiredService<UsersViewModel>();
         public AuthorsViewModel AuthorsModel => App.Services.GetRequiredService<AuthorsViewModel>();

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace WpfMVVMEfApp.Views.AdminViews
+namespace WpfMVVMEfApp.Views.MainViews
 {
     /// <summary>
     /// Логика взаимодействия для AuthorsView.xaml

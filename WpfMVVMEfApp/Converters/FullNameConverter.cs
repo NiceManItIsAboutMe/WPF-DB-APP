@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using WpfMVVMEfApp.Models.Base;
 
-namespace WpfMVVMEfApp.ViewModels.Converters
+namespace WpfMVVMEfApp.Converters
 {
     /// <summary>  ///  Конвертирует объект в полное имя  /// </summary>
     internal class FullNameConverter : IValueConverter

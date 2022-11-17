@@ -1,8 +1,8 @@
 ﻿using WpfDBApp.ViewModels.Base;
 
-namespace WpfMVVMEfApp.ViewModels.AdminViewModels
+namespace WpfMVVMEfApp.ViewModels.MainView
 {
-    internal class AdminViewModel : ViewModel
+    internal class MainViewViewModel : ViewModel
     {
         #region Поля
         #region UsersViewModel
@@ -47,7 +47,7 @@ namespace WpfMVVMEfApp.ViewModels.AdminViewModels
 
         #endregion
 
-        public AdminViewModel(UsersViewModel usersViewModel,
+        public MainViewViewModel(UsersViewModel usersViewModel,
             AuthorsViewModel authorsViewModel,
             CategoriesViewModel categoriesViewModel,
             BooksViewModel booksViewModel)

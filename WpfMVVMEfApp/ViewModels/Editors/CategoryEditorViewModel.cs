@@ -10,7 +10,7 @@ using WpfDBApp.ViewModels.Base;
 using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 
-namespace WpfMVVMEfApp.ViewModels.AdminViewModels.Editors
+namespace WpfMVVMEfApp.ViewModels.Editors
 {
     internal class CategoryEditorViewModel : ViewModel
     {

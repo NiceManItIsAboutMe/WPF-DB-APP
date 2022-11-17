@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:vm="clr-namespace:WpfMVVMEfApp.ViewModels.AdminViewModels.Editors"
+        xmlns:vm="clr-namespace:WpfMVVMEfApp.ViewModels.Editors"
         xmlns:local="clr-namespace:WpfMVVMEfApp.Views.Windows.Dialogs.Editors"
         mc:Ignorable="d"
         Title="Редактор категории" Height="500" Width="700"

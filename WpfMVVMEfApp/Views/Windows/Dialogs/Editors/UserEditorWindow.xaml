@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfMVVMEfApp.Views.Windows.Dialogs.Editors"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:vm="clr-namespace:WpfMVVMEfApp.ViewModels.AdminViewModels.Editors"
+        xmlns:vm="clr-namespace:WpfMVVMEfApp.ViewModels.Editors"
         mc:Ignorable="d"
         Title="Редактор пользователя" Height="246" Width="650"
         d:DataContext="{d:DesignInstance vm:UserEditorViewModel}" WindowStartupLocation="CenterOwner" Cursor="Hand">

@@ -9,9 +9,9 @@ using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
 using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
-using WpfMVVMEfApp.ViewModels.AdminViewModels.Editors;
+using WpfMVVMEfApp.ViewModels.Editors;
 
-namespace WpfMVVMEfApp.ViewModels.AdminViewModels
+namespace WpfMVVMEfApp.ViewModels.MainView
 {
     internal class AuthorsViewModel : BooksViewModel
     {
