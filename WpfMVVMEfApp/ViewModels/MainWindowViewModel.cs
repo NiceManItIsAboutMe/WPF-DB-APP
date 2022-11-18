@@ -1,7 +1,9 @@
-﻿using System.Windows.Input;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Windows.Input;
 using WpfDBApp.ViewModels.Base;
 using WpfMVVMEfApp.Commands.Base;
 using WpfMVVMEfApp.Models;
+using WpfMVVMEfApp.Models.PostgreSqlDB;
 using WpfMVVMEfApp.Services.Interfaces;
 
 namespace WpfMVVMEfApp.ViewModels
@@ -10,6 +12,7 @@ namespace WpfMVVMEfApp.ViewModels
     {
         #region Поля
         private IUserDialogService _DialogService;
+        IDbContextFactory<ApplicationDbContext> _dbFactory;
 
         #region User
 
@@ -66,6 +69,28 @@ namespace WpfMVVMEfApp.ViewModels
         public void OnSelectAuthorizationViewModelCommandExecuted(object? p)
         {
             CurrrentViewModel = _AuthorizationViewModel;
+        }
+
+        #endregion
+
+        #region команда Открыть профиль
+
+        /// <summary> /// Открыть профиль /// </summary>
+        private ICommand _OpenUserProfileCommand;
+
+        /// <summary> /// Открыть профиль /// </summary>
+        public ICommand OpenUserProfileCommand => _OpenUserProfileCommand
+               ??= new RelayCommand(OnOpenUserProfileCommandExecuted, CanOpenUserProfileCommandExecute);
+
+        /// <summary> /// Открыть профиль /// </summary>
+        public bool CanOpenUserProfileCommandExecute(object? p) => User is User;
+
+        /// <summary> /// Открыть профиль /// </summary>
+        public async void OnOpenUserProfileCommandExecuted(object? p)
+        {
+            using var db = await _dbFactory.CreateDbContextAsync();
+            User = await db.Users.Include(u => u.Books).FirstAsync(u => u.Id == User.Id);
+            CurrrentViewModel = new UserProfileViewModel(User, _dbFactory);
         }
 
         #endregion
@@ -132,8 +157,11 @@ namespace WpfMVVMEfApp.ViewModels
 
         #endregion
 
-        public MainWindowViewModel(AuthorizationViewModel authorizationViewModel, IUserDialogService dialogService)
+        public MainWindowViewModel(AuthorizationViewModel authorizationViewModel,
+            IUserDialogService dialogService,
+            IDbContextFactory<ApplicationDbContext> dbFactory)
         {
+            _dbFactory = dbFactory;
             _DialogService = dialogService;
             _AuthorizationViewModel = authorizationViewModel;
             //чтобы создать авторизацию нам надо данный сервис а чтобы создать данный сервис надо авторизацию разрываем это кольцо

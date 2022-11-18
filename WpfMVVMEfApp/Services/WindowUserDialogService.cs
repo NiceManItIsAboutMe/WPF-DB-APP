@@ -31,7 +31,7 @@ namespace WpfMVVMEfApp.Services
                     {
                         if (str == "About")
                         {
-                            AboutProgramWindow window = new() {Owner = Application.Current.MainWindow};
+                            AboutProgramWindow window = new() { Owner = Application.Current.MainWindow };
                             window.Show();
                             return true;
                         }

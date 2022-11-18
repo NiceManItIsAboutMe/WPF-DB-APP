@@ -93,8 +93,8 @@ namespace WpfMVVMEfApp.ViewModels
         }
         #endregion
 
-        public AuthorizationViewModel(IDbContextFactory<ApplicationDbContext> dbFactory, 
-            MainViewViewModel adminViewModel, 
+        public AuthorizationViewModel(IDbContextFactory<ApplicationDbContext> dbFactory,
+            MainViewViewModel adminViewModel,
             IUserDialogService dialogService)
         {
             _dbFactory = dbFactory;
