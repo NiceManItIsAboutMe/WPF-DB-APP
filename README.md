@@ -1,2 +1,3 @@
-WPF-DB-APP
-MVVM
+# WPF-DB-APP MVVM
+## My Pet-project
+### Library
