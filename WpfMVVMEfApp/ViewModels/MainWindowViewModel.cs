@@ -73,28 +73,6 @@ namespace WpfMVVMEfApp.ViewModels
 
         #endregion
 
-        #region команда Открыть профиль
-
-        /// <summary> /// Открыть профиль /// </summary>
-        private ICommand _OpenUserProfileCommand;
-
-        /// <summary> /// Открыть профиль /// </summary>
-        public ICommand OpenUserProfileCommand => _OpenUserProfileCommand
-               ??= new RelayCommand(OnOpenUserProfileCommandExecuted, CanOpenUserProfileCommandExecute);
-
-        /// <summary> /// Открыть профиль /// </summary>
-        public bool CanOpenUserProfileCommandExecute(object? p) => User is User;
-
-        /// <summary> /// Открыть профиль /// </summary>
-        public async void OnOpenUserProfileCommandExecuted(object? p)
-        {
-            using var db = await _dbFactory.CreateDbContextAsync();
-            User = await db.Users.Include(u => u.Books).FirstAsync(u => u.Id == User.Id);
-            CurrrentViewModel = new UserProfileViewModel(User, _dbFactory);
-        }
-
-        #endregion
-
         #region команда Сменить интерфейс
 
         /// <summary> /// Сменить интерфейс /// </summary>
